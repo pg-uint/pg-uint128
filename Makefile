@@ -1,6 +1,6 @@
 MODULES = uint128
 EXTENSION = uint128
-DATA = uint128--1.0.0.sql
+DATA = uint128--1.0.0.sql uint128--1.0.0--1.0.1.sql
 REGRESS = create_ext test_uint2 test_uint4 test_uint8 test_uint16 test_int16
 
 MODULE_big = $(EXTENSION)
