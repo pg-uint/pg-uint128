@@ -870,6 +870,117 @@ DEFAULT FOR TYPE $this->name USING hash FAMILY integer_ops AS
     OPERATOR        1       = ,
     FUNCTION        1       {$this->name}_hash($this->name);
 
+-- pg_depend records to prevent incorrect restoration order from binary dump
+
+-- BTREE OPERATOR CLASS
+WITH typ AS (
+    SELECT 
+        typ.oid AS typ_oid,
+        pg_opclass.oid AS opc_oid
+        
+    FROM (SELECT '$this->name'::regtype AS oid) typ
+
+    JOIN pg_opclass ON pg_opclass.opcintype = typ.oid
+    
+    -- Ensure BTREE operator family
+    JOIN pg_am ON pg_am.oid = pg_opclass.opcmethod AND pg_am.amname = 'btree'
+),
+operators AS (
+    SELECT op.oid, 'pg_operator'::regclass::oid AS refclassid
+    FROM typ
+    JOIN pg_operator op ON 
+        op.oprname IN ('<', '<=', '=', '>=', '>')
+        AND op.oprleft = typ.typ_oid
+        AND op.oprright = typ.typ_oid
+),
+fn AS (
+    SELECT
+        '{$this->name}_cmp($this->name, $this->name)'::regprocedure::oid AS oid,
+        'pg_proc'::regclass::oid AS refclassid
+),
+deps AS (
+    SELECT * FROM operators
+    UNION ALL
+    SELECT * FROM fn
+)
+INSERT INTO pg_depend (classid, objid, objsubid, refclassid, refobjid, refobjsubid, deptype)
+SELECT DISTINCT ON (typ.opc_oid, deps.oid)
+    'pg_opclass'::regclass::oid AS classid,
+    typ.opc_oid AS objid,
+    0 AS objsubid,
+    deps.refclassid,
+    deps.oid AS refobjid,
+    0 AS refobjsubid,
+    'n' AS deptype
+
+FROM typ, deps
+
+WHERE NOT EXISTS (
+	SELECT 1
+	FROM pg_depend
+	WHERE 
+		pg_depend.classid = 'pg_opclass'::regclass::oid
+		AND pg_depend.objid = typ.opc_oid
+		AND pg_depend.refclassid = deps.refclassid
+		AND pg_depend.refobjid = deps.oid
+)
+
+ORDER BY typ.opc_oid, deps.oid;
+
+-- HASH OPERATOR CLASS
+WITH typ AS (
+    SELECT 
+        typ.oid AS typ_oid,
+        pg_opclass.oid AS opc_oid
+        
+    FROM (SELECT '$this->name'::regtype AS oid) typ
+
+    JOIN pg_opclass ON pg_opclass.opcintype = typ.oid
+    
+    -- Ensure BTREE operator family
+    JOIN pg_am ON pg_am.oid = pg_opclass.opcmethod AND pg_am.amname = 'hash'
+),
+operators AS (
+    SELECT op.oid, 'pg_operator'::regclass::oid AS refclassid
+    FROM typ
+    JOIN pg_operator op ON
+        op.oprname = '='
+        AND op.oprleft = typ.typ_oid
+        AND op.oprright = typ.typ_oid
+),
+fn AS (
+    SELECT
+        '{$this->name}_hash($this->name)'::regprocedure::oid AS oid,
+        'pg_proc'::regclass::oid AS refclassid
+),
+deps AS (
+    SELECT * FROM operators
+    UNION ALL
+    SELECT * FROM fn
+)
+INSERT INTO pg_depend (classid, objid, objsubid, refclassid, refobjid, refobjsubid, deptype)
+SELECT DISTINCT ON (typ.opc_oid, deps.oid)
+    'pg_opclass'::regclass::oid AS classid,
+    typ.opc_oid AS objid,
+    0 AS objsubid,
+    deps.refclassid,
+    deps.oid AS refobjid,
+    0 AS refobjsubid,
+    'n' AS deptype
+
+FROM typ, deps
+
+WHERE NOT EXISTS (
+	SELECT 1
+	FROM pg_depend
+	WHERE 
+		pg_depend.classid = 'pg_opclass'::regclass::oid 
+		AND pg_depend.objid = typ.opc_oid
+		AND pg_depend.refclassid = deps.refclassid
+		AND pg_depend.refobjid = deps.oid
+)
+
+ORDER BY typ.opc_oid, deps.oid;
 EOT;
         }
 
