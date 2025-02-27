@@ -30,7 +30,7 @@ RUN make clean && make && make install
 FROM postgres:${PGVERSION}-bookworm
 
 ARG PGVERSION
-ENV UINT128_VERSION=1.0.0
+ENV UINT128_VERSION=1.0.1
 
 COPY --from=builder /usr/lib/postgresql/$PGVERSION/lib/uint128.so           /usr/lib/postgresql/$PGVERSION/lib/uint128.so
 COPY --from=builder /usr/share/postgresql/$PGVERSION/extension/uint128*     /usr/share/postgresql/$PGVERSION/extension
