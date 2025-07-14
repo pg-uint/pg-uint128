@@ -2,7 +2,7 @@
 A PostgreSQL extension that adds native support for unsigned integers and 128-bit signed/unsigned integer types.
 
 ## Supported PostgreSQL Versions
-PostgreSQL 12 - 17
+PostgreSQL 12 - 18
 
 ## Features
 * Provides multiple unsigned types:
