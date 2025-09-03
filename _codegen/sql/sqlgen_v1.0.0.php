@@ -3,168 +3,9 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/sql_gen_core.php';
+require_once __DIR__ . '/sqlgen_v1.0.0_types.php';
 
-/** @var array<TypeConfig> $types */
-$types = [
-    new TypeConfig(
-        type: UINT128,
-        alignment: 'char',
-        passByValue: false,
-        ops: [
-            new TypeOpConfig(Op::Eq, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Ne, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Gt, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Lt, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Ge, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Le, types: INT_CAST_TYPES, inverseTypes: true),
-
-            new TypeOpConfig(Op::Add, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Sub, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Mul, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Div, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Mod, types: INT_CAST_TYPES, inverseTypes: true),
-
-            new TypeOpConfig(Op::Xor),
-            new TypeOpConfig(Op::And),
-            new TypeOpConfig(Op::Or),
-            new TypeOpConfig(Op::Not),
-            new TypeOpConfig(Op::Shl),
-            new TypeOpConfig(Op::Shr),
-        ],
-        casts: array_merge(INT_CAST_TYPES, [UUID]),
-        aggOps: AGG_OPS,
-    ),
-    new TypeConfig(
-        type: UINT64,
-        alignment: 'double',
-        passByValue: true,
-        ops: [
-            new TypeOpConfig(Op::Eq, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Ne, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Gt, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Lt, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Ge, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Le, types: INT_CAST_TYPES, inverseTypes: true),
-
-            new TypeOpConfig(Op::Add, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Sub, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Mul, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Div, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Mod, types: INT_CAST_TYPES, inverseTypes: true),
-
-            new TypeOpConfig(Op::Xor),
-            new TypeOpConfig(Op::And),
-            new TypeOpConfig(Op::Or),
-            new TypeOpConfig(Op::Not),
-            new TypeOpConfig(Op::Shl),
-            new TypeOpConfig(Op::Shr),
-        ],
-        casts: INT_CAST_TYPES,
-        aggOps: AGG_OPS,
-    ),
-    new TypeConfig(
-        type: UINT32,
-        alignment: 'int4',
-        passByValue: true,
-        ops: [
-            new TypeOpConfig(Op::Eq, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Ne, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Gt, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Lt, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Ge, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Le, types: INT_CAST_TYPES, inverseTypes: true),
-
-            new TypeOpConfig(Op::Add, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Sub, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Mul, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Div, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Mod, types: INT_CAST_TYPES, inverseTypes: true),
-
-            new TypeOpConfig(Op::Xor),
-            new TypeOpConfig(Op::And),
-            new TypeOpConfig(Op::Or),
-            new TypeOpConfig(Op::Not),
-            new TypeOpConfig(Op::Shl),
-            new TypeOpConfig(Op::Shr),
-        ],
-        casts: INT_CAST_TYPES,
-        aggOps: AGG_OPS,
-    ),
-    new TypeConfig(
-        type: UINT16,
-        alignment: 'int2',
-        passByValue: true,
-        ops: [
-            new TypeOpConfig(Op::Eq, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Ne, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Gt, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Lt, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Ge, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Le, types: INT_CAST_TYPES, inverseTypes: true),
-
-            new TypeOpConfig(Op::Add, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Sub, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Mul, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Div, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Mod, types: INT_CAST_TYPES, inverseTypes: true),
-
-            new TypeOpConfig(Op::Xor),
-            new TypeOpConfig(Op::And),
-            new TypeOpConfig(Op::Or),
-            new TypeOpConfig(Op::Not),
-            new TypeOpConfig(Op::Shl),
-            new TypeOpConfig(Op::Shr),
-        ],
-        casts: INT_CAST_TYPES,
-        aggOps: AGG_OPS,
-    ),
-
-    new TypeConfig(
-        type: INT128,
-        alignment: 'char',
-        passByValue: false,
-        ops: [
-            new TypeOpConfig(Op::Eq, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Ne, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Gt, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Lt, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Ge, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Le, types: INT_CAST_TYPES, inverseTypes: true),
-
-            new TypeOpConfig(Op::Add, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Sub, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Mul, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Div, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Mod, types: INT_CAST_TYPES, inverseTypes: true),
-
-            new TypeOpConfig(Op::Xor),
-            new TypeOpConfig(Op::And),
-            new TypeOpConfig(Op::Or),
-            new TypeOpConfig(Op::Not),
-            new TypeOpConfig(Op::Shl),
-            new TypeOpConfig(Op::Shr),
-        ],
-        casts: array_merge(INT_CAST_TYPES),
-        aggOps: AGG_OPS,
-    ),
-];
-
-/**
- * @type Type[]
- */
-const V1_UINT_TYPES = [
-    UINT16,
-    UINT32,
-    UINT64,
-    UINT128,
-];
-
-/**
- * @type Type[]
- */
-const V1_INT_TYPES = [
-    INT128,
-];
+$types = getV1_0_0_Types();
 
 $buf = '';
 
@@ -180,34 +21,7 @@ foreach ($types as $type) {
 
 $buf .= "\n\n-- Cross types ops\n";
 
-/** @var array<string, Type[]> $CROSS_TYPES */
-$CROSS_TYPES = [];
-
-/**
- * @var Type $uintType
- */
-foreach (V1_UINT_TYPES as $idx => $uintType) {
-    $crossTypes = [];
-
-    array_push($crossTypes, ...array_slice(V1_UINT_TYPES, 0, $idx));
-    array_push($crossTypes, ...array_slice(V1_UINT_TYPES, $idx + 1));
-    array_push($crossTypes, ...V1_INT_TYPES);
-
-    $CROSS_TYPES[$uintType->pgName] = $crossTypes;
-}
-
-/**
- * @var Type $intType
- */
-foreach (V1_INT_TYPES as $idx => $intType) {
-    $crossTypes = [];
-
-    array_push($crossTypes, ...array_slice(V1_INT_TYPES, 0, $idx));
-    array_push($crossTypes, ...array_slice(V1_INT_TYPES, $idx + 1));
-    array_push($crossTypes, ...V1_UINT_TYPES);
-
-    $CROSS_TYPES[$intType->pgName] = $crossTypes;
-}
+$CROSS_TYPES = buildCrossTypes(V1_0_0_UINT_TYPES, V1_0_0_INT_TYPES);
 
 //const CROSS_TYPES = [
 //    // UINT16
@@ -222,49 +36,7 @@ foreach (V1_INT_TYPES as $idx => $intType) {
 //    'int16' =>  [UINT16, UINT32, UINT64, UINT128],
 //];
 
-/** @var array<string, string[]> $processedCastPairs */
-$processedCastPairs = [];
-
-// Cross types conversions
-foreach ($types as $type) {
-    /** @var array<Type> $crossTypes */
-    $crossTypes = $CROSS_TYPES[$type->type->pgName] ?? [];
-    if ($crossTypes === []) {
-        continue;
-    }
-
-    $typConfig = new TypeConfig(
-        type: $type->type,
-        alignment: $type->alignment,
-        passByValue: $type->passByValue,
-        ops: array_values(array_filter(array_map(function (TypeOpConfig $typeCfg) use ($crossTypes) {
-            return match ($typeCfg->op) {
-                // Bitwise doesn't scale between types
-                Op::Not, Op::And, Op::Or, Op::Xor, Op::Shl, Op::Shr => null,
-                default => new TypeOpConfig(
-                    op: $typeCfg->op,
-                    types: $crossTypes,
-                )
-            };
-        }, $type->ops))),
-        // Prevent generation duplicate casts
-        casts: array_values(
-            array_filter($crossTypes, static function (Type $crossType) use ($type, $processedCastPairs) {
-                if (!array_key_exists($crossType->pgName, $processedCastPairs)) {
-                    return true;
-                }
-
-                return !in_array($type->name, $processedCastPairs[$crossType->pgName], true);
-            })
-        ),
-        crossTypesOnly: true,
-    );
-
-    foreach ($crossTypes as $crossType) {
-        $processedCastPairs[$type->type->pgName][] = $crossType->pgName;
-        $processedCastPairs[$crossType->pgName][] = $type->type->pgName;
-    }
-
+foreach (genSQLForCrossTypes($types, $CROSS_TYPES) as $typConfig) {
     $buf .= $typConfig->toSQL(EXT_NAME) . "\n\n";
 }
 

@@ -3,87 +3,10 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/sql_gen_core.php';
+require_once __DIR__ . '/sqlgen_v1.0.0_types.php';
+require_once __DIR__ . '/sqlgen_v1.1.0_types.php';
 
-/** @var array<TypeConfig> $types */
-$types = [
-    new TypeConfig(
-        type: UINT8,
-        alignment: 'char',
-        passByValue: true,
-        ops: [
-            new TypeOpConfig(Op::Eq, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Ne, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Gt, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Lt, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Ge, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Le, types: INT_CAST_TYPES, inverseTypes: true),
-
-            new TypeOpConfig(Op::Add, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Sub, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Mul, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Div, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Mod, types: INT_CAST_TYPES, inverseTypes: true),
-
-            new TypeOpConfig(Op::Xor),
-            new TypeOpConfig(Op::And),
-            new TypeOpConfig(Op::Or),
-            new TypeOpConfig(Op::Not),
-            new TypeOpConfig(Op::Shl),
-            new TypeOpConfig(Op::Shr),
-        ],
-        casts: INT_CAST_TYPES,
-        aggOps: AGG_OPS,
-    ),
-
-    new TypeConfig(
-        type: INT8,
-        alignment: 'char',
-        passByValue: true,
-        ops: [
-            new TypeOpConfig(Op::Eq, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Ne, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Gt, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Lt, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Ge, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Le, types: INT_CAST_TYPES, inverseTypes: true),
-
-            new TypeOpConfig(Op::Add, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Sub, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Mul, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Div, types: INT_CAST_TYPES, inverseTypes: true),
-            new TypeOpConfig(Op::Mod, types: INT_CAST_TYPES, inverseTypes: true),
-
-            new TypeOpConfig(Op::Xor),
-            new TypeOpConfig(Op::And),
-            new TypeOpConfig(Op::Or),
-            new TypeOpConfig(Op::Not),
-            new TypeOpConfig(Op::Shl),
-            new TypeOpConfig(Op::Shr),
-        ],
-        casts: array_merge(INT_CAST_TYPES),
-        aggOps: AGG_OPS,
-    ),
-];
-
-/**
- * @type Type[]
- */
-const V1_1_UINT_TYPES = [
-    UINT8,
-    UINT16,
-    UINT32,
-    UINT64,
-    UINT128,
-];
-
-/**
- * @type Type[]
- */
-const V1_1_INT_TYPES = [
-    INT8,
-    INT128,
-];
-
+$types = getV1_1_0_Types();
 $buf = '';
 
 foreach ($types as $type) {
@@ -97,83 +20,63 @@ foreach ($types as $type) {
 $buf .= "\n\n-- Cross types ops\n";
 
 /** @var array<string, Type[]> $CROSS_TYPES */
-$CROSS_TYPES = [];
+$CROSS_TYPES = buildCrossTypes(V1_1_UINT_TYPES, V1_1_INT_TYPES);
 
-/**
- * @var Type $uintType
- */
-foreach (V1_1_UINT_TYPES as $idx => $uintType) {
-    $crossTypes = [];
+$crossTests = [];
 
-    array_push($crossTypes, ...array_slice(V1_1_UINT_TYPES, 0, $idx));
-    array_push($crossTypes, ...array_slice(V1_1_UINT_TYPES, $idx + 1));
-    array_push($crossTypes, ...V1_1_INT_TYPES);
-
-    $CROSS_TYPES[$uintType->pgName] = $crossTypes;
-}
-
-/**
- * @var Type $intType
- */
-foreach (V1_1_INT_TYPES as $idx => $intType) {
-    $crossTypes = [];
-
-    array_push($crossTypes, ...array_slice(V1_1_INT_TYPES, 0, $idx));
-    array_push($crossTypes, ...array_slice(V1_1_INT_TYPES, $idx + 1));
-    array_push($crossTypes, ...V1_1_UINT_TYPES);
-
-    $CROSS_TYPES[$intType->pgName] = $crossTypes;
-}
-
-/** @var array<string, string[]> $processedCastPairs */
-$processedCastPairs = [];
-
-$crossTests = [
-];
-
-// Cross types conversions
-foreach ($types as $type) {
-    /** @var array<Type> $crossTypes */
-    $crossTypes = $CROSS_TYPES[$type->type->pgName] ?? [];
-    if ($crossTypes === []) {
-        continue;
-    }
-
-    $typConfig = new TypeConfig(
-        type: $type->type,
-        alignment: $type->alignment,
-        passByValue: $type->passByValue,
-        ops: array_values(array_filter(array_map(function (TypeOpConfig $typeCfg) use ($crossTypes) {
-            return match ($typeCfg->op) {
-                // Bitwise doesn't scale between types
-                Op::Not, Op::And, Op::Or, Op::Xor, Op::Shl, Op::Shr => null,
-                default => new TypeOpConfig(
-                    op: $typeCfg->op,
-                    types: $crossTypes,
-                )
-            };
-        }, $type->ops))),
-        // Prevent generation duplicate casts
-        casts: array_values(
-            array_filter($crossTypes, static function (Type $crossType) use ($type, $processedCastPairs) {
-                if (!array_key_exists($crossType->pgName, $processedCastPairs)) {
-                    return true;
-                }
-
-                return !in_array($type->name, $processedCastPairs[$crossType->pgName], true);
-            })
-        ),
-        crossTypesOnly: true,
-    );
-
-    foreach ($crossTypes as $crossType) {
-        $processedCastPairs[$type->type->pgName][] = $crossType->pgName;
-        $processedCastPairs[$crossType->pgName][] = $type->type->pgName;
-    }
-
+foreach (genSQLForCrossTypes($types, $CROSS_TYPES) as $typConfig) {
     $buf .= $typConfig->toSQL(EXT_NAME) . "\n\n";
 
-    $crossTests[$type->type->pgName] = $typConfig->toSQLTests();
+    $crossTests[$typConfig->type->pgName] = $typConfig->toSQLTests();
+}
+
+/**
+ * Cross type conversion from previous version
+ * @return Generator<TypeConfig>
+ */
+function buildV1_0_0_CrossTypesSQL(): Generator
+{
+    global $types;
+    $V1_0_0_Types = getV1_0_0_Types();
+
+    $crossTypes = array_map(static fn (TypeConfig $typConfig) => $typConfig->type, $types);
+
+    /** @var array<string, string[]> $processedCastPairs */
+    $processedCastPairs = [];
+
+    foreach ($V1_0_0_Types as $type) {
+        $typConfig = new TypeConfig(
+            type: $type->type,
+            alignment: $type->alignment,
+            passByValue: $type->passByValue,
+            ops: array_values(array_filter(array_map(function (TypeOpConfig $typeCfg) use ($crossTypes) {
+                return match ($typeCfg->op) {
+                    // Bitwise doesn't scale between types
+                    Op::Not, Op::And, Op::Or, Op::Xor, Op::Shl, Op::Shr => null,
+                    default => new TypeOpConfig(
+                        op: $typeCfg->op,
+                        types: $crossTypes,
+                    )
+                };
+            }, $type->ops))),
+            crossTypesOnly: true,
+        );
+
+        foreach ($crossTypes as $crossType) {
+            $processedCastPairs[$type->type->pgName][] = $crossType->pgName;
+            $processedCastPairs[$crossType->pgName][] = $type->type->pgName;
+        }
+
+        yield $typConfig;
+    }
+}
+
+$crossTestsWithOldTypes = [];
+
+foreach (buildV1_0_0_CrossTypesSQL() as $typConfig) {
+    $buf .= $typConfig->toSQL(EXT_NAME) . "\n\n";
+
+    $crossTestsWithOldTypes[$typConfig->type->pgName] = $typConfig->toSQLTests();
 }
 
 file_put_contents("uint128--1.0.1--1.1.0.sql", $buf);
@@ -196,6 +99,17 @@ foreach ($types as $type) {
 
     echo "sql/test_{$type->type->pgName}.sql successfully generated\n";
     echo "expected/test_{$type->type->pgName}.out successfully generated\n";
+}
+
+foreach ($crossTestsWithOldTypes as $oldTypName => [$test, $expected]) {
+    $testFileName = "sql/test_1.1.0_{$oldTypName}.sql";
+    $expectedFileName = "expected/test_1.1.0_{$oldTypName}.out";
+
+    file_put_contents($testFileName, $test);
+    file_put_contents($expectedFileName, $expected);
+
+    echo "{$testFileName} successfully generated\n";
+    echo "{$expectedFileName} successfully generated\n";
 }
 
 return;

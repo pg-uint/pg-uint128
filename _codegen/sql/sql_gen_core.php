@@ -1111,3 +1111,88 @@ EOT;
 const INT_CAST_TYPES = [INT16, INT32, INT64];
 
 const AGG_OPS = [AggOp::Sum, AggOp::Avg, AggOp::Min, AggOp::Max];
+
+/**
+ * @param array<Type> $uintTypes
+ * @param array<Type> $intTypes
+ * @return array<string, Type[]>
+ */
+function buildCrossTypes(array $uintTypes = [], array $intTypes = []): array
+{
+    $CROSS_TYPES = [];
+
+    foreach ($uintTypes as $idx => $uintType) {
+        $crossTypes = [];
+
+        array_push($crossTypes, ...array_slice($uintTypes, 0, $idx));
+        array_push($crossTypes, ...array_slice($uintTypes, $idx + 1));
+        array_push($crossTypes, ...$intTypes);
+
+        $CROSS_TYPES[$uintType->pgName] = $crossTypes;
+    }
+
+    foreach ($intTypes as $idx => $intType) {
+        $crossTypes = [];
+
+        array_push($crossTypes, ...array_slice($intTypes, 0, $idx));
+        array_push($crossTypes, ...array_slice($intTypes, $idx + 1));
+        array_push($crossTypes, ...$uintTypes);
+
+        $CROSS_TYPES[$intType->pgName] = $crossTypes;
+    }
+
+    return $CROSS_TYPES;
+}
+
+/**
+ * @param array<TypeConfig> $types
+ * @param array<string, Type[]> $gCrossTypes
+ * @return \Generator<TypeConfig>
+ */
+function genSQLForCrossTypes(array $types, array $gCrossTypes = []): \Generator
+{
+    /** @var array<string, string[]> $processedCastPairs */
+    $processedCastPairs = [];
+
+    // Cross types conversions
+    foreach ($types as $type) {
+        $crossTypes = $gCrossTypes[$type->type->pgName] ?? [];
+        if ($crossTypes === []) {
+            continue;
+        }
+
+        $typConfig = new TypeConfig(
+            type: $type->type,
+            alignment: $type->alignment,
+            passByValue: $type->passByValue,
+            ops: array_values(array_filter(array_map(function (TypeOpConfig $typeCfg) use ($crossTypes) {
+                return match ($typeCfg->op) {
+                    // Bitwise doesn't scale between types
+                    Op::Not, Op::And, Op::Or, Op::Xor, Op::Shl, Op::Shr => null,
+                    default => new TypeOpConfig(
+                        op: $typeCfg->op,
+                        types: $crossTypes,
+                    )
+                };
+            }, $type->ops))),
+            // Prevent generation duplicate casts
+            casts: array_values(
+                array_filter($crossTypes, static function (Type $crossType) use ($type, $processedCastPairs) {
+                    if (!array_key_exists($crossType->pgName, $processedCastPairs)) {
+                        return true;
+                    }
+
+                    return !in_array($type->name, $processedCastPairs[$crossType->pgName], true);
+                })
+            ),
+            crossTypesOnly: true,
+        );
+
+        foreach ($crossTypes as $crossType) {
+            $processedCastPairs[$type->type->pgName][] = $crossType->pgName;
+            $processedCastPairs[$crossType->pgName][] = $type->type->pgName;
+        }
+
+        yield $typConfig;
+    }
+}

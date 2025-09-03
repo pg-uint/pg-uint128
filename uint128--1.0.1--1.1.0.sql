@@ -5881,3 +5881,1938 @@ CREATE OPERATOR % (
 
 
 
+
+-- Casts block
+-- Ops block
+
+CREATE FUNCTION uint16_eq_uint1(uint16, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint16_eq_uint1';
+
+CREATE FUNCTION uint16_eq_int1(uint16, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint16_eq_int1';
+
+
+CREATE FUNCTION uint16_ne_uint1(uint16, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint16_ne_uint1';
+
+CREATE FUNCTION uint16_ne_int1(uint16, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint16_ne_int1';
+
+
+CREATE FUNCTION uint16_gt_uint1(uint16, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint16_gt_uint1';
+
+CREATE FUNCTION uint16_gt_int1(uint16, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint16_gt_int1';
+
+
+CREATE FUNCTION uint16_lt_uint1(uint16, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint16_lt_uint1';
+
+CREATE FUNCTION uint16_lt_int1(uint16, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint16_lt_int1';
+
+
+CREATE FUNCTION uint16_ge_uint1(uint16, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint16_ge_uint1';
+
+CREATE FUNCTION uint16_ge_int1(uint16, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint16_ge_int1';
+
+
+CREATE FUNCTION uint16_le_uint1(uint16, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint16_le_uint1';
+
+CREATE FUNCTION uint16_le_int1(uint16, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint16_le_int1';
+
+
+CREATE FUNCTION uint16_add_uint1(uint16, uint1) RETURNS uint16
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint16_add_uint1';
+
+CREATE FUNCTION uint16_add_int1(uint16, int1) RETURNS uint16
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint16_add_int1';
+
+
+CREATE FUNCTION uint16_sub_uint1(uint16, uint1) RETURNS uint16
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint16_sub_uint1';
+
+CREATE FUNCTION uint16_sub_int1(uint16, int1) RETURNS uint16
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint16_sub_int1';
+
+
+CREATE FUNCTION uint16_mul_uint1(uint16, uint1) RETURNS uint16
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint16_mul_uint1';
+
+CREATE FUNCTION uint16_mul_int1(uint16, int1) RETURNS uint16
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint16_mul_int1';
+
+
+CREATE FUNCTION uint16_div_uint1(uint16, uint1) RETURNS uint16
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint16_div_uint1';
+
+CREATE FUNCTION uint16_div_int1(uint16, int1) RETURNS uint16
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint16_div_int1';
+
+
+CREATE FUNCTION uint16_mod_uint1(uint16, uint1) RETURNS uint16
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint16_mod_uint1';
+
+CREATE FUNCTION uint16_mod_int1(uint16, int1) RETURNS uint16
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint16_mod_int1';
+
+
+CREATE OPERATOR = (
+    LEFTARG=uint16,
+    RIGHTARG=uint1,
+    PROCEDURE=uint16_eq_uint1,
+    COMMUTATOR = =,
+    NEGATOR = <>,
+    RESTRICT = eqsel,
+    JOIN = eqjoinsel,
+    HASHES,
+    MERGES
+);
+
+CREATE OPERATOR = (
+    LEFTARG=uint16,
+    RIGHTARG=int1,
+    PROCEDURE=uint16_eq_int1,
+    COMMUTATOR = =,
+    NEGATOR = <>,
+    RESTRICT = eqsel,
+    JOIN = eqjoinsel,
+    HASHES,
+    MERGES
+);
+
+
+CREATE OPERATOR <> (
+    LEFTARG=uint16,
+    RIGHTARG=uint1,
+    PROCEDURE=uint16_ne_uint1,
+    COMMUTATOR = <>,
+    NEGATOR = =,
+    RESTRICT = neqsel,
+    JOIN = neqjoinsel,
+    HASHES,
+    MERGES
+);
+
+CREATE OPERATOR <> (
+    LEFTARG=uint16,
+    RIGHTARG=int1,
+    PROCEDURE=uint16_ne_int1,
+    COMMUTATOR = <>,
+    NEGATOR = =,
+    RESTRICT = neqsel,
+    JOIN = neqjoinsel,
+    HASHES,
+    MERGES
+);
+
+
+CREATE OPERATOR > (
+    LEFTARG=uint16,
+    RIGHTARG=uint1,
+    PROCEDURE=uint16_gt_uint1,
+    COMMUTATOR = >,
+    NEGATOR = <=,
+    RESTRICT = scalargtsel,
+    JOIN = scalargtjoinsel
+);
+
+CREATE OPERATOR > (
+    LEFTARG=uint16,
+    RIGHTARG=int1,
+    PROCEDURE=uint16_gt_int1,
+    COMMUTATOR = >,
+    NEGATOR = <=,
+    RESTRICT = scalargtsel,
+    JOIN = scalargtjoinsel
+);
+
+
+CREATE OPERATOR < (
+    LEFTARG=uint16,
+    RIGHTARG=uint1,
+    PROCEDURE=uint16_lt_uint1,
+    COMMUTATOR = <,
+    NEGATOR = >=,
+    RESTRICT = scalarltsel,
+    JOIN = scalarltjoinsel
+);
+
+CREATE OPERATOR < (
+    LEFTARG=uint16,
+    RIGHTARG=int1,
+    PROCEDURE=uint16_lt_int1,
+    COMMUTATOR = <,
+    NEGATOR = >=,
+    RESTRICT = scalarltsel,
+    JOIN = scalarltjoinsel
+);
+
+
+CREATE OPERATOR >= (
+    LEFTARG=uint16,
+    RIGHTARG=uint1,
+    PROCEDURE=uint16_ge_uint1,
+    COMMUTATOR = >=,
+    NEGATOR = <,
+    RESTRICT = scalargtsel,
+    JOIN = scalargtjoinsel
+);
+
+CREATE OPERATOR >= (
+    LEFTARG=uint16,
+    RIGHTARG=int1,
+    PROCEDURE=uint16_ge_int1,
+    COMMUTATOR = >=,
+    NEGATOR = <,
+    RESTRICT = scalargtsel,
+    JOIN = scalargtjoinsel
+);
+
+
+CREATE OPERATOR <= (
+    LEFTARG=uint16,
+    RIGHTARG=uint1,
+    PROCEDURE=uint16_le_uint1,
+    COMMUTATOR = <=,
+    NEGATOR = >,
+    RESTRICT = scalarltsel,
+    JOIN = scalarltjoinsel
+);
+
+CREATE OPERATOR <= (
+    LEFTARG=uint16,
+    RIGHTARG=int1,
+    PROCEDURE=uint16_le_int1,
+    COMMUTATOR = <=,
+    NEGATOR = >,
+    RESTRICT = scalarltsel,
+    JOIN = scalarltjoinsel
+);
+
+
+CREATE OPERATOR + (
+    LEFTARG=uint16,
+    RIGHTARG=uint1,
+    PROCEDURE=uint16_add_uint1,
+    COMMUTATOR = +
+);
+
+CREATE OPERATOR + (
+    LEFTARG=uint16,
+    RIGHTARG=int1,
+    PROCEDURE=uint16_add_int1,
+    COMMUTATOR = +
+);
+
+
+CREATE OPERATOR - (
+    LEFTARG=uint16,
+    RIGHTARG=uint1,
+    PROCEDURE=uint16_sub_uint1,
+    COMMUTATOR = -
+);
+
+CREATE OPERATOR - (
+    LEFTARG=uint16,
+    RIGHTARG=int1,
+    PROCEDURE=uint16_sub_int1,
+    COMMUTATOR = -
+);
+
+
+CREATE OPERATOR * (
+    LEFTARG=uint16,
+    RIGHTARG=uint1,
+    PROCEDURE=uint16_mul_uint1
+);
+
+CREATE OPERATOR * (
+    LEFTARG=uint16,
+    RIGHTARG=int1,
+    PROCEDURE=uint16_mul_int1
+);
+
+
+CREATE OPERATOR / (
+    LEFTARG=uint16,
+    RIGHTARG=uint1,
+    PROCEDURE=uint16_div_uint1
+);
+
+CREATE OPERATOR / (
+    LEFTARG=uint16,
+    RIGHTARG=int1,
+    PROCEDURE=uint16_div_int1
+);
+
+
+CREATE OPERATOR % (
+    LEFTARG=uint16,
+    RIGHTARG=uint1,
+    PROCEDURE=uint16_mod_uint1
+);
+
+CREATE OPERATOR % (
+    LEFTARG=uint16,
+    RIGHTARG=int1,
+    PROCEDURE=uint16_mod_int1
+);
+
+
+
+
+
+
+-- Casts block
+-- Ops block
+
+CREATE FUNCTION uint8_eq_uint1(uint8, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint8_eq_uint1';
+
+CREATE FUNCTION uint8_eq_int1(uint8, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint8_eq_int1';
+
+
+CREATE FUNCTION uint8_ne_uint1(uint8, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint8_ne_uint1';
+
+CREATE FUNCTION uint8_ne_int1(uint8, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint8_ne_int1';
+
+
+CREATE FUNCTION uint8_gt_uint1(uint8, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint8_gt_uint1';
+
+CREATE FUNCTION uint8_gt_int1(uint8, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint8_gt_int1';
+
+
+CREATE FUNCTION uint8_lt_uint1(uint8, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint8_lt_uint1';
+
+CREATE FUNCTION uint8_lt_int1(uint8, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint8_lt_int1';
+
+
+CREATE FUNCTION uint8_ge_uint1(uint8, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint8_ge_uint1';
+
+CREATE FUNCTION uint8_ge_int1(uint8, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint8_ge_int1';
+
+
+CREATE FUNCTION uint8_le_uint1(uint8, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint8_le_uint1';
+
+CREATE FUNCTION uint8_le_int1(uint8, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint8_le_int1';
+
+
+CREATE FUNCTION uint8_add_uint1(uint8, uint1) RETURNS uint8
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint8_add_uint1';
+
+CREATE FUNCTION uint8_add_int1(uint8, int1) RETURNS uint8
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint8_add_int1';
+
+
+CREATE FUNCTION uint8_sub_uint1(uint8, uint1) RETURNS uint8
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint8_sub_uint1';
+
+CREATE FUNCTION uint8_sub_int1(uint8, int1) RETURNS uint8
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint8_sub_int1';
+
+
+CREATE FUNCTION uint8_mul_uint1(uint8, uint1) RETURNS uint8
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint8_mul_uint1';
+
+CREATE FUNCTION uint8_mul_int1(uint8, int1) RETURNS uint8
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint8_mul_int1';
+
+
+CREATE FUNCTION uint8_div_uint1(uint8, uint1) RETURNS uint8
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint8_div_uint1';
+
+CREATE FUNCTION uint8_div_int1(uint8, int1) RETURNS uint8
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint8_div_int1';
+
+
+CREATE FUNCTION uint8_mod_uint1(uint8, uint1) RETURNS uint8
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint8_mod_uint1';
+
+CREATE FUNCTION uint8_mod_int1(uint8, int1) RETURNS uint8
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint8_mod_int1';
+
+
+CREATE OPERATOR = (
+    LEFTARG=uint8,
+    RIGHTARG=uint1,
+    PROCEDURE=uint8_eq_uint1,
+    COMMUTATOR = =,
+    NEGATOR = <>,
+    RESTRICT = eqsel,
+    JOIN = eqjoinsel,
+    HASHES,
+    MERGES
+);
+
+CREATE OPERATOR = (
+    LEFTARG=uint8,
+    RIGHTARG=int1,
+    PROCEDURE=uint8_eq_int1,
+    COMMUTATOR = =,
+    NEGATOR = <>,
+    RESTRICT = eqsel,
+    JOIN = eqjoinsel,
+    HASHES,
+    MERGES
+);
+
+
+CREATE OPERATOR <> (
+    LEFTARG=uint8,
+    RIGHTARG=uint1,
+    PROCEDURE=uint8_ne_uint1,
+    COMMUTATOR = <>,
+    NEGATOR = =,
+    RESTRICT = neqsel,
+    JOIN = neqjoinsel,
+    HASHES,
+    MERGES
+);
+
+CREATE OPERATOR <> (
+    LEFTARG=uint8,
+    RIGHTARG=int1,
+    PROCEDURE=uint8_ne_int1,
+    COMMUTATOR = <>,
+    NEGATOR = =,
+    RESTRICT = neqsel,
+    JOIN = neqjoinsel,
+    HASHES,
+    MERGES
+);
+
+
+CREATE OPERATOR > (
+    LEFTARG=uint8,
+    RIGHTARG=uint1,
+    PROCEDURE=uint8_gt_uint1,
+    COMMUTATOR = >,
+    NEGATOR = <=,
+    RESTRICT = scalargtsel,
+    JOIN = scalargtjoinsel
+);
+
+CREATE OPERATOR > (
+    LEFTARG=uint8,
+    RIGHTARG=int1,
+    PROCEDURE=uint8_gt_int1,
+    COMMUTATOR = >,
+    NEGATOR = <=,
+    RESTRICT = scalargtsel,
+    JOIN = scalargtjoinsel
+);
+
+
+CREATE OPERATOR < (
+    LEFTARG=uint8,
+    RIGHTARG=uint1,
+    PROCEDURE=uint8_lt_uint1,
+    COMMUTATOR = <,
+    NEGATOR = >=,
+    RESTRICT = scalarltsel,
+    JOIN = scalarltjoinsel
+);
+
+CREATE OPERATOR < (
+    LEFTARG=uint8,
+    RIGHTARG=int1,
+    PROCEDURE=uint8_lt_int1,
+    COMMUTATOR = <,
+    NEGATOR = >=,
+    RESTRICT = scalarltsel,
+    JOIN = scalarltjoinsel
+);
+
+
+CREATE OPERATOR >= (
+    LEFTARG=uint8,
+    RIGHTARG=uint1,
+    PROCEDURE=uint8_ge_uint1,
+    COMMUTATOR = >=,
+    NEGATOR = <,
+    RESTRICT = scalargtsel,
+    JOIN = scalargtjoinsel
+);
+
+CREATE OPERATOR >= (
+    LEFTARG=uint8,
+    RIGHTARG=int1,
+    PROCEDURE=uint8_ge_int1,
+    COMMUTATOR = >=,
+    NEGATOR = <,
+    RESTRICT = scalargtsel,
+    JOIN = scalargtjoinsel
+);
+
+
+CREATE OPERATOR <= (
+    LEFTARG=uint8,
+    RIGHTARG=uint1,
+    PROCEDURE=uint8_le_uint1,
+    COMMUTATOR = <=,
+    NEGATOR = >,
+    RESTRICT = scalarltsel,
+    JOIN = scalarltjoinsel
+);
+
+CREATE OPERATOR <= (
+    LEFTARG=uint8,
+    RIGHTARG=int1,
+    PROCEDURE=uint8_le_int1,
+    COMMUTATOR = <=,
+    NEGATOR = >,
+    RESTRICT = scalarltsel,
+    JOIN = scalarltjoinsel
+);
+
+
+CREATE OPERATOR + (
+    LEFTARG=uint8,
+    RIGHTARG=uint1,
+    PROCEDURE=uint8_add_uint1,
+    COMMUTATOR = +
+);
+
+CREATE OPERATOR + (
+    LEFTARG=uint8,
+    RIGHTARG=int1,
+    PROCEDURE=uint8_add_int1,
+    COMMUTATOR = +
+);
+
+
+CREATE OPERATOR - (
+    LEFTARG=uint8,
+    RIGHTARG=uint1,
+    PROCEDURE=uint8_sub_uint1,
+    COMMUTATOR = -
+);
+
+CREATE OPERATOR - (
+    LEFTARG=uint8,
+    RIGHTARG=int1,
+    PROCEDURE=uint8_sub_int1,
+    COMMUTATOR = -
+);
+
+
+CREATE OPERATOR * (
+    LEFTARG=uint8,
+    RIGHTARG=uint1,
+    PROCEDURE=uint8_mul_uint1
+);
+
+CREATE OPERATOR * (
+    LEFTARG=uint8,
+    RIGHTARG=int1,
+    PROCEDURE=uint8_mul_int1
+);
+
+
+CREATE OPERATOR / (
+    LEFTARG=uint8,
+    RIGHTARG=uint1,
+    PROCEDURE=uint8_div_uint1
+);
+
+CREATE OPERATOR / (
+    LEFTARG=uint8,
+    RIGHTARG=int1,
+    PROCEDURE=uint8_div_int1
+);
+
+
+CREATE OPERATOR % (
+    LEFTARG=uint8,
+    RIGHTARG=uint1,
+    PROCEDURE=uint8_mod_uint1
+);
+
+CREATE OPERATOR % (
+    LEFTARG=uint8,
+    RIGHTARG=int1,
+    PROCEDURE=uint8_mod_int1
+);
+
+
+
+
+
+
+-- Casts block
+-- Ops block
+
+CREATE FUNCTION uint4_eq_uint1(uint4, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint4_eq_uint1';
+
+CREATE FUNCTION uint4_eq_int1(uint4, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint4_eq_int1';
+
+
+CREATE FUNCTION uint4_ne_uint1(uint4, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint4_ne_uint1';
+
+CREATE FUNCTION uint4_ne_int1(uint4, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint4_ne_int1';
+
+
+CREATE FUNCTION uint4_gt_uint1(uint4, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint4_gt_uint1';
+
+CREATE FUNCTION uint4_gt_int1(uint4, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint4_gt_int1';
+
+
+CREATE FUNCTION uint4_lt_uint1(uint4, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint4_lt_uint1';
+
+CREATE FUNCTION uint4_lt_int1(uint4, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint4_lt_int1';
+
+
+CREATE FUNCTION uint4_ge_uint1(uint4, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint4_ge_uint1';
+
+CREATE FUNCTION uint4_ge_int1(uint4, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint4_ge_int1';
+
+
+CREATE FUNCTION uint4_le_uint1(uint4, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint4_le_uint1';
+
+CREATE FUNCTION uint4_le_int1(uint4, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint4_le_int1';
+
+
+CREATE FUNCTION uint4_add_uint1(uint4, uint1) RETURNS uint4
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint4_add_uint1';
+
+CREATE FUNCTION uint4_add_int1(uint4, int1) RETURNS uint4
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint4_add_int1';
+
+
+CREATE FUNCTION uint4_sub_uint1(uint4, uint1) RETURNS uint4
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint4_sub_uint1';
+
+CREATE FUNCTION uint4_sub_int1(uint4, int1) RETURNS uint4
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint4_sub_int1';
+
+
+CREATE FUNCTION uint4_mul_uint1(uint4, uint1) RETURNS uint4
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint4_mul_uint1';
+
+CREATE FUNCTION uint4_mul_int1(uint4, int1) RETURNS uint4
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint4_mul_int1';
+
+
+CREATE FUNCTION uint4_div_uint1(uint4, uint1) RETURNS uint4
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint4_div_uint1';
+
+CREATE FUNCTION uint4_div_int1(uint4, int1) RETURNS uint4
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint4_div_int1';
+
+
+CREATE FUNCTION uint4_mod_uint1(uint4, uint1) RETURNS uint4
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint4_mod_uint1';
+
+CREATE FUNCTION uint4_mod_int1(uint4, int1) RETURNS uint4
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint4_mod_int1';
+
+
+CREATE OPERATOR = (
+    LEFTARG=uint4,
+    RIGHTARG=uint1,
+    PROCEDURE=uint4_eq_uint1,
+    COMMUTATOR = =,
+    NEGATOR = <>,
+    RESTRICT = eqsel,
+    JOIN = eqjoinsel,
+    HASHES,
+    MERGES
+);
+
+CREATE OPERATOR = (
+    LEFTARG=uint4,
+    RIGHTARG=int1,
+    PROCEDURE=uint4_eq_int1,
+    COMMUTATOR = =,
+    NEGATOR = <>,
+    RESTRICT = eqsel,
+    JOIN = eqjoinsel,
+    HASHES,
+    MERGES
+);
+
+
+CREATE OPERATOR <> (
+    LEFTARG=uint4,
+    RIGHTARG=uint1,
+    PROCEDURE=uint4_ne_uint1,
+    COMMUTATOR = <>,
+    NEGATOR = =,
+    RESTRICT = neqsel,
+    JOIN = neqjoinsel,
+    HASHES,
+    MERGES
+);
+
+CREATE OPERATOR <> (
+    LEFTARG=uint4,
+    RIGHTARG=int1,
+    PROCEDURE=uint4_ne_int1,
+    COMMUTATOR = <>,
+    NEGATOR = =,
+    RESTRICT = neqsel,
+    JOIN = neqjoinsel,
+    HASHES,
+    MERGES
+);
+
+
+CREATE OPERATOR > (
+    LEFTARG=uint4,
+    RIGHTARG=uint1,
+    PROCEDURE=uint4_gt_uint1,
+    COMMUTATOR = >,
+    NEGATOR = <=,
+    RESTRICT = scalargtsel,
+    JOIN = scalargtjoinsel
+);
+
+CREATE OPERATOR > (
+    LEFTARG=uint4,
+    RIGHTARG=int1,
+    PROCEDURE=uint4_gt_int1,
+    COMMUTATOR = >,
+    NEGATOR = <=,
+    RESTRICT = scalargtsel,
+    JOIN = scalargtjoinsel
+);
+
+
+CREATE OPERATOR < (
+    LEFTARG=uint4,
+    RIGHTARG=uint1,
+    PROCEDURE=uint4_lt_uint1,
+    COMMUTATOR = <,
+    NEGATOR = >=,
+    RESTRICT = scalarltsel,
+    JOIN = scalarltjoinsel
+);
+
+CREATE OPERATOR < (
+    LEFTARG=uint4,
+    RIGHTARG=int1,
+    PROCEDURE=uint4_lt_int1,
+    COMMUTATOR = <,
+    NEGATOR = >=,
+    RESTRICT = scalarltsel,
+    JOIN = scalarltjoinsel
+);
+
+
+CREATE OPERATOR >= (
+    LEFTARG=uint4,
+    RIGHTARG=uint1,
+    PROCEDURE=uint4_ge_uint1,
+    COMMUTATOR = >=,
+    NEGATOR = <,
+    RESTRICT = scalargtsel,
+    JOIN = scalargtjoinsel
+);
+
+CREATE OPERATOR >= (
+    LEFTARG=uint4,
+    RIGHTARG=int1,
+    PROCEDURE=uint4_ge_int1,
+    COMMUTATOR = >=,
+    NEGATOR = <,
+    RESTRICT = scalargtsel,
+    JOIN = scalargtjoinsel
+);
+
+
+CREATE OPERATOR <= (
+    LEFTARG=uint4,
+    RIGHTARG=uint1,
+    PROCEDURE=uint4_le_uint1,
+    COMMUTATOR = <=,
+    NEGATOR = >,
+    RESTRICT = scalarltsel,
+    JOIN = scalarltjoinsel
+);
+
+CREATE OPERATOR <= (
+    LEFTARG=uint4,
+    RIGHTARG=int1,
+    PROCEDURE=uint4_le_int1,
+    COMMUTATOR = <=,
+    NEGATOR = >,
+    RESTRICT = scalarltsel,
+    JOIN = scalarltjoinsel
+);
+
+
+CREATE OPERATOR + (
+    LEFTARG=uint4,
+    RIGHTARG=uint1,
+    PROCEDURE=uint4_add_uint1,
+    COMMUTATOR = +
+);
+
+CREATE OPERATOR + (
+    LEFTARG=uint4,
+    RIGHTARG=int1,
+    PROCEDURE=uint4_add_int1,
+    COMMUTATOR = +
+);
+
+
+CREATE OPERATOR - (
+    LEFTARG=uint4,
+    RIGHTARG=uint1,
+    PROCEDURE=uint4_sub_uint1,
+    COMMUTATOR = -
+);
+
+CREATE OPERATOR - (
+    LEFTARG=uint4,
+    RIGHTARG=int1,
+    PROCEDURE=uint4_sub_int1,
+    COMMUTATOR = -
+);
+
+
+CREATE OPERATOR * (
+    LEFTARG=uint4,
+    RIGHTARG=uint1,
+    PROCEDURE=uint4_mul_uint1
+);
+
+CREATE OPERATOR * (
+    LEFTARG=uint4,
+    RIGHTARG=int1,
+    PROCEDURE=uint4_mul_int1
+);
+
+
+CREATE OPERATOR / (
+    LEFTARG=uint4,
+    RIGHTARG=uint1,
+    PROCEDURE=uint4_div_uint1
+);
+
+CREATE OPERATOR / (
+    LEFTARG=uint4,
+    RIGHTARG=int1,
+    PROCEDURE=uint4_div_int1
+);
+
+
+CREATE OPERATOR % (
+    LEFTARG=uint4,
+    RIGHTARG=uint1,
+    PROCEDURE=uint4_mod_uint1
+);
+
+CREATE OPERATOR % (
+    LEFTARG=uint4,
+    RIGHTARG=int1,
+    PROCEDURE=uint4_mod_int1
+);
+
+
+
+
+
+
+-- Casts block
+-- Ops block
+
+CREATE FUNCTION uint2_eq_uint1(uint2, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint2_eq_uint1';
+
+CREATE FUNCTION uint2_eq_int1(uint2, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint2_eq_int1';
+
+
+CREATE FUNCTION uint2_ne_uint1(uint2, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint2_ne_uint1';
+
+CREATE FUNCTION uint2_ne_int1(uint2, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint2_ne_int1';
+
+
+CREATE FUNCTION uint2_gt_uint1(uint2, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint2_gt_uint1';
+
+CREATE FUNCTION uint2_gt_int1(uint2, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint2_gt_int1';
+
+
+CREATE FUNCTION uint2_lt_uint1(uint2, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint2_lt_uint1';
+
+CREATE FUNCTION uint2_lt_int1(uint2, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint2_lt_int1';
+
+
+CREATE FUNCTION uint2_ge_uint1(uint2, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint2_ge_uint1';
+
+CREATE FUNCTION uint2_ge_int1(uint2, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint2_ge_int1';
+
+
+CREATE FUNCTION uint2_le_uint1(uint2, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint2_le_uint1';
+
+CREATE FUNCTION uint2_le_int1(uint2, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint2_le_int1';
+
+
+CREATE FUNCTION uint2_add_uint1(uint2, uint1) RETURNS uint2
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint2_add_uint1';
+
+CREATE FUNCTION uint2_add_int1(uint2, int1) RETURNS uint2
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint2_add_int1';
+
+
+CREATE FUNCTION uint2_sub_uint1(uint2, uint1) RETURNS uint2
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint2_sub_uint1';
+
+CREATE FUNCTION uint2_sub_int1(uint2, int1) RETURNS uint2
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint2_sub_int1';
+
+
+CREATE FUNCTION uint2_mul_uint1(uint2, uint1) RETURNS uint2
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint2_mul_uint1';
+
+CREATE FUNCTION uint2_mul_int1(uint2, int1) RETURNS uint2
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint2_mul_int1';
+
+
+CREATE FUNCTION uint2_div_uint1(uint2, uint1) RETURNS uint2
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint2_div_uint1';
+
+CREATE FUNCTION uint2_div_int1(uint2, int1) RETURNS uint2
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint2_div_int1';
+
+
+CREATE FUNCTION uint2_mod_uint1(uint2, uint1) RETURNS uint2
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint2_mod_uint1';
+
+CREATE FUNCTION uint2_mod_int1(uint2, int1) RETURNS uint2
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint2_mod_int1';
+
+
+CREATE OPERATOR = (
+    LEFTARG=uint2,
+    RIGHTARG=uint1,
+    PROCEDURE=uint2_eq_uint1,
+    COMMUTATOR = =,
+    NEGATOR = <>,
+    RESTRICT = eqsel,
+    JOIN = eqjoinsel,
+    HASHES,
+    MERGES
+);
+
+CREATE OPERATOR = (
+    LEFTARG=uint2,
+    RIGHTARG=int1,
+    PROCEDURE=uint2_eq_int1,
+    COMMUTATOR = =,
+    NEGATOR = <>,
+    RESTRICT = eqsel,
+    JOIN = eqjoinsel,
+    HASHES,
+    MERGES
+);
+
+
+CREATE OPERATOR <> (
+    LEFTARG=uint2,
+    RIGHTARG=uint1,
+    PROCEDURE=uint2_ne_uint1,
+    COMMUTATOR = <>,
+    NEGATOR = =,
+    RESTRICT = neqsel,
+    JOIN = neqjoinsel,
+    HASHES,
+    MERGES
+);
+
+CREATE OPERATOR <> (
+    LEFTARG=uint2,
+    RIGHTARG=int1,
+    PROCEDURE=uint2_ne_int1,
+    COMMUTATOR = <>,
+    NEGATOR = =,
+    RESTRICT = neqsel,
+    JOIN = neqjoinsel,
+    HASHES,
+    MERGES
+);
+
+
+CREATE OPERATOR > (
+    LEFTARG=uint2,
+    RIGHTARG=uint1,
+    PROCEDURE=uint2_gt_uint1,
+    COMMUTATOR = >,
+    NEGATOR = <=,
+    RESTRICT = scalargtsel,
+    JOIN = scalargtjoinsel
+);
+
+CREATE OPERATOR > (
+    LEFTARG=uint2,
+    RIGHTARG=int1,
+    PROCEDURE=uint2_gt_int1,
+    COMMUTATOR = >,
+    NEGATOR = <=,
+    RESTRICT = scalargtsel,
+    JOIN = scalargtjoinsel
+);
+
+
+CREATE OPERATOR < (
+    LEFTARG=uint2,
+    RIGHTARG=uint1,
+    PROCEDURE=uint2_lt_uint1,
+    COMMUTATOR = <,
+    NEGATOR = >=,
+    RESTRICT = scalarltsel,
+    JOIN = scalarltjoinsel
+);
+
+CREATE OPERATOR < (
+    LEFTARG=uint2,
+    RIGHTARG=int1,
+    PROCEDURE=uint2_lt_int1,
+    COMMUTATOR = <,
+    NEGATOR = >=,
+    RESTRICT = scalarltsel,
+    JOIN = scalarltjoinsel
+);
+
+
+CREATE OPERATOR >= (
+    LEFTARG=uint2,
+    RIGHTARG=uint1,
+    PROCEDURE=uint2_ge_uint1,
+    COMMUTATOR = >=,
+    NEGATOR = <,
+    RESTRICT = scalargtsel,
+    JOIN = scalargtjoinsel
+);
+
+CREATE OPERATOR >= (
+    LEFTARG=uint2,
+    RIGHTARG=int1,
+    PROCEDURE=uint2_ge_int1,
+    COMMUTATOR = >=,
+    NEGATOR = <,
+    RESTRICT = scalargtsel,
+    JOIN = scalargtjoinsel
+);
+
+
+CREATE OPERATOR <= (
+    LEFTARG=uint2,
+    RIGHTARG=uint1,
+    PROCEDURE=uint2_le_uint1,
+    COMMUTATOR = <=,
+    NEGATOR = >,
+    RESTRICT = scalarltsel,
+    JOIN = scalarltjoinsel
+);
+
+CREATE OPERATOR <= (
+    LEFTARG=uint2,
+    RIGHTARG=int1,
+    PROCEDURE=uint2_le_int1,
+    COMMUTATOR = <=,
+    NEGATOR = >,
+    RESTRICT = scalarltsel,
+    JOIN = scalarltjoinsel
+);
+
+
+CREATE OPERATOR + (
+    LEFTARG=uint2,
+    RIGHTARG=uint1,
+    PROCEDURE=uint2_add_uint1,
+    COMMUTATOR = +
+);
+
+CREATE OPERATOR + (
+    LEFTARG=uint2,
+    RIGHTARG=int1,
+    PROCEDURE=uint2_add_int1,
+    COMMUTATOR = +
+);
+
+
+CREATE OPERATOR - (
+    LEFTARG=uint2,
+    RIGHTARG=uint1,
+    PROCEDURE=uint2_sub_uint1,
+    COMMUTATOR = -
+);
+
+CREATE OPERATOR - (
+    LEFTARG=uint2,
+    RIGHTARG=int1,
+    PROCEDURE=uint2_sub_int1,
+    COMMUTATOR = -
+);
+
+
+CREATE OPERATOR * (
+    LEFTARG=uint2,
+    RIGHTARG=uint1,
+    PROCEDURE=uint2_mul_uint1
+);
+
+CREATE OPERATOR * (
+    LEFTARG=uint2,
+    RIGHTARG=int1,
+    PROCEDURE=uint2_mul_int1
+);
+
+
+CREATE OPERATOR / (
+    LEFTARG=uint2,
+    RIGHTARG=uint1,
+    PROCEDURE=uint2_div_uint1
+);
+
+CREATE OPERATOR / (
+    LEFTARG=uint2,
+    RIGHTARG=int1,
+    PROCEDURE=uint2_div_int1
+);
+
+
+CREATE OPERATOR % (
+    LEFTARG=uint2,
+    RIGHTARG=uint1,
+    PROCEDURE=uint2_mod_uint1
+);
+
+CREATE OPERATOR % (
+    LEFTARG=uint2,
+    RIGHTARG=int1,
+    PROCEDURE=uint2_mod_int1
+);
+
+
+
+
+
+
+-- Casts block
+-- Ops block
+
+CREATE FUNCTION int16_eq_uint1(int16, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'int16_eq_uint1';
+
+CREATE FUNCTION int16_eq_int1(int16, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'int16_eq_int1';
+
+
+CREATE FUNCTION int16_ne_uint1(int16, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'int16_ne_uint1';
+
+CREATE FUNCTION int16_ne_int1(int16, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'int16_ne_int1';
+
+
+CREATE FUNCTION int16_gt_uint1(int16, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'int16_gt_uint1';
+
+CREATE FUNCTION int16_gt_int1(int16, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'int16_gt_int1';
+
+
+CREATE FUNCTION int16_lt_uint1(int16, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'int16_lt_uint1';
+
+CREATE FUNCTION int16_lt_int1(int16, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'int16_lt_int1';
+
+
+CREATE FUNCTION int16_ge_uint1(int16, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'int16_ge_uint1';
+
+CREATE FUNCTION int16_ge_int1(int16, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'int16_ge_int1';
+
+
+CREATE FUNCTION int16_le_uint1(int16, uint1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'int16_le_uint1';
+
+CREATE FUNCTION int16_le_int1(int16, int1) RETURNS boolean
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LEAKPROOF
+    LANGUAGE C
+    AS '$libdir/uint128', 'int16_le_int1';
+
+
+CREATE FUNCTION int16_add_uint1(int16, uint1) RETURNS int16
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'int16_add_uint1';
+
+CREATE FUNCTION int16_add_int1(int16, int1) RETURNS int16
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'int16_add_int1';
+
+
+CREATE FUNCTION int16_sub_uint1(int16, uint1) RETURNS int16
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'int16_sub_uint1';
+
+CREATE FUNCTION int16_sub_int1(int16, int1) RETURNS int16
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'int16_sub_int1';
+
+
+CREATE FUNCTION int16_mul_uint1(int16, uint1) RETURNS int16
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'int16_mul_uint1';
+
+CREATE FUNCTION int16_mul_int1(int16, int1) RETURNS int16
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'int16_mul_int1';
+
+
+CREATE FUNCTION int16_div_uint1(int16, uint1) RETURNS int16
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'int16_div_uint1';
+
+CREATE FUNCTION int16_div_int1(int16, int1) RETURNS int16
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'int16_div_int1';
+
+
+CREATE FUNCTION int16_mod_uint1(int16, uint1) RETURNS int16
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'int16_mod_uint1';
+
+CREATE FUNCTION int16_mod_int1(int16, int1) RETURNS int16
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'int16_mod_int1';
+
+
+CREATE OPERATOR = (
+    LEFTARG=int16,
+    RIGHTARG=uint1,
+    PROCEDURE=int16_eq_uint1,
+    COMMUTATOR = =,
+    NEGATOR = <>,
+    RESTRICT = eqsel,
+    JOIN = eqjoinsel,
+    HASHES,
+    MERGES
+);
+
+CREATE OPERATOR = (
+    LEFTARG=int16,
+    RIGHTARG=int1,
+    PROCEDURE=int16_eq_int1,
+    COMMUTATOR = =,
+    NEGATOR = <>,
+    RESTRICT = eqsel,
+    JOIN = eqjoinsel,
+    HASHES,
+    MERGES
+);
+
+
+CREATE OPERATOR <> (
+    LEFTARG=int16,
+    RIGHTARG=uint1,
+    PROCEDURE=int16_ne_uint1,
+    COMMUTATOR = <>,
+    NEGATOR = =,
+    RESTRICT = neqsel,
+    JOIN = neqjoinsel,
+    HASHES,
+    MERGES
+);
+
+CREATE OPERATOR <> (
+    LEFTARG=int16,
+    RIGHTARG=int1,
+    PROCEDURE=int16_ne_int1,
+    COMMUTATOR = <>,
+    NEGATOR = =,
+    RESTRICT = neqsel,
+    JOIN = neqjoinsel,
+    HASHES,
+    MERGES
+);
+
+
+CREATE OPERATOR > (
+    LEFTARG=int16,
+    RIGHTARG=uint1,
+    PROCEDURE=int16_gt_uint1,
+    COMMUTATOR = >,
+    NEGATOR = <=,
+    RESTRICT = scalargtsel,
+    JOIN = scalargtjoinsel
+);
+
+CREATE OPERATOR > (
+    LEFTARG=int16,
+    RIGHTARG=int1,
+    PROCEDURE=int16_gt_int1,
+    COMMUTATOR = >,
+    NEGATOR = <=,
+    RESTRICT = scalargtsel,
+    JOIN = scalargtjoinsel
+);
+
+
+CREATE OPERATOR < (
+    LEFTARG=int16,
+    RIGHTARG=uint1,
+    PROCEDURE=int16_lt_uint1,
+    COMMUTATOR = <,
+    NEGATOR = >=,
+    RESTRICT = scalarltsel,
+    JOIN = scalarltjoinsel
+);
+
+CREATE OPERATOR < (
+    LEFTARG=int16,
+    RIGHTARG=int1,
+    PROCEDURE=int16_lt_int1,
+    COMMUTATOR = <,
+    NEGATOR = >=,
+    RESTRICT = scalarltsel,
+    JOIN = scalarltjoinsel
+);
+
+
+CREATE OPERATOR >= (
+    LEFTARG=int16,
+    RIGHTARG=uint1,
+    PROCEDURE=int16_ge_uint1,
+    COMMUTATOR = >=,
+    NEGATOR = <,
+    RESTRICT = scalargtsel,
+    JOIN = scalargtjoinsel
+);
+
+CREATE OPERATOR >= (
+    LEFTARG=int16,
+    RIGHTARG=int1,
+    PROCEDURE=int16_ge_int1,
+    COMMUTATOR = >=,
+    NEGATOR = <,
+    RESTRICT = scalargtsel,
+    JOIN = scalargtjoinsel
+);
+
+
+CREATE OPERATOR <= (
+    LEFTARG=int16,
+    RIGHTARG=uint1,
+    PROCEDURE=int16_le_uint1,
+    COMMUTATOR = <=,
+    NEGATOR = >,
+    RESTRICT = scalarltsel,
+    JOIN = scalarltjoinsel
+);
+
+CREATE OPERATOR <= (
+    LEFTARG=int16,
+    RIGHTARG=int1,
+    PROCEDURE=int16_le_int1,
+    COMMUTATOR = <=,
+    NEGATOR = >,
+    RESTRICT = scalarltsel,
+    JOIN = scalarltjoinsel
+);
+
+
+CREATE OPERATOR + (
+    LEFTARG=int16,
+    RIGHTARG=uint1,
+    PROCEDURE=int16_add_uint1,
+    COMMUTATOR = +
+);
+
+CREATE OPERATOR + (
+    LEFTARG=int16,
+    RIGHTARG=int1,
+    PROCEDURE=int16_add_int1,
+    COMMUTATOR = +
+);
+
+
+CREATE OPERATOR - (
+    LEFTARG=int16,
+    RIGHTARG=uint1,
+    PROCEDURE=int16_sub_uint1,
+    COMMUTATOR = -
+);
+
+CREATE OPERATOR - (
+    LEFTARG=int16,
+    RIGHTARG=int1,
+    PROCEDURE=int16_sub_int1,
+    COMMUTATOR = -
+);
+
+
+CREATE OPERATOR * (
+    LEFTARG=int16,
+    RIGHTARG=uint1,
+    PROCEDURE=int16_mul_uint1
+);
+
+CREATE OPERATOR * (
+    LEFTARG=int16,
+    RIGHTARG=int1,
+    PROCEDURE=int16_mul_int1
+);
+
+
+CREATE OPERATOR / (
+    LEFTARG=int16,
+    RIGHTARG=uint1,
+    PROCEDURE=int16_div_uint1
+);
+
+CREATE OPERATOR / (
+    LEFTARG=int16,
+    RIGHTARG=int1,
+    PROCEDURE=int16_div_int1
+);
+
+
+CREATE OPERATOR % (
+    LEFTARG=int16,
+    RIGHTARG=uint1,
+    PROCEDURE=int16_mod_uint1
+);
+
+CREATE OPERATOR % (
+    LEFTARG=int16,
+    RIGHTARG=int1,
+    PROCEDURE=int16_mod_int1
+);
+
+
+
+
+
