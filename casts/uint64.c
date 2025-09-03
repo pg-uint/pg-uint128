@@ -6,6 +6,25 @@
 
 // Unsigned casts
 
+PG_FUNCTION_INFO_V1(uint8_from_uint1);
+Datum uint8_from_uint1(PG_FUNCTION_ARGS) {
+    uint8 a = PG_GETARG_UINT8(0);
+
+    PG_RETURN_UINT64((uint64) a);
+}
+
+
+PG_FUNCTION_INFO_V1(uint8_to_uint1);
+Datum uint8_to_uint1(PG_FUNCTION_ARGS) {
+    uint64 a = PG_GETARG_UINT64(0);
+
+    if (a > UINT8_MAX) {
+        OUT_OF_RANGE_ERR(uint1);
+    }
+    PG_RETURN_UINT8((uint8) a);
+}
+
+
 PG_FUNCTION_INFO_V1(uint8_from_uint2);
 Datum uint8_from_uint2(PG_FUNCTION_ARGS) {
     uint16 a = PG_GETARG_UINT16(0);
@@ -64,6 +83,28 @@ Datum uint8_to_uint16(PG_FUNCTION_ARGS) {
 
 
 // Signed casts
+
+PG_FUNCTION_INFO_V1(uint8_from_int1);
+Datum uint8_from_int1(PG_FUNCTION_ARGS) {
+    int8 a = PG_GETARG_INT8(0);
+    if (a < 0) {
+        OUT_OF_RANGE_ERR(uint8);
+    }
+
+    PG_RETURN_UINT64((uint64) a);
+}
+
+
+PG_FUNCTION_INFO_V1(uint8_to_int1);
+Datum uint8_to_int1(PG_FUNCTION_ARGS) {
+    uint64 a = PG_GETARG_UINT64(0);
+
+    if (a > INT8_MAX) {
+        OUT_OF_RANGE_ERR(int1);
+    }
+    PG_RETURN_INT8((int8) a);
+}
+
 
 PG_FUNCTION_INFO_V1(uint8_from_int2);
 Datum uint8_from_int2(PG_FUNCTION_ARGS) {

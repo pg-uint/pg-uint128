@@ -6,6 +6,69 @@
 
 // UINT with UINT arithmetic funcs
 
+PG_FUNCTION_INFO_V1(uint2_add_uint1);
+Datum uint2_add_uint1(PG_FUNCTION_ARGS)
+{
+    uint16 a = PG_GETARG_UINT16(0);
+    uint8 b = PG_GETARG_UINT8(1);
+    uint16 result = 0;
+    if (add_u16_overflow(a, b, &result)) {
+        OUT_OF_RANGE_ERR(uint2);
+    }
+    PG_RETURN_UINT16(result);
+}
+
+
+PG_FUNCTION_INFO_V1(uint2_sub_uint1);
+Datum uint2_sub_uint1(PG_FUNCTION_ARGS)
+{
+    uint16 a = PG_GETARG_UINT16(0);
+    uint8 b = PG_GETARG_UINT8(1);
+    uint16 result = 0;
+    if (sub_u16_overflow(a, b, &result)) {
+        OUT_OF_RANGE_ERR(uint2);
+    }
+    PG_RETURN_UINT16(result);
+}
+
+
+PG_FUNCTION_INFO_V1(uint2_mul_uint1);
+Datum uint2_mul_uint1(PG_FUNCTION_ARGS)
+{
+    uint16 a = PG_GETARG_UINT16(0);
+    uint8 b = PG_GETARG_UINT8(1);
+    uint16 result = 0;
+    if (mul_u16_overflow(a, b, &result)) {
+        OUT_OF_RANGE_ERR(uint2);
+    }
+    PG_RETURN_UINT16(result);
+}
+
+
+PG_FUNCTION_INFO_V1(uint2_div_uint1);
+Datum uint2_div_uint1(PG_FUNCTION_ARGS)
+{
+    uint16 a = PG_GETARG_UINT16(0);
+    uint8 b = PG_GETARG_UINT8(1);
+    if (b == 0) {
+        DIVISION_BY_ZERO_ERR;
+    }
+    PG_RETURN_UINT16(a / (uint16)b);
+}
+
+
+PG_FUNCTION_INFO_V1(uint2_mod_uint1);
+Datum uint2_mod_uint1(PG_FUNCTION_ARGS)
+{
+    uint16 a = PG_GETARG_UINT16(0);
+    uint8 b = PG_GETARG_UINT8(1);
+    if (b == 0) {
+        DIVISION_BY_ZERO_ERR;
+    }
+    PG_RETURN_UINT16(a % (uint16)b);
+}
+
+
 PG_FUNCTION_INFO_V1(uint2_add_uint2);
 Datum uint2_add_uint2(PG_FUNCTION_ARGS)
 {
@@ -287,6 +350,94 @@ Datum uint2_mod_uint16(PG_FUNCTION_ARGS)
 
 
 // Mixed sign, UINT with INT (signed) arithmetic funcs
+
+PG_FUNCTION_INFO_V1(uint2_add_int1);
+Datum uint2_add_int1(PG_FUNCTION_ARGS)
+{
+    uint16 a = PG_GETARG_UINT16(0);
+    int8 b = PG_GETARG_INT8(1);
+    uint16 result = 0;
+    if (b < 0) {
+        if (sub_u16_overflow(a, -b, &result)) {
+            OUT_OF_RANGE_ERR(uint2);
+        }
+    }
+    if (add_u16_overflow(a, b, &result)) {
+        OUT_OF_RANGE_ERR(uint2);
+    }
+    PG_RETURN_UINT16(result);
+}
+
+
+PG_FUNCTION_INFO_V1(uint2_sub_int1);
+Datum uint2_sub_int1(PG_FUNCTION_ARGS)
+{
+    uint16 a = PG_GETARG_UINT16(0);
+    int8 b = PG_GETARG_INT8(1);
+    uint16 result = 0;
+    if (b < 0) {
+        if (add_u16_overflow(a, -b, &result)) {
+            OUT_OF_RANGE_ERR(uint2);
+        }
+    }
+    if (sub_u16_overflow(a, b, &result)) {
+        OUT_OF_RANGE_ERR(uint2);
+    }
+    PG_RETURN_UINT16(result);
+}
+
+
+PG_FUNCTION_INFO_V1(uint2_mul_int1);
+Datum uint2_mul_int1(PG_FUNCTION_ARGS)
+{
+    uint16 a = PG_GETARG_UINT16(0);
+    int8 b = PG_GETARG_INT8(1);
+    uint16 result = 0;
+    if (b < 0) {
+        UINT_MULTIPLY_BY_NEGATIVE_SIGNED_INT_ERR;
+    }
+    if (mul_u16_overflow(a, b, &result)) {
+        OUT_OF_RANGE_ERR(uint2);
+    }
+    PG_RETURN_UINT16(result);
+}
+
+
+PG_FUNCTION_INFO_V1(uint2_div_int1);
+Datum uint2_div_int1(PG_FUNCTION_ARGS)
+{
+    uint16 a = PG_GETARG_UINT16(0);
+    int8 b = PG_GETARG_INT8(1);
+    if (b == 0) {
+        DIVISION_BY_ZERO_ERR;
+    }
+    if (b < 0) {
+        UINT_DIVISION_BY_NEGATIVE_SIGNED_INT_ERR;
+    }
+    if (b > a) {
+        PG_RETURN_UINT16(0);
+    }
+    PG_RETURN_UINT16(a / (uint16)b);
+}
+
+
+PG_FUNCTION_INFO_V1(uint2_mod_int1);
+Datum uint2_mod_int1(PG_FUNCTION_ARGS)
+{
+    uint16 a = PG_GETARG_UINT16(0);
+    int8 b = PG_GETARG_INT8(1);
+    if (b == 0) {
+        DIVISION_BY_ZERO_ERR;
+    }
+    if (b < 0) {
+        UINT_DIVISION_BY_NEGATIVE_SIGNED_INT_ERR;
+    }
+    if (b > a) {
+        PG_RETURN_UINT16(a);
+    }
+    PG_RETURN_UINT16(a % (uint16)b);
+}
+
 
 PG_FUNCTION_INFO_V1(uint2_add_int2);
 Datum uint2_add_int2(PG_FUNCTION_ARGS)

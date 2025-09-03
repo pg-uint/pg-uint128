@@ -25,7 +25,28 @@ static inline int128* AllocInt128(int128 initial)
 #define PG_GETARG_INT128_P(X)		DatumGetInt128P(PG_GETARG_DATUM(X))
 #define PG_GETARG_INT128(X)		    *DatumGetInt128P(PG_GETARG_DATUM(X))
 
+
+/*
+ * DatumGetInt8
+ *		Returns 8-bit signed integer value of a datum.
+ */
+static inline int8 DatumGetInt8(Datum X)
+{
+	return (int8) X;
+}
+
+#ifndef PG_GETARG_INT8
+#define PG_GETARG_INT8(n)	 DatumGetInt8(PG_GETARG_DATUM(n))
+#endif
+
+#ifndef PG_RETURN_INT8
+#define PG_RETURN_INT8(x)	 return Int8GetDatum(x)
+#endif
+
 typedef enum {
+	INT8_STRLEN = 4,
+	INT8_STRBUFLEN = INT8_STRLEN + 1,
+
 	INT128_STRLEN = 40,
 	INT128_STRBUFLEN = INT128_STRLEN + 1
 } int128_strlen_t;
@@ -41,10 +62,71 @@ int parse_int128(const char *str, int128 *result);
 // inspired by formatBits in strconv/itoa.go
 char *int128_to_string(int128 value, char *buffer, size_t buffer_size);
 
+// Function to parse int8 from string
+int parse_int8(const char *str, int8 *result);
+
+// Function to convert int8 to a decimal string using Golang approach
+// inspired by formatBits in strconv/itoa.go
+char *int8_to_string(int8 value, char *buffer, size_t buffer_size);
+
 /*------------------------------------------------------------------------
  * Overflow routines for signed integers
  *------------------------------------------------------------------------
  */
+
+/*
+ * INT8
+ */
+static inline bool add_s8_overflow(int8 a, int8 b, int8 *result)
+{
+#if __has_builtin(__builtin_add_overflow)
+	return __builtin_add_overflow(a, b, result);
+#else
+	int16		res = (int16) a + (int16) b;
+
+	if (res > PG_INT8_MAX || res < PG_INT8_MIN)
+	{
+		*result = 0x5E;		/* to avoid spurious warnings */
+		return true;
+	}
+	*result = (int8) res;
+	return false;
+#endif
+}
+
+static inline bool sub_s8_overflow(int8 a, int8 b, int8 *result)
+{
+#if __has_builtin(__builtin_sub_overflow)
+	return __builtin_sub_overflow(a, b, result);
+#else
+	int16		res = (int16) a - (int16) b;
+
+	if (res > PG_INT8_MAX || res < PG_INT8_MIN)
+	{
+		*result = 0x5E;		/* to avoid spurious warnings */
+		return true;
+	}
+	*result = (int8) res;
+	return false;
+#endif
+}
+
+static inline bool mul_s8_overflow(int8 a, int8 b, int8 *result)
+{
+#if __has_builtin(__builtin_mul_overflow)
+	return __builtin_mul_overflow(a, b, result);
+#else
+	int16		res = (int16) a * (int16) b;
+
+	if (res > PG_INT8_MAX || res < PG_INT8_MIN)
+	{
+		*result = 0x5E;		/* to avoid spurious warnings */
+		return true;
+	}
+	*result = (int8) res;
+	return false;
+#endif
+}
 
 /*
  * INT16

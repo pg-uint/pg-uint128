@@ -29,7 +29,7 @@ Datum uint2_in(PG_FUNCTION_ARGS)
             ERROR,
             (
                 errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
-                errmsg("invalid input syntax for type %s: \"%s\"", "uint4", num_str)
+                errmsg("invalid input syntax for type %s: \"%s\"", "uint2", num_str)
             )
         );
     }
@@ -39,7 +39,7 @@ Datum uint2_in(PG_FUNCTION_ARGS)
             ERROR,
             (
                 errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
-                errmsg("invalid input syntax for type %s: \"%s\"", "uint4", num_str)
+                errmsg("invalid input syntax for type %s: \"%s\"", "uint2", num_str)
             )
         );
     }

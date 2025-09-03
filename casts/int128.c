@@ -6,6 +6,25 @@
 
 // Signed comparison
 
+PG_FUNCTION_INFO_V1(int16_from_int1);
+Datum int16_from_int1(PG_FUNCTION_ARGS) {
+    int8 a = PG_GETARG_INT8(0);
+
+    PG_RETURN_INT128((int128) a);
+}
+
+
+PG_FUNCTION_INFO_V1(int16_to_int1);
+Datum int16_to_int1(PG_FUNCTION_ARGS) {
+    int128 a = PG_GETARG_INT128(0);
+
+    if (a > INT8_MAX || a < INT8_MIN) {
+        OUT_OF_RANGE_ERR(int1);
+    }
+    PG_RETURN_INT8((int8) a);
+}
+
+
 PG_FUNCTION_INFO_V1(int16_from_int2);
 Datum int16_from_int2(PG_FUNCTION_ARGS) {
     int16 a = PG_GETARG_INT16(0);
@@ -64,6 +83,28 @@ Datum int16_to_int8(PG_FUNCTION_ARGS) {
 
 
 // Unsigned comparison
+
+PG_FUNCTION_INFO_V1(int16_from_uint1);
+Datum int16_from_uint1(PG_FUNCTION_ARGS) {
+    uint8 a = PG_GETARG_UINT8(0);
+
+    PG_RETURN_INT128((int128) a);
+}
+
+
+PG_FUNCTION_INFO_V1(int16_to_uint1);
+Datum int16_to_uint1(PG_FUNCTION_ARGS) {
+    int128 a = PG_GETARG_INT128(0);
+
+    if (a < 0) {
+        OUT_OF_RANGE_ERR(uint1);
+    }
+    if (a > UINT8_MAX) {
+        OUT_OF_RANGE_ERR(uint1);
+    }
+    PG_RETURN_UINT8((uint8) a);
+}
+
 
 PG_FUNCTION_INFO_V1(int16_from_uint2);
 Datum int16_from_uint2(PG_FUNCTION_ARGS) {

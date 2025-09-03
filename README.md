@@ -6,20 +6,24 @@ PostgreSQL 12 - 18
 
 ## Features
 * Provides multiple unsigned types:
+  * `uint1` (uint8)
   * `uint2` (uint16)
   * `uint4` (uint32)
   * `uint8` (uint64)
   * `uint16` (uint128)
-* Provides signed 128-bit integer type:
+* Provides multiple signed integer types:
+  * `int1` (int8)
   * `int16` (int128)
 * Provides corresponding range (and multi range) types with GiST indexing support:
+  * `uint1range`, `uint1multirange`
   * `uint2range`, `uint2multirange`
   * `uint4range`, `uint4multirange`
   * `uint8range`, `uint8multirange`
   * `uint16range`, `uint16multirange`
+  * `int1range`, `int1multirange`
   * `int16range`, `int16multirange`
 * Binary send/recv support
-* Casts to `uint16`, `uint8`, `uint4`, `uint2`, `int16`, `int8`, `int4`, `int2`, `numeric`, `real`, `double`, `uuid` (for `uint16` only)
+* Casts to `uint16`, `uint8`, `uint4`, `uint2`, `uint1`, `int16`, `int8`, `int4`, `int2`, `int1`, `numeric`, `real`, `double`, `uuid` (for `uint16` only)
 * Mixed-type arithmetic support (signed ↔ unsigned)
 * Indexing support for BTREE and HASH indexes
 * Rich operators set:
@@ -130,7 +134,7 @@ Now you can explore and experiment with the `pg-uint128` extension within a Post
 * Add PostgreSQL repository to your package manager, e.g. see this for Ubuntu https://www.postgresql.org/download/linux/ubuntu/
 * Install PostgreSQL version you want, e.g. `sudo apt-get install postgresql-15`
 * Install PostgreSQL dev headers, e.g. `sudo apt-get install postgresql-server-dev-15`
-* Install build tools `sudo apt-get install build-essentials`
+* Install build tools `sudo apt-get install build-essential`
 * Clone repository `git clone https://github.com/pg-uint/pg-uint128.git && cd pg-uint128`
 * Compile extension `make`
 * Copy extension files to pg catalogs `sudo make install`

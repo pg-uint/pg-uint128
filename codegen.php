@@ -11,5 +11,6 @@ if (!array_key_exists(1, $argv) || $argv[1] === "--c-only") {
 }
 
 if (!array_key_exists(1, $argv) || $argv[1] === "--sql-only") {
-    include __DIR__ . '/_codegen/sql/sqlgen.php';
+    include __DIR__ . '/_codegen/sql/sqlgen_v1.0.0.php';
+    include __DIR__ . '/_codegen/sql/sqlgen_v1.1.0.php';
 }

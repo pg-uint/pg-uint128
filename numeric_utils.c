@@ -23,6 +23,20 @@
 //     }
 // }
 
+Numeric uint8_to_numeric(uint8 val, char* buf, size_t buffer_size)
+{
+    char *num_str = uint8_to_string(val, buf, buffer_size);
+
+    return DatumGetNumeric(
+        DirectFunctionCall3(
+            numeric_in,
+            CStringGetDatum(num_str),
+            ObjectIdGetDatum(0),
+            Int32GetDatum(-1)
+        )
+    );
+}
+
 Numeric uint16_to_numeric(uint16 val, char* buf, size_t buffer_size)
 {
     char *num_str = uint16_to_string(val, buf, buffer_size);
@@ -76,6 +90,20 @@ Numeric uint64_to_numeric(uint64 val, char* buf, size_t buffer_size)
 Numeric uint128_to_numeric(uint128 val, char* buf, size_t buffer_size)
 {
     char *num_str = uint128_to_string(val, buf, buffer_size);
+
+    return DatumGetNumeric(
+        DirectFunctionCall3(
+            numeric_in,
+            CStringGetDatum(num_str),
+            ObjectIdGetDatum(0),
+            Int32GetDatum(-1)
+        )
+    );
+}
+
+Numeric int8_to_numeric(int8 val, char* buf, size_t buffer_size)
+{
+    char *num_str = int8_to_string(val, buf, buffer_size);
 
     return DatumGetNumeric(
         DirectFunctionCall3(
