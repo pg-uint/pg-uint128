@@ -36,6 +36,13 @@ static inline uint128* AllocUint128(uint128 initial)
 #define PG_GETARG_UINT64(n)  DatumGetUInt64(PG_GETARG_DATUM(n))
 #endif
 
+#ifndef PG_GETARG_UINT8
+#define PG_GETARG_UINT8(n) DatumGetUInt8(PG_GETARG_DATUM(n))
+#endif
+
+#ifndef PG_RETURN_UINT8
+#define PG_RETURN_UINT8(x)  return UInt8GetDatum(x)
+#endif
 
 #define DIVISION_BY_ZERO_ERR \
     ereport(ERROR, \
@@ -76,11 +83,13 @@ static inline uint128* AllocUint128(uint128 initial)
 );
 
 typedef enum {
+    UINT8_STRLEN = 3,
     UINT16_STRLEN = 5,
     UINT32_STRLEN = 10,
     UINT64_STRLEN = 20,
     UINT128_STRLEN = 39,
 
+    UINT8_STRBUFLEN = UINT8_STRLEN + 1,
     UINT16_STRBUFLEN = UINT16_STRLEN + 1,
     UINT32_STRBUFLEN = UINT32_STRLEN + 1,
     UINT64_STRBUFLEN = UINT64_STRLEN + 1,
@@ -91,11 +100,13 @@ int parse_uint128(const char *str, uint128 *result);
 int parse_uint64(const char *str, uint64 *result);
 int parse_uint32(const char *str, uint32 *result);
 int parse_uint16(const char *str, uint16 *result);
+int parse_uint8(const char *str, uint8 *result);
 
 char *uint128_to_string(uint128 value, char *buffer, size_t buffer_size);
 char *uint64_to_string(uint64 value, char *buffer, size_t buffer_size);
 char *uint32_to_string(uint32 value, char *buffer, size_t buffer_size);
 char *uint16_to_string(uint16 value, char *buffer, size_t buffer_size);
+char *uint8_to_string(uint8 value, char *buffer, size_t buffer_size);
 
 // Swaps bytes in 64 bit int
 // Linux byteswap.h impl
@@ -180,6 +191,59 @@ static inline Datum hashuint8(uint64 val)
  * Overflow routines for unsigned integers
  *------------------------------------------------------------------------
  */
+
+/*
+ * UINT8
+ */
+
+static inline bool add_u8_overflow(uint8 a, uint8 b, uint8 *result)
+{
+#if defined(HAVE__BUILTIN_OP_OVERFLOW)
+    return __builtin_add_overflow(a, b, result);
+#else
+    uint8		res = a + b;
+
+    if (res < a)
+    {
+        *result = 0x5E;		/* to avoid spurious warnings */
+        return true;
+    }
+    *result = res;
+    return false;
+#endif
+}
+
+static inline bool sub_u8_overflow(uint8 a, uint8 b, uint8 *result)
+{
+#if defined(HAVE__BUILTIN_OP_OVERFLOW)
+    return __builtin_sub_overflow(a, b, result);
+#else
+    if (b > a)
+    {
+        *result = 0x5E;		/* to avoid spurious warnings */
+        return true;
+    }
+    *result = a - b;
+    return false;
+#endif
+}
+
+static inline bool mul_u8_overflow(uint8 a, uint8 b, uint8 *result)
+{
+#if defined(HAVE__BUILTIN_OP_OVERFLOW)
+    return __builtin_mul_overflow(a, b, result);
+#else
+    uint16		res = (uint16) a * (uint16) b;
+
+    if (res > PG_UINT8_MAX)
+    {
+        *result = 0x5E;		/* to avoid spurious warnings */
+        return true;
+    }
+    *result = (uint8) res;
+    return false;
+#endif
+}
 
 /*
  * UINT16

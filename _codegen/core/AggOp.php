@@ -119,15 +119,25 @@ SQL;
 
         $q = "SELECT $this->value(s::$type->pgName) FROM generate_series(1, 10000) s;\n";
 
-        $test .= $q;
-        $expected .= $q;
-
         $expectedVal = match ($this) {
             self::Sum => '50005000',
             self::Avg => '5000.5000000000000000',
             self::Min => '1',
             self::Max => '10000',
         };
+
+        if ($type->bitSize === 8) {
+            $q = "SELECT $this->value(s::$type->pgName) FROM generate_series(1, 100) s;\n";
+            $expectedVal = match ($this) {
+                self::Sum => '5050',
+                self::Avg => '50.5000000000000000',
+                self::Min => '1',
+                self::Max => '100',
+            };
+        }
+
+        $test .= $q;
+        $expected .= $q;
 
         $expected .= genSqlExpectedPaddedValue($this->value, $expectedVal, $this === self::Sum || $this === self::Avg);
 

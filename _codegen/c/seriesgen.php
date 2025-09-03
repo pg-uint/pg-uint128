@@ -195,7 +195,7 @@ C;
 
 @mkdir("series");
 
-foreach ([...UINT_TYPES, INT128] as $LEFT_TYPE) {
+foreach ([...UINT_TYPES, ...CUSTOM_INT_TYPES] as $LEFT_TYPE) {
     $buf = $header . "\n";
 
     $buf .= genGenerateSeriesForType($LEFT_TYPE) . "\n\n";

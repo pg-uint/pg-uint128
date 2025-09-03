@@ -1,0 +1,1825 @@
+-- Testing uint1
+-- Ops block
+SELECT 1::uint1 = 1::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 = 0::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 = 1::int2;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 = 0::int2;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::int2 = 1::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::int2 = 0::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 = 1::int4;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 = 0::int4;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::int4 = 1::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::int4 = 0::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 = 1::int8;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 = 0::int8;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::int8 = 1::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::int8 = 0::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 <> 0::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 <> 0::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 <> 0::int2;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 <> 0::int2;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::int2 <> 0::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::int2 <> 0::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 <> 0::int4;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 <> 0::int4;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::int4 <> 0::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::int4 <> 0::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 <> 0::int8;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 <> 0::int8;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::int8 <> 0::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::int8 <> 0::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 > 0::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 > 1::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 > 0::int2;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 > 1::int2;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::int2 > 0::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::int2 > 1::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 > 0::int4;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 > 1::int4;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::int4 > 0::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::int4 > 1::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 > 0::int8;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 > 1::int8;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::int8 > 0::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::int8 > 1::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 0::uint1 < 1::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 < 0::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 0::uint1 < 1::int2;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 < 0::int2;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 0::int2 < 1::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::int2 < 0::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 0::uint1 < 1::int4;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 < 0::int4;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 0::int4 < 1::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::int4 < 0::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 0::uint1 < 1::int8;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 < 0::int8;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 0::int8 < 1::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::int8 < 0::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 >= 0::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 >= 1::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 >= 1::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 >= 0::int2;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 >= 1::int2;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 >= 1::int2;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::int2 >= 0::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::int2 >= 1::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::int2 >= 1::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 >= 0::int4;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 >= 1::int4;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 >= 1::int4;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::int4 >= 0::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::int4 >= 1::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::int4 >= 1::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 >= 0::int8;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 >= 1::int8;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 >= 1::int8;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::int8 >= 0::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::int8 >= 1::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::int8 >= 1::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 <= 1::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 <= 0::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 <= 1::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 <= 1::int2;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 <= 0::int2;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 <= 1::int2;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::int2 <= 1::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::int2 <= 0::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::int2 <= 1::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 <= 1::int4;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 <= 0::int4;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 <= 1::int4;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::int4 <= 1::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::int4 <= 0::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::int4 <= 1::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 <= 1::int8;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 <= 0::int8;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 <= 1::int8;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::int8 <= 1::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::int8 <= 0::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::int8 <= 1::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 25::uint1 + 5::uint1;
+ ?column? 
+----------
+ 30
+(1 row)
+
+SELECT 25::uint1 + 5::int2;
+ ?column? 
+----------
+ 30
+(1 row)
+
+SELECT 255::uint1 + 1::int2;
+ERROR:  uint1 out of range
+SELECT 120::int2 + 10::uint1;
+ ?column? 
+----------
+      130
+(1 row)
+
+SELECT 32767::int2 + 1::uint1;
+ERROR:  int2 out of range
+SELECT (-120)::int2 + 10::uint1;
+ ?column? 
+----------
+     -110
+(1 row)
+
+SELECT 25::uint1 + 5::int4;
+ ?column? 
+----------
+ 30
+(1 row)
+
+SELECT 255::uint1 + 1::int4;
+ERROR:  uint1 out of range
+SELECT 120::int4 + 10::uint1;
+ ?column? 
+----------
+      130
+(1 row)
+
+SELECT 2147483647::int4 + 1::uint1;
+ERROR:  int4 out of range
+SELECT (-120)::int4 + 10::uint1;
+ ?column? 
+----------
+     -110
+(1 row)
+
+SELECT 25::uint1 + 5::int8;
+ ?column? 
+----------
+ 30
+(1 row)
+
+SELECT 255::uint1 + 1::int8;
+ERROR:  uint1 out of range
+SELECT 120::int8 + 10::uint1;
+ ?column? 
+----------
+      130
+(1 row)
+
+SELECT 9223372036854775807::int8 + 1::uint1;
+ERROR:  int8 out of range
+SELECT (-120)::int8 + 10::uint1;
+ ?column? 
+----------
+     -110
+(1 row)
+
+SELECT 25::uint1 - 5::uint1;
+ ?column? 
+----------
+ 20
+(1 row)
+
+SELECT 25::uint1 - 5::int2;
+ ?column? 
+----------
+ 20
+(1 row)
+
+SELECT 0::uint1 - 1::int2;
+ERROR:  uint1 out of range
+SELECT 120::int2 - 10::uint1;
+ ?column? 
+----------
+      110
+(1 row)
+
+SELECT (-32768)::int2 - 1::uint1;
+ERROR:  int2 out of range
+SELECT (-120)::int2 - 10::uint1;
+ ?column? 
+----------
+     -130
+(1 row)
+
+SELECT 25::uint1 - 5::int4;
+ ?column? 
+----------
+ 20
+(1 row)
+
+SELECT 0::uint1 - 1::int4;
+ERROR:  uint1 out of range
+SELECT 120::int4 - 10::uint1;
+ ?column? 
+----------
+      110
+(1 row)
+
+SELECT (-2147483648)::int4 - 1::uint1;
+ERROR:  int4 out of range
+SELECT (-120)::int4 - 10::uint1;
+ ?column? 
+----------
+     -130
+(1 row)
+
+SELECT 25::uint1 - 5::int8;
+ ?column? 
+----------
+ 20
+(1 row)
+
+SELECT 0::uint1 - 1::int8;
+ERROR:  uint1 out of range
+SELECT 120::int8 - 10::uint1;
+ ?column? 
+----------
+      110
+(1 row)
+
+SELECT (-9223372036854775808)::int8 - 1::uint1;
+ERROR:  int8 out of range
+SELECT (-120)::int8 - 10::uint1;
+ ?column? 
+----------
+     -130
+(1 row)
+
+SELECT 25::uint1 * 5::uint1;
+ ?column? 
+----------
+ 125
+(1 row)
+
+SELECT 25::uint1 * 5::int2;
+ ?column? 
+----------
+ 125
+(1 row)
+
+SELECT 255::uint1 * 2::int2;
+ERROR:  uint1 out of range
+SELECT 120::int2 * 10::uint1;
+ ?column? 
+----------
+     1200
+(1 row)
+
+SELECT 32767::int2 * 2::uint1;
+ERROR:  int2 out of range
+SELECT (-120)::int2 * 10::uint1;
+ ?column? 
+----------
+    -1200
+(1 row)
+
+SELECT 25::uint1 * 5::int4;
+ ?column? 
+----------
+ 125
+(1 row)
+
+SELECT 255::uint1 * 2::int4;
+ERROR:  uint1 out of range
+SELECT 120::int4 * 10::uint1;
+ ?column? 
+----------
+     1200
+(1 row)
+
+SELECT 2147483647::int4 * 2::uint1;
+ERROR:  int4 out of range
+SELECT (-120)::int4 * 10::uint1;
+ ?column? 
+----------
+    -1200
+(1 row)
+
+SELECT 25::uint1 * 5::int8;
+ ?column? 
+----------
+ 125
+(1 row)
+
+SELECT 255::uint1 * 2::int8;
+ERROR:  uint1 out of range
+SELECT 120::int8 * 10::uint1;
+ ?column? 
+----------
+     1200
+(1 row)
+
+SELECT 9223372036854775807::int8 * 2::uint1;
+ERROR:  int8 out of range
+SELECT (-120)::int8 * 10::uint1;
+ ?column? 
+----------
+    -1200
+(1 row)
+
+SELECT 25::uint1 / 5::uint1;
+ ?column? 
+----------
+ 5
+(1 row)
+
+SELECT 25::uint1 / 5::int2;
+ ?column? 
+----------
+ 5
+(1 row)
+
+SELECT 1::uint1 / 0::int2;
+ERROR:  division by zero
+SELECT 120::int2 / 10::uint1;
+ ?column? 
+----------
+       12
+(1 row)
+
+SELECT 1::int2 / 0::uint1;
+ERROR:  division by zero
+SELECT (-120)::int2 / 10::uint1;
+ ?column? 
+----------
+        0
+(1 row)
+
+SELECT 25::uint1 / 5::int4;
+ ?column? 
+----------
+ 5
+(1 row)
+
+SELECT 1::uint1 / 0::int4;
+ERROR:  division by zero
+SELECT 120::int4 / 10::uint1;
+ ?column? 
+----------
+       12
+(1 row)
+
+SELECT 1::int4 / 0::uint1;
+ERROR:  division by zero
+SELECT (-120)::int4 / 10::uint1;
+ ?column? 
+----------
+        0
+(1 row)
+
+SELECT 25::uint1 / 5::int8;
+ ?column? 
+----------
+ 5
+(1 row)
+
+SELECT 1::uint1 / 0::int8;
+ERROR:  division by zero
+SELECT 120::int8 / 10::uint1;
+ ?column? 
+----------
+       12
+(1 row)
+
+SELECT 1::int8 / 0::uint1;
+ERROR:  division by zero
+SELECT (-120)::int8 / 10::uint1;
+ ?column? 
+----------
+        0
+(1 row)
+
+SELECT 25::uint1 % 5::uint1;
+ ?column? 
+----------
+ 0
+(1 row)
+
+SELECT 25::uint1 % 5::int2;
+ ?column? 
+----------
+ 0
+(1 row)
+
+SELECT 1::uint1 % 0::int2;
+ERROR:  division by zero
+SELECT 120::int2 % 10::uint1;
+ ?column? 
+----------
+        0
+(1 row)
+
+SELECT 1::int2 % 0::uint1;
+ERROR:  division by zero
+SELECT (-120)::int2 % 10::uint1;
+ ?column? 
+----------
+     -120
+(1 row)
+
+SELECT 25::uint1 % 5::int4;
+ ?column? 
+----------
+ 0
+(1 row)
+
+SELECT 1::uint1 % 0::int4;
+ERROR:  division by zero
+SELECT 120::int4 % 10::uint1;
+ ?column? 
+----------
+        0
+(1 row)
+
+SELECT 1::int4 % 0::uint1;
+ERROR:  division by zero
+SELECT (-120)::int4 % 10::uint1;
+ ?column? 
+----------
+     -120
+(1 row)
+
+SELECT 25::uint1 % 5::int8;
+ ?column? 
+----------
+ 0
+(1 row)
+
+SELECT 1::uint1 % 0::int8;
+ERROR:  division by zero
+SELECT 120::int8 % 10::uint1;
+ ?column? 
+----------
+        0
+(1 row)
+
+SELECT 1::int8 % 0::uint1;
+ERROR:  division by zero
+SELECT (-120)::int8 % 10::uint1;
+ ?column? 
+----------
+     -120
+(1 row)
+
+-- Agg ops block
+SELECT sum(s::uint1) FROM generate_series(1, 100) s;
+ sum  
+------
+ 5050
+(1 row)
+
+SELECT avg(s::uint1) FROM generate_series(1, 100) s;
+         avg         
+---------------------
+ 50.5000000000000000
+(1 row)
+
+SELECT min(s::uint1) FROM generate_series(1, 100) s;
+ min 
+-----
+ 1
+(1 row)
+
+SELECT max(s::uint1) FROM generate_series(1, 100) s;
+ max 
+-----
+ 100
+(1 row)
+
+-- Generate series block
+SELECT s FROM generate_series(1::uint1, 10::uint1) s;
+ s  
+----
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+ 10
+(10 rows)
+
+SELECT s FROM generate_series(1::uint1, 10::uint1, 2::uint1) s;
+ s 
+---
+ 1
+ 3
+ 5
+ 7
+ 9
+(5 rows)
+
+-- Ranges block
+SELECT uint1range(0, 10);
+ uint1range 
+------------
+ [0,10)
+(1 row)
+
+SELECT uint1range(0::uint1, 255::uint1);
+ uint1range 
+------------
+ [0,255)
+(1 row)
+
+SELECT uint1range(0::uint1, 255::uint1, '[]');
+ERROR:  uint1 out of range
+SELECT upper(uint1range(0, 10));
+ upper 
+-------
+ 10
+(1 row)
+
+SELECT lower(uint1range(0, 10));
+ lower 
+-------
+ 0
+(1 row)
+
+SELECT isempty(uint1range(0, 10));
+ isempty 
+---------
+ f
+(1 row)
+
+SELECT uint1range(0, 10) @> 9::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT uint1range(0, 10) @> 10::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT uint1range(0, 10) && uint1range(10,20);
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT uint1range(0, 10) && uint1range(9,20);
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT uint1range(5, 10) - uint1range(5, 10);
+ ?column? 
+----------
+ empty
+(1 row)
+
+SELECT uint1range(5, 10) - uint1range(5, 9);
+ ?column? 
+----------
+ [9,10)
+(1 row)
+
+CREATE TEMPORARY TABLE test_uint1range (
+    r uint1range,
+    EXCLUDE USING GIST (r WITH &&)
+);
+INSERT INTO test_uint1range (r) VALUES (uint1range(0, 10));
+INSERT INTO test_uint1range (r) VALUES (uint1range(10, 20));
+INSERT INTO test_uint1range (r) VALUES (uint1range(19, 30));
+ERROR:  conflicting key value violates exclusion constraint "test_uint1range_r_excl"
+DETAIL:  Key (r)=([19,30)) conflicts with existing key (r)=([10,20)).
+DROP TABLE test_uint1range;
+-- Testing cross-types compatibility
+SELECT 1::uint1 = 1::uint2;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 = 0::uint2;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 = 1::uint4;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 = 0::uint4;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 = 1::uint8;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 = 0::uint8;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 = 1::uint16;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 = 0::uint16;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 = 1::int1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 = 0::int1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 = 1::int16;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 = 0::int16;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 <> 0::uint2;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 <> 0::uint2;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 <> 0::uint4;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 <> 0::uint4;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 <> 0::uint8;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 <> 0::uint8;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 <> 0::uint16;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 <> 0::uint16;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 <> 0::int1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 <> 0::int1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 <> 0::int16;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 <> 0::int16;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 > 0::uint2;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 > 1::uint2;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 > 0::uint4;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 > 1::uint4;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 > 0::uint8;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 > 1::uint8;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 > 0::uint16;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 > 1::uint16;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 > 0::int1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 > 1::int1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 > 0::int16;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 > 1::int16;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 0::uint1 < 1::uint2;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 < 0::uint2;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 0::uint1 < 1::uint4;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 < 0::uint4;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 0::uint1 < 1::uint8;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 < 0::uint8;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 0::uint1 < 1::uint16;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 < 0::uint16;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 0::uint1 < 1::int1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 < 0::int1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 0::uint1 < 1::int16;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 < 0::int16;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 >= 0::uint2;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 >= 1::uint2;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 >= 1::uint2;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 >= 0::uint4;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 >= 1::uint4;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 >= 1::uint4;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 >= 0::uint8;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 >= 1::uint8;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 >= 1::uint8;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 >= 0::uint16;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 >= 1::uint16;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 >= 1::uint16;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 >= 0::int1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 >= 1::int1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 >= 1::int1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 >= 0::int16;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 >= 1::int16;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 >= 1::int16;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 <= 1::uint2;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 <= 0::uint2;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 <= 1::uint2;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 <= 1::uint4;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 <= 0::uint4;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 <= 1::uint4;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 <= 1::uint8;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 <= 0::uint8;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 <= 1::uint8;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 <= 1::uint16;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 <= 0::uint16;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 <= 1::uint16;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 <= 1::int1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 <= 0::int1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 <= 1::int1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint1 <= 1::int16;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint1 <= 0::int16;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint1 <= 1::int16;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 25::uint1 + 5::uint2;
+ ?column? 
+----------
+ 30
+(1 row)
+
+SELECT 255::uint1 + 1::uint2;
+ERROR:  uint1 out of range
+SELECT 25::uint1 + 5::uint4;
+ ?column? 
+----------
+ 30
+(1 row)
+
+SELECT 255::uint1 + 1::uint4;
+ERROR:  uint1 out of range
+SELECT 25::uint1 + 5::uint8;
+ ?column? 
+----------
+ 30
+(1 row)
+
+SELECT 255::uint1 + 1::uint8;
+ERROR:  uint1 out of range
+SELECT 25::uint1 + 5::uint16;
+ ?column? 
+----------
+ 30
+(1 row)
+
+SELECT 255::uint1 + 1::uint16;
+ERROR:  uint1 out of range
+SELECT 25::uint1 + 5::int1;
+ ?column? 
+----------
+ 30
+(1 row)
+
+SELECT 255::uint1 + 1::int1;
+ERROR:  uint1 out of range
+SELECT 25::uint1 + 5::int16;
+ ?column? 
+----------
+ 30
+(1 row)
+
+SELECT 255::uint1 + 1::int16;
+ERROR:  uint1 out of range
+SELECT 25::uint1 - 5::uint2;
+ ?column? 
+----------
+ 20
+(1 row)
+
+SELECT 0::uint1 - 1::uint2;
+ERROR:  uint1 out of range
+SELECT 25::uint1 - 5::uint4;
+ ?column? 
+----------
+ 20
+(1 row)
+
+SELECT 0::uint1 - 1::uint4;
+ERROR:  uint1 out of range
+SELECT 25::uint1 - 5::uint8;
+ ?column? 
+----------
+ 20
+(1 row)
+
+SELECT 0::uint1 - 1::uint8;
+ERROR:  uint1 out of range
+SELECT 25::uint1 - 5::uint16;
+ ?column? 
+----------
+ 20
+(1 row)
+
+SELECT 0::uint1 - 1::uint16;
+ERROR:  uint1 out of range
+SELECT 25::uint1 - 5::int1;
+ ?column? 
+----------
+ 20
+(1 row)
+
+SELECT 0::uint1 - 1::int1;
+ERROR:  uint1 out of range
+SELECT 25::uint1 - 5::int16;
+ ?column? 
+----------
+ 20
+(1 row)
+
+SELECT 0::uint1 - 1::int16;
+ERROR:  uint1 out of range
+SELECT 25::uint1 * 5::uint2;
+ ?column? 
+----------
+ 125
+(1 row)
+
+SELECT 255::uint1 * 2::uint2;
+ERROR:  uint1 out of range
+SELECT 25::uint1 * 5::uint4;
+ ?column? 
+----------
+ 125
+(1 row)
+
+SELECT 255::uint1 * 2::uint4;
+ERROR:  uint1 out of range
+SELECT 25::uint1 * 5::uint8;
+ ?column? 
+----------
+ 125
+(1 row)
+
+SELECT 255::uint1 * 2::uint8;
+ERROR:  uint1 out of range
+SELECT 25::uint1 * 5::uint16;
+ ?column? 
+----------
+ 125
+(1 row)
+
+SELECT 255::uint1 * 2::uint16;
+ERROR:  uint1 out of range
+SELECT 25::uint1 * 5::int1;
+ ?column? 
+----------
+ 125
+(1 row)
+
+SELECT 255::uint1 * 2::int1;
+ERROR:  uint1 out of range
+SELECT 25::uint1 * 5::int16;
+ ?column? 
+----------
+ 125
+(1 row)
+
+SELECT 255::uint1 * 2::int16;
+ERROR:  uint1 out of range
+SELECT 25::uint1 / 5::uint2;
+ ?column? 
+----------
+ 5
+(1 row)
+
+SELECT 1::uint1 / 0::uint2;
+ERROR:  division by zero
+SELECT 25::uint1 / 5::uint4;
+ ?column? 
+----------
+ 5
+(1 row)
+
+SELECT 1::uint1 / 0::uint4;
+ERROR:  division by zero
+SELECT 25::uint1 / 5::uint8;
+ ?column? 
+----------
+ 5
+(1 row)
+
+SELECT 1::uint1 / 0::uint8;
+ERROR:  division by zero
+SELECT 25::uint1 / 5::uint16;
+ ?column? 
+----------
+ 5
+(1 row)
+
+SELECT 1::uint1 / 0::uint16;
+ERROR:  division by zero
+SELECT 25::uint1 / 5::int1;
+ ?column? 
+----------
+ 5
+(1 row)
+
+SELECT 1::uint1 / 0::int1;
+ERROR:  division by zero
+SELECT 25::uint1 / 5::int16;
+ ?column? 
+----------
+ 5
+(1 row)
+
+SELECT 1::uint1 / 0::int16;
+ERROR:  division by zero
+SELECT 25::uint1 % 5::uint2;
+ ?column? 
+----------
+ 0
+(1 row)
+
+SELECT 1::uint1 % 0::uint2;
+ERROR:  division by zero
+SELECT 25::uint1 % 5::uint4;
+ ?column? 
+----------
+ 0
+(1 row)
+
+SELECT 1::uint1 % 0::uint4;
+ERROR:  division by zero
+SELECT 25::uint1 % 5::uint8;
+ ?column? 
+----------
+ 0
+(1 row)
+
+SELECT 1::uint1 % 0::uint8;
+ERROR:  division by zero
+SELECT 25::uint1 % 5::uint16;
+ ?column? 
+----------
+ 0
+(1 row)
+
+SELECT 1::uint1 % 0::uint16;
+ERROR:  division by zero
+SELECT 25::uint1 % 5::int1;
+ ?column? 
+----------
+ 0
+(1 row)
+
+SELECT 1::uint1 % 0::int1;
+ERROR:  division by zero
+SELECT 25::uint1 % 5::int16;
+ ?column? 
+----------
+ 0
+(1 row)
+
+SELECT 1::uint1 % 0::int16;
+ERROR:  division by zero

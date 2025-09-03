@@ -93,7 +93,7 @@ C;
 
 @mkdir("agg");
 
-foreach ([...UINT_TYPES, INT128] as $LEFT_TYPE) {
+foreach ([...UINT_TYPES, ...CUSTOM_INT_TYPES] as $LEFT_TYPE) {
     $buf = $header . "\n";
 
     $buf .= genSumAvgAggAcuumFunc($LEFT_TYPE) . "\n\n";

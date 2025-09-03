@@ -59,6 +59,19 @@ class Type
 }
 
 
+const UINT8 =  new Type(
+    name: 'uint8',
+    isUnsigned: true,
+    bitSize: 8,
+    minValue: '0',
+    maxValue: '255',
+    pgName: 'uint1',
+    pgGetArgMacro: 'PG_GETARG_UINT8',
+    pgReturnMacro: 'PG_RETURN_UINT8',
+    strLen: 3,
+    fromDatum: 'DatumGetUInt8',
+    toDatum: 'UInt8GetDatum',
+);
 const UINT16 = new Type(
     name: 'uint16',
     isUnsigned: true,
@@ -115,13 +128,30 @@ const UINT128 = new Type(
     pgReturnPtrMacro: 'PG_RETURN_UINT128_P'
 );
 
+/**
+ * @type Type[]
+ */
 const UINT_TYPES = [
+    UINT8,
     UINT16,
     UINT32,
     UINT64,
     UINT128,
 ];
 
+const INT8 = new Type(
+    name: 'int8',
+    isUnsigned: false,
+    bitSize: 8,
+    minValue: '-128',
+    maxValue: '127',
+    pgName: 'int1',
+    pgGetArgMacro: 'PG_GETARG_INT8',
+    pgReturnMacro: 'PG_RETURN_INT8',
+    strLen: 4,
+    fromDatum: 'DatumGetInt8',
+    toDatum: 'Int8GetDatum',
+);
 const INT16 = new Type(
     name: 'int16',
     isUnsigned: false,
@@ -180,12 +210,17 @@ const INT128 = new Type(
 
 
 const INT_TYPES = [
+    INT8,
     INT16,
     INT32,
     INT64,
     INT128,
 ];
 
+const CUSTOM_INT_TYPES = [
+    INT8,
+    INT128,
+];
 
 const UUID = new Type(
     name: 'pg_uuid_t',

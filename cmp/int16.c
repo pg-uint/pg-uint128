@@ -6,6 +6,60 @@
 
 // Signed comparison
 
+PG_FUNCTION_INFO_V1(int2_eq_int1);
+Datum int2_eq_int1(PG_FUNCTION_ARGS)
+{
+    const int16 a = PG_GETARG_INT16(0);
+    const int8 b = PG_GETARG_INT8(1);
+    PG_RETURN_BOOL(a == (int16)b);
+}
+
+
+PG_FUNCTION_INFO_V1(int2_ne_int1);
+Datum int2_ne_int1(PG_FUNCTION_ARGS)
+{
+    const int16 a = PG_GETARG_INT16(0);
+    const int8 b = PG_GETARG_INT8(1);
+    PG_RETURN_BOOL(a != (int16)b);
+}
+
+
+PG_FUNCTION_INFO_V1(int2_gt_int1);
+Datum int2_gt_int1(PG_FUNCTION_ARGS)
+{
+    const int16 a = PG_GETARG_INT16(0);
+    const int8 b = PG_GETARG_INT8(1);
+    PG_RETURN_BOOL(a > (int16)b);
+}
+
+
+PG_FUNCTION_INFO_V1(int2_lt_int1);
+Datum int2_lt_int1(PG_FUNCTION_ARGS)
+{
+    const int16 a = PG_GETARG_INT16(0);
+    const int8 b = PG_GETARG_INT8(1);
+    PG_RETURN_BOOL(a < (int16)b);
+}
+
+
+PG_FUNCTION_INFO_V1(int2_ge_int1);
+Datum int2_ge_int1(PG_FUNCTION_ARGS)
+{
+    const int16 a = PG_GETARG_INT16(0);
+    const int8 b = PG_GETARG_INT8(1);
+    PG_RETURN_BOOL(a >= (int16)b);
+}
+
+
+PG_FUNCTION_INFO_V1(int2_le_int1);
+Datum int2_le_int1(PG_FUNCTION_ARGS)
+{
+    const int16 a = PG_GETARG_INT16(0);
+    const int8 b = PG_GETARG_INT8(1);
+    PG_RETURN_BOOL(a <= (int16)b);
+}
+
+
 PG_FUNCTION_INFO_V1(int2_eq_int2);
 Datum int2_eq_int2(PG_FUNCTION_ARGS)
 {
@@ -223,6 +277,78 @@ Datum int2_le_int16(PG_FUNCTION_ARGS)
 
 
 // Unsigned comparison
+
+PG_FUNCTION_INFO_V1(int2_eq_uint1);
+Datum int2_eq_uint1(PG_FUNCTION_ARGS)
+{
+    const int16 a = PG_GETARG_INT16(0);
+    const uint8 b = PG_GETARG_UINT8(1);
+    if (a < 0) {
+        PG_RETURN_BOOL(false);
+    }
+    PG_RETURN_BOOL(a == (int16)b);
+}
+
+
+PG_FUNCTION_INFO_V1(int2_ne_uint1);
+Datum int2_ne_uint1(PG_FUNCTION_ARGS)
+{
+    const int16 a = PG_GETARG_INT16(0);
+    const uint8 b = PG_GETARG_UINT8(1);
+    if (a < 0) {
+        PG_RETURN_BOOL(true);
+    }
+    PG_RETURN_BOOL(a != (int16)b);
+}
+
+
+PG_FUNCTION_INFO_V1(int2_gt_uint1);
+Datum int2_gt_uint1(PG_FUNCTION_ARGS)
+{
+    const int16 a = PG_GETARG_INT16(0);
+    const uint8 b = PG_GETARG_UINT8(1);
+    if (a < 0) {
+        PG_RETURN_BOOL(false);
+    }
+    PG_RETURN_BOOL(a > (int16)b);
+}
+
+
+PG_FUNCTION_INFO_V1(int2_lt_uint1);
+Datum int2_lt_uint1(PG_FUNCTION_ARGS)
+{
+    const int16 a = PG_GETARG_INT16(0);
+    const uint8 b = PG_GETARG_UINT8(1);
+    if (a < 0) {
+        PG_RETURN_BOOL(true);
+    }
+    PG_RETURN_BOOL(a < (int16)b);
+}
+
+
+PG_FUNCTION_INFO_V1(int2_ge_uint1);
+Datum int2_ge_uint1(PG_FUNCTION_ARGS)
+{
+    const int16 a = PG_GETARG_INT16(0);
+    const uint8 b = PG_GETARG_UINT8(1);
+    if (a < 0) {
+        PG_RETURN_BOOL(false);
+    }
+    PG_RETURN_BOOL(a >= (int16)b);
+}
+
+
+PG_FUNCTION_INFO_V1(int2_le_uint1);
+Datum int2_le_uint1(PG_FUNCTION_ARGS)
+{
+    const int16 a = PG_GETARG_INT16(0);
+    const uint8 b = PG_GETARG_UINT8(1);
+    if (a < 0) {
+        PG_RETURN_BOOL(true);
+    }
+    PG_RETURN_BOOL(a <= (int16)b);
+}
+
 
 PG_FUNCTION_INFO_V1(int2_eq_uint2);
 Datum int2_eq_uint2(PG_FUNCTION_ARGS)
