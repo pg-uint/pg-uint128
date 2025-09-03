@@ -1,0 +1,249 @@
+-- Testing cross-types compatibility
+SELECT 1::uint4 = 1::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint4 = 0::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint4 = 1::int1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint4 = 0::int1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint4 <> 0::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint4 <> 0::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint4 <> 0::int1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint4 <> 0::int1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint4 > 0::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint4 > 1::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint4 > 0::int1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint4 > 1::int1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 0::uint4 < 1::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint4 < 0::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 0::uint4 < 1::int1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint4 < 0::int1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint4 >= 0::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint4 >= 1::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint4 >= 1::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint4 >= 0::int1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint4 >= 1::int1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint4 >= 1::int1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint4 <= 1::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint4 <= 0::uint1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint4 <= 1::uint1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 0::uint4 <= 1::int1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 1::uint4 <= 0::int1;
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT 1::uint4 <= 1::int1;
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT 120::uint4 + 10::uint1;
+ ?column? 
+----------
+ 130
+(1 row)
+
+SELECT 4294967295::uint4 + 1::uint1;
+ERROR:  uint4 out of range
+SELECT 120::uint4 + 10::int1;
+ ?column? 
+----------
+ 130
+(1 row)
+
+SELECT 4294967295::uint4 + 1::int1;
+ERROR:  uint4 out of range
+SELECT 120::uint4 - 10::uint1;
+ ?column? 
+----------
+ 110
+(1 row)
+
+SELECT 0::uint4 - 1::uint1;
+ERROR:  uint4 out of range
+SELECT 120::uint4 - 10::int1;
+ ?column? 
+----------
+ 110
+(1 row)
+
+SELECT 0::uint4 - 1::int1;
+ERROR:  uint4 out of range
+SELECT 120::uint4 * 10::uint1;
+ ?column? 
+----------
+ 1200
+(1 row)
+
+SELECT 4294967295::uint4 * 2::uint1;
+ERROR:  uint4 out of range
+SELECT 120::uint4 * 10::int1;
+ ?column? 
+----------
+ 1200
+(1 row)
+
+SELECT 4294967295::uint4 * 2::int1;
+ERROR:  uint4 out of range
+SELECT 120::uint4 / 10::uint1;
+ ?column? 
+----------
+ 12
+(1 row)
+
+SELECT 1::uint4 / 0::uint1;
+ERROR:  division by zero
+SELECT 120::uint4 / 10::int1;
+ ?column? 
+----------
+ 12
+(1 row)
+
+SELECT 1::uint4 / 0::int1;
+ERROR:  division by zero
+SELECT 120::uint4 % 10::uint1;
+ ?column? 
+----------
+ 0
+(1 row)
+
+SELECT 1::uint4 % 0::uint1;
+ERROR:  division by zero
+SELECT 120::uint4 % 10::int1;
+ ?column? 
+----------
+ 0
+(1 row)
+
+SELECT 1::uint4 % 0::int1;
+ERROR:  division by zero
