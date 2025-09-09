@@ -3,6 +3,12 @@
 #include "postgres.h"
 #include "int_utils.h"
 #include "uint_utils.h"
+#include "numeric_utils.h"
+#include "utils/jsonb.h"
+#include "utils/jsonfuncs.h"
+#include "utils/fmgrprotos.h"
+#include "utils/builtins.h"
+#include "utils.h"
 
 // Signed comparison
 

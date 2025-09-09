@@ -20,7 +20,7 @@ foreach ($types as $type) {
 $buf .= "\n\n-- Cross types ops\n";
 
 /** @var array<string, Type[]> $CROSS_TYPES */
-$CROSS_TYPES = buildCrossTypes(V1_1_UINT_TYPES, V1_1_INT_TYPES);
+$CROSS_TYPES = buildCrossTypes(V1_1_0_UINT_TYPES, V1_1_0_INT_TYPES);
 
 $crossTests = [];
 

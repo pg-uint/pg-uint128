@@ -1,0 +1,37 @@
+-- Testing cross-types compatibility
+SELECT (0::int16)::json;
+ json 
+------
+ 0
+(1 row)
+
+SELECT json_build_object('some', 0::int16);
+ json_build_object 
+-------------------
+ {"some" : 0}
+(1 row)
+
+SELECT ('0'::json)::int16;
+ int16 
+-------
+ 0
+(1 row)
+
+SELECT (0::int16)::jsonb;
+ jsonb 
+-------
+ 0
+(1 row)
+
+SELECT jsonb_build_object('some', 0::int16);
+ jsonb_build_object 
+--------------------
+ {"some": 0}
+(1 row)
+
+SELECT ('0'::jsonb)::int16;
+ int16 
+-------
+ 0
+(1 row)
+

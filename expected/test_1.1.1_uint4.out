@@ -1,0 +1,37 @@
+-- Testing cross-types compatibility
+SELECT (0::uint4)::json;
+ json 
+------
+ 0
+(1 row)
+
+SELECT json_build_object('some', 0::uint4);
+ json_build_object 
+-------------------
+ {"some" : 0}
+(1 row)
+
+SELECT ('0'::json)::uint4;
+ uint4 
+-------
+ 0
+(1 row)
+
+SELECT (0::uint4)::jsonb;
+ jsonb 
+-------
+ 0
+(1 row)
+
+SELECT jsonb_build_object('some', 0::uint4);
+ jsonb_build_object 
+--------------------
+ {"some": 0}
+(1 row)
+
+SELECT ('0'::jsonb)::uint4;
+ uint4 
+-------
+ 0
+(1 row)
+
