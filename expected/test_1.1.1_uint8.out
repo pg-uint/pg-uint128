@@ -1,0 +1,39 @@
+-- Testing cross-types compatibility
+SELECT (0::uint8)::json;
+ json 
+------
+ 0
+(1 row)
+
+SELECT json_build_object('some', 0::uint8);
+ json_build_object 
+-------------------
+ {"some" : 0}
+(1 row)
+
+SELECT ('0'::json)::uint8;
+ uint8 
+-------
+ 0
+(1 row)
+
+SELECT (0::uint8)::jsonb;
+ jsonb 
+-------
+ 0
+(1 row)
+
+SELECT jsonb_build_object('some', 0::uint8);
+ jsonb_build_object 
+--------------------
+ {"some": 0}
+(1 row)
+
+SELECT ('0'::jsonb)::uint8;
+ uint8 
+-------
+ 0
+(1 row)
+
+SELECT ('"abc"'::jsonb)::uint8;
+ERROR:  cannot cast jsonb string to type uint8

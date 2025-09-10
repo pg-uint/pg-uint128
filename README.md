@@ -23,7 +23,7 @@ PostgreSQL 12 - 18
   * `int1range`, `int1multirange`
   * `int16range`, `int16multirange`
 * Binary send/recv support
-* Casts to `uint16`, `uint8`, `uint4`, `uint2`, `uint1`, `int16`, `int8`, `int4`, `int2`, `int1`, `numeric`, `real`, `double`, `uuid` (for `uint16` only)
+* Casts to `uint16`, `uint8`, `uint4`, `uint2`, `uint1`, `int16`, `int8`, `int4`, `int2`, `int1`, `numeric`, `real`, `double`, `uuid` (for `uint16` only), `json`, `jsonb`
 * Mixed-type arithmetic support (signed ↔ unsigned)
 * Indexing support for BTREE and HASH indexes
 * Rich operators set:

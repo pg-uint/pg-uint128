@@ -68,7 +68,7 @@ $V1_1_0_Types = [
 /**
  * @type Type[]
  */
-const V1_1_UINT_TYPES = [
+const V1_1_0_UINT_TYPES = [
     UINT8,
     UINT16,
     UINT32,
@@ -79,7 +79,7 @@ const V1_1_UINT_TYPES = [
 /**
  * @type Type[]
  */
-const V1_1_INT_TYPES = [
+const V1_1_0_INT_TYPES = [
     INT8,
     INT128,
 ];

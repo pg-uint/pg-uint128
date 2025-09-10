@@ -235,3 +235,31 @@ const UUID = new Type(
     fromDatum: '',
     toDatum: '',
 );
+
+const JSON = new Type(
+    name: 'json',
+    isUnsigned: false,
+    bitSize: 0,
+    minValue: '',
+    maxValue: '',
+    pgName: 'json',
+    pgGetArgMacro: 'PG_GETARG_UUID',
+    pgReturnMacro: 'PG_RETURN_DATUM',
+    strLen: 0,
+    fromDatum: '',
+    toDatum: '',
+);
+
+const JSONB = new Type(
+    name: 'jsonb',
+    isUnsigned: false,
+    bitSize: 0,
+    minValue: '',
+    maxValue: '',
+    pgName: 'jsonb',
+    pgGetArgMacro: 'PG_GETARG_UUID',
+    pgReturnMacro: 'PG_RETURN_JSONB_P',
+    strLen: 0,
+    fromDatum: '',
+    toDatum: '',
+);
