@@ -96,11 +96,17 @@ typedef enum {
     UINT128_STRBUFLEN = UINT128_STRLEN + 1,
 } uint128_strlen_t;
 
-int parse_uint128(const char *str, uint128 *result);
-int parse_uint64(const char *str, uint64 *result);
-int parse_uint32(const char *str, uint32 *result);
-int parse_uint16(const char *str, uint16 *result);
-int parse_uint8(const char *str, uint8 *result);
+typedef enum {
+    ParseOK = 0,
+    ParseError = 1,
+    ParseOverflow = 2,
+} parse_uint_res_t;
+
+parse_uint_res_t parse_uint128(const char *str, uint128 *result);
+parse_uint_res_t parse_uint64(const char *str, uint64 *result);
+parse_uint_res_t parse_uint32(const char *str, uint32 *result);
+parse_uint_res_t parse_uint16(const char *str, uint16 *result);
+parse_uint_res_t parse_uint8(const char *str, uint8 *result);
 
 char *uint128_to_string(uint128 value, char *buffer, size_t buffer_size);
 char *uint64_to_string(uint64 value, char *buffer, size_t buffer_size);

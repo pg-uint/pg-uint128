@@ -239,7 +239,7 @@ Datum uint4_from_json(PG_FUNCTION_ARGS)
     text* json = PG_GETARG_TEXT_PP(0);
     char* cStrValue;
     uint32 retValue = 0;
-    int convRes;
+    parse_uint_res_t convRes;
 
     // Enforce JSON validation for supported PostgreSQL versions
 #if PG_VERSION_NUM >= 130000
@@ -300,7 +300,11 @@ Datum uint4_from_json(PG_FUNCTION_ARGS)
     pfree(cStrValue);
     PG_FREE_IF_COPY(json, 0);
 
-    if (convRes == -1)
+    if (convRes == ParseOK) {
+        PG_RETURN_UINT32(retValue);
+    }
+
+    if (convRes == ParseError)
     {
         ereport(
             ERROR,
@@ -311,18 +315,7 @@ Datum uint4_from_json(PG_FUNCTION_ARGS)
         );
     }
 
-    if (convRes == -2)
-    {
-        ereport(
-            ERROR,
-            (
-                errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
-                errmsg("uint4 out of range")
-            )
-        );
-    }
-
-    PG_RETURN_UINT32(retValue);
+    OUT_OF_RANGE_ERR(uint4);
 }
 
 PG_FUNCTION_INFO_V1(uint4_from_jsonb);
@@ -331,7 +324,7 @@ Datum uint4_from_jsonb(PG_FUNCTION_ARGS)
     Jsonb* in = PG_GETARG_JSONB_P(0);
     JsonbValue v;
     char* cStrValue;
-    int convRes;
+    parse_uint_res_t convRes;
     uint32 retValue = 0;
 
     if (!JsonbExtractScalar(&in->root, &v))
@@ -355,8 +348,15 @@ Datum uint4_from_jsonb(PG_FUNCTION_ARGS)
     );
 
     convRes = parse_uint32(cStrValue, &retValue);
-    // Syntax error
-    if (convRes == -1)
+    if (convRes == ParseOK) {
+        pfree(cStrValue);
+
+        PG_FREE_IF_COPY(in, 0);
+
+        PG_RETURN_UINT32(retValue);
+    }
+
+    if (convRes == ParseError)
     {
         ereport(
             ERROR,
@@ -367,22 +367,6 @@ Datum uint4_from_jsonb(PG_FUNCTION_ARGS)
         );
     }
 
-    // Overflow error
-    if (convRes == -2)
-    {
-        ereport(
-            ERROR,
-            (
-                errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
-                errmsg("uint4 out of range: %s", cStrValue)
-            )
-        );
-    }
-
-    pfree(cStrValue);
-
-    PG_FREE_IF_COPY(in, 0);
-
-    PG_RETURN_UINT32(retValue);
+    OUT_OF_RANGE_ERR(uint4);
 }
 

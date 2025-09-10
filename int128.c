@@ -21,7 +21,7 @@ Datum int16_in(PG_FUNCTION_ARGS)
 {
     char *num_str = PG_GETARG_CSTRING(0);
     int128 num = 0;
-    int convRes = 0;
+    parse_uint_res_t convRes = 0;
 
     if (num_str == NULL)
         elog(ERROR, "NULL pointer");
@@ -39,7 +39,15 @@ Datum int16_in(PG_FUNCTION_ARGS)
     // elog(INFO, "uint16in num_str: %s", num_str);
 
     convRes = parse_int128(num_str, &num);
-    if (convRes == -1) {
+
+    // elog(INFO, "uint16in high %llu low %llu", (uint64)((*num) >> 64), (uint64)low_part);
+
+    if (convRes == ParseOK)
+    {
+        PG_RETURN_INT128(num);
+    }
+
+    if (convRes == ParseError) {
         ereport(
             ERROR,
             (
@@ -48,14 +56,8 @@ Datum int16_in(PG_FUNCTION_ARGS)
             )
         );
     }
-    if (convRes == -2)
-    {
-        OUT_OF_RANGE_ERR(int16);
-    }
 
-    // elog(INFO, "uint16in high %llu low %llu", (uint64)((*num) >> 64), (uint64)low_part);
-
-    PG_RETURN_INT128(num);
+    OUT_OF_RANGE_ERR(int16);
 }
 
 Datum int16_out(PG_FUNCTION_ARGS)

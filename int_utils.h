@@ -2,6 +2,7 @@
 #define _INT_UTILS_H
 
 #include "postgres.h"
+#include "uint_utils.h"
 
 static inline int128* AllocInt128(int128 initial)
 {
@@ -56,14 +57,14 @@ typedef enum {
 // extern const size_t INT128_STRBUFLEN = INT128_STRLEN + 1;
 
 // Function to parse int128 from string
-int parse_int128(const char *str, int128 *result);
+parse_uint_res_t parse_int128(const char *str, int128 *result);
 
 // Function to convert int128 to a decimal string using Golang approach
 // inspired by formatBits in strconv/itoa.go
 char *int128_to_string(int128 value, char *buffer, size_t buffer_size);
 
 // Function to parse int8 from string
-int parse_int8(const char *str, int8 *result);
+parse_uint_res_t parse_int8(const char *str, int8 *result);
 
 // Function to convert int8 to a decimal string using Golang approach
 // inspired by formatBits in strconv/itoa.go
