@@ -1,4 +1,18 @@
 -- Testing cross-types compatibility
+SELECT (0::int16)::numeric;
+ numeric 
+---------
+       0
+(1 row)
+
+SELECT ('0'::numeric)::int16;
+ int16 
+-------
+ 0
+(1 row)
+
+SELECT ('170141183460469231731687303715884105728'::numeric)::int16;
+ERROR:  int16 out of range
 SELECT (0::int16)::json;
  json 
 ------

@@ -198,6 +198,31 @@ Datum uint2_to_int16(PG_FUNCTION_ARGS) {
 }
 
 
+// Numeric casts
+
+PG_FUNCTION_INFO_V1(uint2_from_numeric);
+Datum uint2_from_numeric(PG_FUNCTION_ARGS)
+{
+	Numeric num = PG_GETARG_NUMERIC(0);
+	int32 numInt = 0;
+
+    // Fast path for small integers
+    numInt = DatumGetInt32(DirectFunctionCall1(numeric_int4, NumericGetDatum(num)));
+    if (numInt < 0 || numInt > 65535) {
+        OUT_OF_RANGE_ERR(uint2);
+    }
+
+	PG_RETURN_UINT16((uint16)numInt);
+}
+
+PG_FUNCTION_INFO_V1(uint2_to_numeric);
+Datum uint2_to_numeric(PG_FUNCTION_ARGS)
+{
+	uint16		val = PG_GETARG_UINT16(0);
+
+	PG_RETURN_DATUM(DirectFunctionCall1(int4_numeric, Int32GetDatum((int32)val)));
+}
+
 // JSON casts
 
 PG_FUNCTION_INFO_V1(uint2_to_json);
@@ -214,14 +239,14 @@ Datum uint2_to_json(PG_FUNCTION_ARGS) {
 }
 
 PG_FUNCTION_INFO_V1(uint2_to_jsonb);
-Datum uint2_to_jsonb(PG_FUNCTION_ARGS) {
+Datum uint2_to_jsonb(PG_FUNCTION_ARGS)
+{
     uint16 val = PG_GETARG_UINT16(0);
+
     JsonbValue jbv;
     Jsonb* result;
 
-    /* convert to Numeric */
-    char buf[UINT16_STRBUFLEN];
-    Numeric num = uint16_to_numeric(val, buf, sizeof(buf));
+    Numeric num = DatumGetNumeric(DirectFunctionCall1(int4_numeric, Int32GetDatum((int32)val)));
 
     /* convert Numeric to JsonbValue */
     jbv.type = jbvNumeric;

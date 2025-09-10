@@ -1,4 +1,18 @@
 -- Testing cross-types compatibility
+SELECT (0::int1)::numeric;
+ numeric 
+---------
+       0
+(1 row)
+
+SELECT ('0'::numeric)::int1;
+ int1 
+------
+ 0
+(1 row)
+
+SELECT ('128'::numeric)::int1;
+ERROR:  int1 out of range
 SELECT (0::int1)::json;
  json 
 ------

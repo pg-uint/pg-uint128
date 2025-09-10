@@ -1,4 +1,18 @@
 -- Testing cross-types compatibility
+SELECT (0::uint1)::numeric;
+ numeric 
+---------
+       0
+(1 row)
+
+SELECT ('0'::numeric)::uint1;
+ uint1 
+-------
+ 0
+(1 row)
+
+SELECT ('256'::numeric)::uint1;
+ERROR:  uint1 out of range
 SELECT (0::uint1)::json;
  json 
 ------
