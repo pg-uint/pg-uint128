@@ -20,6 +20,7 @@ Datum uint4_in(PG_FUNCTION_ARGS)
 {
     char *num_str = PG_GETARG_CSTRING(0);
     uint32 num = 0;
+    int convRes = 0;
 
     if (num_str == NULL)
         elog(ERROR, "NULL pointer");
@@ -29,19 +30,25 @@ Datum uint4_in(PG_FUNCTION_ARGS)
             ERROR,
             (
                 errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
-                errmsg("invalid input syntax for type %s: \"%s\"", "uint4", num_str)
+                errmsg("invalid input syntax for type uint4: \"%s\"", num_str)
             )
         );
     }
 
-    if (parse_uint32(num_str, &num) != 0) {
+    convRes = parse_uint32(num_str, &num);
+    if (convRes == -1)
+    {
         ereport(
             ERROR,
             (
                 errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
-                errmsg("invalid input syntax for type %s: \"%s\"", "uint4", num_str)
+                errmsg("invalid input syntax for type uint4: \"%s\"", num_str)
             )
         );
+    }
+    if (convRes == -2)
+    {
+        OUT_OF_RANGE_ERR(uint4);
     }
 
     PG_RETURN_UINT32(num);

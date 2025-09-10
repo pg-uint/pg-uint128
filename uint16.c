@@ -20,6 +20,7 @@ Datum uint2_in(PG_FUNCTION_ARGS)
 {
     char *num_str = PG_GETARG_CSTRING(0);
     uint16 num = 0;
+    int convRes = 0;
 
     if (num_str == NULL)
         elog(ERROR, "NULL pointer");
@@ -29,19 +30,24 @@ Datum uint2_in(PG_FUNCTION_ARGS)
             ERROR,
             (
                 errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
-                errmsg("invalid input syntax for type %s: \"%s\"", "uint2", num_str)
+                errmsg("invalid input syntax for type uint2: \"%s\"", num_str)
             )
         );
     }
 
-    if (parse_uint16(num_str, &num) != 0) {
+    convRes = parse_uint16(num_str, &num);
+    if (convRes == -1) {
         ereport(
             ERROR,
             (
                 errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
-                errmsg("invalid input syntax for type %s: \"%s\"", "uint2", num_str)
+                errmsg("invalid input syntax for type uint2: \"%s\"", num_str)
             )
         );
+    }
+    if (convRes == -2)
+    {
+        OUT_OF_RANGE_ERR(uint2);
     }
 
     PG_RETURN_UINT16(num);

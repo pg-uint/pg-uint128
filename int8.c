@@ -6,6 +6,8 @@
 #include "int_utils.h"
 #include "int8.h"
 
+#include "uint_utils.h"
+
 PG_FUNCTION_INFO_V1(int1_in);
 PG_FUNCTION_INFO_V1(int1_out);
 PG_FUNCTION_INFO_V1(int1_send);
@@ -20,6 +22,7 @@ Datum int1_in(PG_FUNCTION_ARGS)
 {
     char *num_str = PG_GETARG_CSTRING(0);
     int8 num = 0;
+    int convRes = 0;
 
     if (num_str == NULL)
         elog(ERROR, "NULL pointer");
@@ -29,21 +32,26 @@ Datum int1_in(PG_FUNCTION_ARGS)
             ERROR,
             (
                 errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
-                errmsg("invalid input syntax for type %s: \"%s\"", "int1", num_str)
+                errmsg("invalid input syntax for type int1: \"%s\"", num_str)
             )
         );
     }
 
     // elog(INFO, "int1in num_str: %s", num_str);
 
-    if (parse_int8(num_str, &num) != 0) {
+    convRes = parse_int8(num_str, &num);
+    if (convRes == -1) {
         ereport(
             ERROR,
             (
                 errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
-                errmsg("invalid input syntax for type %s: \"%s\"", "int1", num_str)
+                errmsg("invalid input syntax for type int1: \"%s\"", num_str)
             )
         );
+    }
+    if (convRes == -2)
+    {
+        OUT_OF_RANGE_ERR(int1);
     }
 
     PG_RETURN_INT8(num);

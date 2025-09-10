@@ -25,6 +25,7 @@ Datum uint16_in(PG_FUNCTION_ARGS)
 {
     char *num_str = PG_GETARG_CSTRING(0);
     uint128 num = 0;
+    int convRes = 0;
 
     if (num_str == NULL)
         elog(ERROR, "NULL pointer");
@@ -34,21 +35,26 @@ Datum uint16_in(PG_FUNCTION_ARGS)
             ERROR,
             (
                 errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
-                errmsg("invalid input syntax for type %s: \"%s\"", "uint16", num_str)
+                errmsg("invalid input syntax for type uint16: \"%s\"", num_str)
             )
         );
     }
 
     // elog(INFO, "uint16in num_str: %s", num_str);
 
-    if (parse_uint128(num_str, &num) != 0) {
+    convRes = parse_uint128(num_str, &num);
+    if (convRes == -1) {
         ereport(
             ERROR,
             (
                 errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
-                errmsg("invalid input syntax for type %s: \"%s\"", "uint16", num_str)
+                errmsg("invalid input syntax for type uint16: \"%s\"", num_str)
             )
         );
+    }
+    if (convRes == -2)
+    {
+        OUT_OF_RANGE_ERR(uint16);
     }
 
     // elog(INFO, "uint16in high %llu low %llu", (uint64)((*num) >> 64), (uint64)low_part);
