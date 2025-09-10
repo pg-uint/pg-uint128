@@ -323,13 +323,7 @@ Datum $funcName(PG_FUNCTION_ARGS)
         );
     }
 
-    ereport(
-        ERROR,
-        (
-            errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
-            errmsg("{$left->pgName} out of range: %s", cStrValue)
-        )
-    );
+    OUT_OF_RANGE_ERR($left->pgName);
 }
 C;
 }
@@ -422,13 +416,7 @@ Datum $funcName(PG_FUNCTION_ARGS)
         );
     }
 
-    ereport(
-        ERROR,
-        (
-            errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
-            errmsg("$left->pgName out of range")
-        )
-    );
+    OUT_OF_RANGE_ERR($left->pgName);
 }
 C;
 }

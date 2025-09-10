@@ -315,13 +315,7 @@ Datum uint4_from_json(PG_FUNCTION_ARGS)
         );
     }
 
-    ereport(
-        ERROR,
-        (
-            errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
-            errmsg("uint4 out of range")
-        )
-    );
+    OUT_OF_RANGE_ERR(uint4);
 }
 
 PG_FUNCTION_INFO_V1(uint4_from_jsonb);
@@ -373,12 +367,6 @@ Datum uint4_from_jsonb(PG_FUNCTION_ARGS)
         );
     }
 
-    ereport(
-        ERROR,
-        (
-            errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
-            errmsg("uint4 out of range: %s", cStrValue)
-        )
-    );
+    OUT_OF_RANGE_ERR(uint4);
 }
 

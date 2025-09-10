@@ -315,13 +315,7 @@ Datum int1_from_json(PG_FUNCTION_ARGS)
         );
     }
 
-    ereport(
-        ERROR,
-        (
-            errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
-            errmsg("int1 out of range")
-        )
-    );
+    OUT_OF_RANGE_ERR(int1);
 }
 
 PG_FUNCTION_INFO_V1(int1_from_jsonb);
@@ -373,12 +367,6 @@ Datum int1_from_jsonb(PG_FUNCTION_ARGS)
         );
     }
 
-    ereport(
-        ERROR,
-        (
-            errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
-            errmsg("int1 out of range: %s", cStrValue)
-        )
-    );
+    OUT_OF_RANGE_ERR(int1);
 }
 
