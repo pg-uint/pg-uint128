@@ -1,4 +1,46 @@
 -- Testing uint2
+-- From string block
+-- NULL
+SELECT NULL::text::uint2;
+ uint2 
+-------
+ 
+(1 row)
+
+-- Empty
+SELECT ''::text::uint2;
+ERROR:  invalid input syntax for type uint2: ""
+-- Zero
+SELECT '0'::text::uint2;
+ uint2 
+-------
+ 0
+(1 row)
+
+-- Min
+SELECT '0'::text::uint2;
+ uint2 
+-------
+ 0
+(1 row)
+
+-- Max
+SELECT '65535'::text::uint2;
+ uint2 
+-------
+ 65535
+(1 row)
+
+-- Underflow
+SELECT '-1'::uint2;
+ERROR:  invalid input syntax for type uint2: "-1"
+LINE 1: SELECT '-1'::uint2;
+               ^
+-- Overflow
+SELECT '65536'::uint2;
+ERROR:  uint2 out of range
+LINE 1: SELECT '65536'::uint2;
+               ^
 -- Ops block
 SELECT 1::uint2 = 1::uint2;
  ?column? 

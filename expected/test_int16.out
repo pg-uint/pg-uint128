@@ -1,4 +1,46 @@
 -- Testing int16
+-- From string block
+-- NULL
+SELECT NULL::text::int16;
+ int16 
+-------
+ 
+(1 row)
+
+-- Empty
+SELECT ''::text::int16;
+ERROR:  invalid input syntax for type int16: ""
+-- Zero
+SELECT '0'::text::int16;
+ int16 
+-------
+ 0
+(1 row)
+
+-- Min
+SELECT '-170141183460469231731687303715884105728'::text::int16;
+                  int16                   
+------------------------------------------
+ -170141183460469231731687303715884105728
+(1 row)
+
+-- Max
+SELECT '170141183460469231731687303715884105727'::text::int16;
+                  int16                  
+-----------------------------------------
+ 170141183460469231731687303715884105727
+(1 row)
+
+-- Underflow
+SELECT '-170141183460469231731687303715884105729'::int16;
+ERROR:  int16 out of range
+LINE 1: SELECT '-170141183460469231731687303715884105729'::int16;
+               ^
+-- Overflow
+SELECT '170141183460469231731687303715884105728'::int16;
+ERROR:  int16 out of range
+LINE 1: SELECT '170141183460469231731687303715884105728'::int16;
+               ^
 -- Ops block
 SELECT 1::int16 = 1::int16;
  ?column? 

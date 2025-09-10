@@ -1,5 +1,22 @@
 -- Testing uint2
 
+-- From string block
+
+-- NULL
+SELECT NULL::text::uint2;
+-- Empty
+SELECT ''::text::uint2;
+-- Zero
+SELECT '0'::text::uint2;
+-- Min
+SELECT '0'::text::uint2;
+-- Max
+SELECT '65535'::text::uint2;
+-- Underflow
+SELECT '-1'::uint2;
+-- Overflow
+SELECT '65536'::uint2;
+
 -- Ops block
 
 SELECT 1::uint2 = 1::uint2;

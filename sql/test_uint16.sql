@@ -1,5 +1,22 @@
 -- Testing uint16
 
+-- From string block
+
+-- NULL
+SELECT NULL::text::uint16;
+-- Empty
+SELECT ''::text::uint16;
+-- Zero
+SELECT '0'::text::uint16;
+-- Min
+SELECT '0'::text::uint16;
+-- Max
+SELECT '340282366920938463463374607431768211455'::text::uint16;
+-- Underflow
+SELECT '-1'::uint16;
+-- Overflow
+SELECT '340282366920938463463374607431768211456'::uint16;
+
 -- Ops block
 
 SELECT 1::uint16 = 1::uint16;

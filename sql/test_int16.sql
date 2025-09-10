@@ -1,5 +1,22 @@
 -- Testing int16
 
+-- From string block
+
+-- NULL
+SELECT NULL::text::int16;
+-- Empty
+SELECT ''::text::int16;
+-- Zero
+SELECT '0'::text::int16;
+-- Min
+SELECT '-170141183460469231731687303715884105728'::text::int16;
+-- Max
+SELECT '170141183460469231731687303715884105727'::text::int16;
+-- Underflow
+SELECT '-170141183460469231731687303715884105729'::int16;
+-- Overflow
+SELECT '170141183460469231731687303715884105728'::int16;
+
 -- Ops block
 
 SELECT 1::int16 = 1::int16;

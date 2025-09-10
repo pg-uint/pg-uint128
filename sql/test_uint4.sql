@@ -1,5 +1,22 @@
 -- Testing uint4
 
+-- From string block
+
+-- NULL
+SELECT NULL::text::uint4;
+-- Empty
+SELECT ''::text::uint4;
+-- Zero
+SELECT '0'::text::uint4;
+-- Min
+SELECT '0'::text::uint4;
+-- Max
+SELECT '4294967295'::text::uint4;
+-- Underflow
+SELECT '-1'::uint4;
+-- Overflow
+SELECT '4294967296'::uint4;
+
 -- Ops block
 
 SELECT 1::uint4 = 1::uint4;

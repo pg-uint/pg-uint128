@@ -34,6 +34,7 @@ Datum uint8_in(PG_FUNCTION_ARGS)
 {
     char *num_str = PG_GETARG_CSTRING(0);
     uint64 num = 0;
+	int convRes = 0;
 
     if (num_str == NULL)
         elog(ERROR, "NULL pointer");
@@ -43,22 +44,28 @@ Datum uint8_in(PG_FUNCTION_ARGS)
             ERROR,
             (
                 errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
-                errmsg("invalid input syntax for type %s: \"%s\"", "uint8", num_str)
+                errmsg("invalid input syntax for type uint8: \"%s\"", num_str)
             )
         );
     }
 
     // elog(INFO, "uint8in num_str: %s", num_str);
 
-    if (parse_uint64(num_str, &num) != 0) {
-        ereport(
-            ERROR,
-            (
-                errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
-                errmsg("invalid input syntax for type %s: \"%s\"", "uint8", num_str)
-            )
-        );
-    }
+	convRes = parse_uint64(num_str, &num);
+	if (convRes == -1)
+	{
+		ereport(
+			ERROR,
+			(
+				errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
+				errmsg("invalid input syntax for type uint8: \"%s\"", num_str)
+			)
+		);
+	}
+	if (convRes == -2)
+	{
+		OUT_OF_RANGE_ERR(uint8);
+	}
 
     // elog(INFO, "uint8in high %llu low %llu", (uint64)((*num) >> 64), (uint64)low_part);
 
