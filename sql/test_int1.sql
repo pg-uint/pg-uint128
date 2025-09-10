@@ -1,5 +1,22 @@
 -- Testing int1
 
+-- From string block
+
+-- NULL
+SELECT NULL::text::int1;
+-- Empty
+SELECT ''::text::int1;
+-- Zero
+SELECT '0'::text::int1;
+-- Min
+SELECT '-128'::text::int1;
+-- Max
+SELECT '127'::text::int1;
+-- Underflow
+SELECT '-129'::int1;
+-- Overflow
+SELECT '128'::int1;
+
 -- Ops block
 
 SELECT 1::int1 = 1::int1;

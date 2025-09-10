@@ -1068,6 +1068,10 @@ EOT;
         $sql = "-- Testing $this->name\n\n";
         $expected = "-- Testing $this->name\n";
 
+        [$tSql, $tExpected] = genTextVsTypeSQLTest($this->type);
+        $sql .= $tSql . "\n";
+        $expected .= $tExpected;
+
         $sql .= "-- Ops block\n\n";
         $expected .= "-- Ops block\n";
 
@@ -1106,6 +1110,101 @@ EOT;
 
         return [$sql, $expected];
     }
+}
+
+function genTextVsTypeSQLTest(Type $type): array
+{
+    $sql = '';
+    $expected = '';
+
+    $sql .= "-- From string block\n\n";
+    $expected .= "-- From string block\n";
+
+    // NULL string
+    $q = "-- NULL\nSELECT NULL::text::$type->pgName;\n";
+    $sql .= $q;
+    $expected .= $q;
+    $expected .= genSqlExpectedPaddedValue(
+        $type->pgName,
+        '',
+        !$type->isUnsigned && $type !== INT128 && $type->bitSize !== 8,
+    );
+
+    // Empty string
+    $q = "-- Empty\nSELECT ''::text::$type->pgName;\n";
+    $sql .= $q;
+    $expected .= $q;
+    $expected .= "ERROR:  invalid input syntax for type $type->pgName: \"\"\n";
+
+    // Zero value
+    $q = "-- Zero\nSELECT '0'::text::$type->pgName;\n";
+    $sql .= $q;
+    $expected .= $q;
+    $expected .= genSqlExpectedPaddedValue(
+        $type->pgName,
+        '0',
+        !$type->isUnsigned && $type !== INT128 && $type->bitSize !== 8,
+    );
+
+    // Min
+    $q = "-- Min\nSELECT '$type->minValue'::text::$type->pgName;\n";
+    $sql .= $q;
+    $expected .= $q;
+    $expected .= genSqlExpectedPaddedValue(
+        $type->pgName,
+        $type->minValue,
+        !$type->isUnsigned && $type !== INT128 && $type->bitSize !== 8,
+    );
+
+    // Max
+    $q = "-- Max\nSELECT '$type->maxValue'::text::$type->pgName;\n";
+    $sql .= $q;
+    $expected .= $q;
+    $expected .= genSqlExpectedPaddedValue(
+        $type->pgName,
+        $type->maxValue,
+        !$type->isUnsigned && $type !== INT128 && $type->bitSize !== 8,
+    );
+
+    // Underflow
+    $underflowVal = $type->isUnsigned ? '-1' : \bcsub($type->minValue, '1');
+
+    $q = "SELECT '$underflowVal'::$type->pgName;\n";
+    $sql .= "-- Underflow\n$q";
+    $expected .= "-- Underflow\n$q";
+
+    if ($type->isUnsigned) {
+        $expected .= <<<TEXT
+ERROR:  invalid input syntax for type $type->pgName: "$underflowVal"
+LINE 1: SELECT '$underflowVal'::$type->pgName;
+               ^
+TEXT;
+
+    } else {
+        $expected .= <<<TEXT
+ERROR:  $type->pgName out of range
+LINE 1: SELECT '$underflowVal'::$type->pgName;
+               ^
+TEXT;
+    }
+
+    $expected .= "\n";
+
+    // Overflow
+    $overflowVal = \bcadd($type->maxValue, '1');
+
+    $q = "SELECT '$overflowVal'::$type->pgName;\n";
+    $sql .= "-- Overflow\n$q";
+    $expected .= "-- Overflow\n$q";
+    $expected .= <<<TEXT
+ERROR:  $type->pgName out of range
+LINE 1: SELECT '$overflowVal'::$type->pgName;
+               ^
+TEXT;
+
+    $expected .= "\n";
+
+    return [$sql, $expected];
 }
 
 const INT_CAST_TYPES = [INT16, INT32, INT64];

@@ -1,4 +1,46 @@
 -- Testing uint4
+-- From string block
+-- NULL
+SELECT NULL::text::uint4;
+ uint4 
+-------
+ 
+(1 row)
+
+-- Empty
+SELECT ''::text::uint4;
+ERROR:  invalid input syntax for type uint4: ""
+-- Zero
+SELECT '0'::text::uint4;
+ uint4 
+-------
+ 0
+(1 row)
+
+-- Min
+SELECT '0'::text::uint4;
+ uint4 
+-------
+ 0
+(1 row)
+
+-- Max
+SELECT '4294967295'::text::uint4;
+   uint4    
+------------
+ 4294967295
+(1 row)
+
+-- Underflow
+SELECT '-1'::uint4;
+ERROR:  invalid input syntax for type uint4: "-1"
+LINE 1: SELECT '-1'::uint4;
+               ^
+-- Overflow
+SELECT '4294967296'::uint4;
+ERROR:  uint4 out of range
+LINE 1: SELECT '4294967296'::uint4;
+               ^
 -- Ops block
 SELECT 1::uint4 = 1::uint4;
  ?column? 

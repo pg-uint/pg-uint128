@@ -31,7 +31,7 @@ int parse_int128(const char *str, int128 *result)
         // If result equals INT128_MIN, we can't safely negate it
         if (*(uint128*)result > (uint128)INT128_MAX + 1ULL) {
             // Detected overflow if the unsigned value is larger than INT128_MAX + 1
-            return -3;
+            return -2;
         }
 
         // Safely negate the result
@@ -42,7 +42,7 @@ int parse_int128(const char *str, int128 *result)
 
     // Check if the value parsed exceeds INT128_MAX (positive overflow)
     if (*(uint128*)result > INT128_MAX) {
-        return -3;  // Overflow detected for positive range
+        return -2;  // Overflow detected for positive range
     }
 
     return 0;
@@ -78,7 +78,7 @@ int parse_int8(const char *str, int8 *result)
         // If result equals INT8_MIN, we can't safely negate it
         if (*(uint8*)result > INT8_MAX + 1) {
             // Detected overflow if the unsigned value is larger than INT8_MAX + 1
-            return -3;
+            return -2;
         }
 
         // Safely negate the result
@@ -89,7 +89,7 @@ int parse_int8(const char *str, int8 *result)
 
     // Check if the value parsed exceeds INT8_MAX (positive overflow)
     if (*(uint8*)result > INT8_MAX) {
-        return -3;  // Overflow detected for positive range
+        return -2;  // Overflow detected for positive range
     }
 
     return 0;

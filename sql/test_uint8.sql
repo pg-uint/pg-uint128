@@ -1,5 +1,22 @@
 -- Testing uint8
 
+-- From string block
+
+-- NULL
+SELECT NULL::text::uint8;
+-- Empty
+SELECT ''::text::uint8;
+-- Zero
+SELECT '0'::text::uint8;
+-- Min
+SELECT '0'::text::uint8;
+-- Max
+SELECT '18446744073709551615'::text::uint8;
+-- Underflow
+SELECT '-1'::uint8;
+-- Overflow
+SELECT '18446744073709551616'::uint8;
+
 -- Ops block
 
 SELECT 1::uint8 = 1::uint8;
