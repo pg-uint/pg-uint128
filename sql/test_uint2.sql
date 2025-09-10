@@ -222,26 +222,26 @@ SELECT s FROM generate_series(1::uint2, 10::uint2, 2::uint2) s;
 
 -- Ranges block
 
-SELECT uint2range(0, 10);
+SELECT uint2range(0::uint2, 10::uint2);
 SELECT uint2range(0::uint2, 65535::uint2);
 SELECT uint2range(0::uint2, 65535::uint2, '[]');
-SELECT upper(uint2range(0, 10));
-SELECT lower(uint2range(0, 10));
-SELECT isempty(uint2range(0, 10));
-SELECT uint2range(0, 10) @> 9::uint2;
-SELECT uint2range(0, 10) @> 10::uint2;
-SELECT uint2range(0, 10) && uint2range(10,20);
-SELECT uint2range(0, 10) && uint2range(9,20);
-SELECT uint2range(5, 10) - uint2range(5, 10);
-SELECT uint2range(5, 10) - uint2range(5, 9);
+SELECT upper(uint2range(0::uint2, 10::uint2));
+SELECT lower(uint2range(0::uint2, 10::uint2));
+SELECT isempty(uint2range(0::uint2, 10::uint2));
+SELECT uint2range(0::uint2, 10::uint2) @> 9::uint2;
+SELECT uint2range(0::uint2, 10::uint2) @> 10::uint2;
+SELECT uint2range(0::uint2, 10::uint2) && uint2range(10::uint2,20::uint2);
+SELECT uint2range(0::uint2, 10::uint2) && uint2range(9::uint2,20::uint2);
+SELECT uint2range(5::uint2, 10::uint2) - uint2range(5::uint2, 10::uint2);
+SELECT uint2range(5::uint2, 10::uint2) - uint2range(5::uint2, 9::uint2);
 CREATE TEMPORARY TABLE test_uint2range (
     r uint2range,
 
     EXCLUDE USING GIST (r WITH &&)
 );
 
-INSERT INTO test_uint2range (r) VALUES (uint2range(0, 10));
-INSERT INTO test_uint2range (r) VALUES (uint2range(10, 20));
-INSERT INTO test_uint2range (r) VALUES (uint2range(19, 30));
+INSERT INTO test_uint2range (r) VALUES (uint2range(0::uint2, 10::uint2));
+INSERT INTO test_uint2range (r) VALUES (uint2range(10::uint2, 20::uint2));
+INSERT INTO test_uint2range (r) VALUES (uint2range(19::uint2, 30::uint2));
 
 DROP TABLE test_uint2range;

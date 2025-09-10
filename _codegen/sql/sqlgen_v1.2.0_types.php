@@ -23,53 +23,88 @@ function typesExcept(array $types, Type $except): array
     return $crossTypes;
 }
 
+/**
+ * @return array
+ */
+function makeDefaultTypeOps(Type $type): array
+{
+    if ($type->builtIn) {
+        $defaultUintOpsTypes = typesExcept([
+            ...CUSTOM_INT_TYPES,
+            ...UINT_TYPES,
+        ], $type);
+    } else {
+        $defaultUintOpsTypes = typesExcept([
+            ...INT_TYPES,
+            ...UINT_TYPES,
+        ], $type);
+    }
+
+    return [
+        new TypeOpConfig(Op::Eq, types: $defaultUintOpsTypes, inverseTypes: false),
+        new TypeOpConfig(Op::Ne, types: $defaultUintOpsTypes, inverseTypes: false),
+        new TypeOpConfig(Op::Gt, types: $defaultUintOpsTypes, inverseTypes: false),
+        new TypeOpConfig(Op::Lt, types: $defaultUintOpsTypes, inverseTypes: false),
+        new TypeOpConfig(Op::Ge, types: $defaultUintOpsTypes, inverseTypes: false),
+        new TypeOpConfig(Op::Le, types: $defaultUintOpsTypes, inverseTypes: false),
+
+        new TypeOpConfig(Op::Add, types: $defaultUintOpsTypes, inverseTypes: false),
+        new TypeOpConfig(Op::Sub, types: $defaultUintOpsTypes, inverseTypes: false),
+        new TypeOpConfig(Op::Mul, types: $defaultUintOpsTypes, inverseTypes: false),
+        new TypeOpConfig(Op::Div, types: $defaultUintOpsTypes, inverseTypes: false),
+        new TypeOpConfig(Op::Mod, types: $defaultUintOpsTypes, inverseTypes: false),
+
+        new TypeOpConfig(Op::Xor),
+        new TypeOpConfig(Op::And),
+        new TypeOpConfig(Op::Or),
+        new TypeOpConfig(Op::Not),
+        new TypeOpConfig(Op::Shl),
+        new TypeOpConfig(Op::Shr),
+    ];
+}
+
 /** @var array<TypeConfig> $V1_2_0_Types */
 $V1_2_0_Types = [
     new TypeConfig(
         type: UINT8,
         alignment: 'char',
         passByValue: true,
-        ops: [],
+        ops: makeDefaultTypeOps(UINT8),
         casts: [...INT_TYPES, ...typesExcept(UINT_TYPES, UINT8), NUMERIC, FLOAT4, FLOAT8, JSON, JSONB],
-        crossTypesOnly: true,
         aggOps: AGG_OPS,
     ),
     new TypeConfig(
         type: UINT16,
-        alignment: 'char',
+        alignment: 'int2',
         passByValue: true,
-        ops: [],
+        ops: makeDefaultTypeOps(UINT16),
         casts: [...INT_TYPES, ...typesExcept(UINT_TYPES, UINT16), NUMERIC, FLOAT4, FLOAT8, JSON, JSONB],
-        crossTypesOnly: true,
         aggOps: AGG_OPS,
     ),
     new TypeConfig(
         type: UINT32,
-        alignment: 'char',
+        alignment: 'int4',
         passByValue: true,
-        ops: [],
+        ops: makeDefaultTypeOps(UINT32),
         casts: [...INT_TYPES, ...typesExcept(UINT_TYPES, UINT32), NUMERIC, FLOAT4, FLOAT8, JSON, JSONB],
-        crossTypesOnly: true,
         aggOps: AGG_OPS,
     ),
     new TypeConfig(
         type: UINT64,
-        alignment: 'char',
+        alignment: 'double',
         passByValue: true,
-        ops: [],
+        ops: makeDefaultTypeOps(UINT64),
         casts: [...INT_TYPES, ...typesExcept(UINT_TYPES, UINT64), FLOAT4, FLOAT8, JSON, JSONB],
         inOutCasts: [NUMERIC],
-        crossTypesOnly: true,
         aggOps: AGG_OPS,
     ),
     new TypeConfig(
         type: UINT128,
         alignment: 'char',
         passByValue: false,
-        ops: [],
+        ops: makeDefaultTypeOps(UINT128),
         casts: [...INT_TYPES, ...typesExcept(UINT_TYPES, UINT128), FLOAT4, FLOAT8, JSON, JSONB, UUID],
         inOutCasts: [NUMERIC],
-        crossTypesOnly: true,
         aggOps: AGG_OPS,
     ),
 
@@ -77,34 +112,38 @@ $V1_2_0_Types = [
         type: INT8,
         alignment: 'char',
         passByValue: true,
-        ops: [],
+        ops: makeDefaultTypeOps(INT8),
         casts: [...UINT_TYPES, ...typesExcept(INT_TYPES, INT8), NUMERIC, FLOAT4, FLOAT8, JSON, JSONB],
-        crossTypesOnly: true,
         aggOps: AGG_OPS,
     ),
     new TypeConfig(
         type: INT16,
-        alignment: 'char',
+        alignment: 'int2',
+        passByValue: true,
+        ops: makeDefaultTypeOps(INT16),
         casts: [...UINT_TYPES, ...CUSTOM_INT_TYPES],
     ),
     new TypeConfig(
         type: INT32,
-        alignment: 'char',
+        alignment: 'int4',
+        passByValue: true,
+        ops: makeDefaultTypeOps(INT32),
         casts: [...UINT_TYPES, ...CUSTOM_INT_TYPES],
     ),
     new TypeConfig(
         type: INT64,
-        alignment: 'char',
+        alignment: 'double',
+        passByValue: true,
+        ops: makeDefaultTypeOps(INT64),
         casts: [...UINT_TYPES, ...CUSTOM_INT_TYPES],
     ),
     new TypeConfig(
         type: INT128,
         alignment: 'char',
         passByValue: false,
-        ops: [],
+        ops: makeDefaultTypeOps(INT128),
         casts: [...UINT_TYPES, ...typesExcept(INT_TYPES, INT128), FLOAT4, FLOAT8, JSON, JSONB],
         inOutCasts: [NUMERIC],
-        crossTypesOnly: true,
         aggOps: AGG_OPS,
     ),
 
@@ -118,15 +157,15 @@ $V1_2_0_Types = [
 
     new TypeConfig(
         type: FLOAT4,
-        alignment: 'char',
-        passByValue: false,
+        alignment: 'int4',
+        passByValue: true,
         casts: [...UINT_TYPES, ...CUSTOM_INT_TYPES],
     ),
 
     new TypeConfig(
         type: FLOAT8,
-        alignment: 'char',
-        passByValue: false,
+        alignment: 'double',
+        passByValue: true,
         casts: [...UINT_TYPES, ...CUSTOM_INT_TYPES],
     ),
 

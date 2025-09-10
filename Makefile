@@ -1,7 +1,8 @@
 MODULES = uint128
 EXTENSION = uint128
 DATA = uint128--1.0.0.sql uint128--1.0.0--1.0.1.sql uint128--1.0.1--1.1.0.sql uint128--1.1.0.sql \
- 	uint128--1.1.0--1.1.1.sql uint128--1.1.1.sql
+ 	uint128--1.1.0--1.1.1.sql uint128--1.1.1.sql \
+ 	uint128--1.1.1--1.2.0.sql uint128--1.2.0.sql
 REGRESS = create_ext test_uint1 test_uint2 test_uint4 test_uint8 test_uint16 test_int1 test_int16 \
 	test_1.1.0_int16 test_1.1.0_uint2 test_1.1.0_uint4 test_1.1.0_uint8 test_1.1.0_uint16 \
 	test_1.1.1_int1 test_1.1.1_int16 test_1.1.1_uint1 test_1.1.1_uint2 test_1.1.1_uint4 test_1.1.1_uint8 test_1.1.1_uint16

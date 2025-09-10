@@ -40,6 +40,54 @@ CREATE FUNCTION $funcName($leftType->pgName, $rightType->pgName) RETURNS {$leftT
 EOL;
 }
 
+function genSQLBitwiseSelfFunc(Op $op, Type $leftType): string
+{
+    global $extName;
+
+    $funcName = "{$leftType->pgName}_$op->value";
+
+    return <<<EOL
+CREATE FUNCTION $funcName({$leftType->pgName}, {$leftType->pgName}) RETURNS {$leftType->pgName}
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '\$libdir/$extName', '$funcName';
+EOL;
+}
+
+function genSQLBitwiseShiftFunc(Op $op, Type $leftType): string
+{
+    global $extName;
+
+    $funcName = "{$leftType->pgName}_$op->value";
+
+    return <<<EOT
+CREATE FUNCTION $funcName({$leftType->pgName}, int4) RETURNS {$leftType->pgName}
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '\$libdir/$extName', '$funcName';
+EOT;
+}
+
+function genSQLBitwiseNotFunc(Op $op, Type $leftType): string
+{
+    global $extName;
+
+    $funcName = "{$leftType->pgName}_$op->value";
+
+    return <<<EOT
+CREATE FUNCTION $funcName({$leftType->pgName}) RETURNS {$leftType->pgName}
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT
+    LANGUAGE C
+    AS '\$libdir/$extName', '$funcName';
+EOT;
+}
+
 /**
  * @return array{0: string, 1: string}
  */
@@ -311,7 +359,7 @@ function genSQLTestRanges(Type $type): array
     $rangeTypName = $type->getRangePgTypeName();
 
     // Test constructor
-    $q = "SELECT $rangeTypName(0, 10);\n";
+    $q = "SELECT $rangeTypName(0::$type->pgName, 10::$type->pgName);\n";
 
     $sql .= $q;
     $expected .= $q;
@@ -332,60 +380,60 @@ function genSQLTestRanges(Type $type): array
     $expected .= "ERROR:  $type->pgName out of range\n";
 
     // Test upper
-    $q = "SELECT upper($rangeTypName(0, 10));\n";
+    $q = "SELECT upper($rangeTypName(0::$type->pgName, 10::$type->pgName));\n";
 
     $sql .= $q;
     $expected .= $q;
     $expected .= genSqlExpectedPaddedValue("upper", "10", false);
 
     // Test lower
-    $q = "SELECT lower($rangeTypName(0, 10));\n";
+    $q = "SELECT lower($rangeTypName(0::$type->pgName, 10::$type->pgName));\n";
 
     $sql .= $q;
     $expected .= $q;
     $expected .= genSqlExpectedPaddedValue("lower", "0", false);
 
     // Test isempty
-    $q = "SELECT isempty($rangeTypName(0, 10));\n";
+    $q = "SELECT isempty($rangeTypName(0::$type->pgName, 10::$type->pgName));\n";
 
     $sql .= $q;
     $expected .= $q;
     $expected .= genSqlExpectedPaddedValue("isempty", "f", false);
 
     // Test containment
-    $q = "SELECT $rangeTypName(0, 10) @> 9::$type->pgName;\n";
+    $q = "SELECT $rangeTypName(0::$type->pgName, 10::$type->pgName) @> 9::$type->pgName;\n";
 
     $sql .= $q;
     $expected .= $q;
     $expected .= genSqlExpectedPaddedValue("?column?", "t", false);
 
-    $q = "SELECT $rangeTypName(0, 10) @> 10::$type->pgName;\n";
+    $q = "SELECT $rangeTypName(0::$type->pgName, 10::$type->pgName) @> 10::$type->pgName;\n";
 
     $sql .= $q;
     $expected .= $q;
     $expected .= genSqlExpectedPaddedValue("?column?", "f", false);
 
     // Test overlapping
-    $q = "SELECT $rangeTypName(0, 10) && $rangeTypName(10,20);\n";
+    $q = "SELECT $rangeTypName(0::$type->pgName, 10::$type->pgName) && $rangeTypName(10::$type->pgName,20::$type->pgName);\n";
 
     $sql .= $q;
     $expected .= $q;
     $expected .= genSqlExpectedPaddedValue("?column?", "f", false);
 
-    $q = "SELECT $rangeTypName(0, 10) && $rangeTypName(9,20);\n";
+    $q = "SELECT $rangeTypName(0::$type->pgName, 10::$type->pgName) && $rangeTypName(9::$type->pgName,20::$type->pgName);\n";
 
     $sql .= $q;
     $expected .= $q;
     $expected .= genSqlExpectedPaddedValue("?column?", "t", false);
 
     // Test subtract
-    $q = "SELECT $rangeTypName(5, 10) - $rangeTypName(5, 10);\n";
+    $q = "SELECT $rangeTypName(5::$type->pgName, 10::$type->pgName) - $rangeTypName(5::$type->pgName, 10::$type->pgName);\n";
 
     $sql .= $q;
     $expected .= $q;
     $expected .= genSqlExpectedPaddedValue("?column?", "empty", false);
 
-    $q = "SELECT $rangeTypName(5, 10) - $rangeTypName(5, 9);\n";
+    $q = "SELECT $rangeTypName(5::$type->pgName, 10::$type->pgName) - $rangeTypName(5::$type->pgName, 9::$type->pgName);\n";
 
     $sql .= $q;
     $expected .= $q;
@@ -401,9 +449,9 @@ CREATE TEMPORARY TABLE $tmpTbl (
     EXCLUDE USING GIST (r WITH &&)
 );
 
-INSERT INTO $tmpTbl (r) VALUES ($rangeTypName(0, 10));
-INSERT INTO $tmpTbl (r) VALUES ($rangeTypName(10, 20));
-INSERT INTO $tmpTbl (r) VALUES ($rangeTypName(19, 30));
+INSERT INTO $tmpTbl (r) VALUES ($rangeTypName(0::$type->pgName, 10::$type->pgName));
+INSERT INTO $tmpTbl (r) VALUES ($rangeTypName(10::$type->pgName, 20::$type->pgName));
+INSERT INTO $tmpTbl (r) VALUES ($rangeTypName(19::$type->pgName, 30::$type->pgName));
 
 DROP TABLE $tmpTbl;
 
@@ -415,9 +463,9 @@ CREATE TEMPORARY TABLE $tmpTbl (
     r $rangeTypName,
     EXCLUDE USING GIST (r WITH &&)
 );
-INSERT INTO $tmpTbl (r) VALUES ($rangeTypName(0, 10));
-INSERT INTO $tmpTbl (r) VALUES ($rangeTypName(10, 20));
-INSERT INTO $tmpTbl (r) VALUES ($rangeTypName(19, 30));
+INSERT INTO $tmpTbl (r) VALUES ($rangeTypName(0::$type->pgName, 10::$type->pgName));
+INSERT INTO $tmpTbl (r) VALUES ($rangeTypName(10::$type->pgName, 20::$type->pgName));
+INSERT INTO $tmpTbl (r) VALUES ($rangeTypName(19::$type->pgName, 30::$type->pgName));
 ERROR:  conflicting key value violates exclusion constraint "{$tmpTbl}_r_excl"
 DETAIL:  Key (r)=([19,30)) conflicts with existing key (r)=([10,20)).
 DROP TABLE $tmpTbl;
@@ -425,6 +473,53 @@ DROP TABLE $tmpTbl;
 EOL;
 
     return [$sql, $expected];
+}
+
+function genSQLOperatorFunc(Op $op, Type $left, ?Type $right = null): string {
+    return match ($op) {
+        Op::Eq, Op::Ne, Op::Gt, Op::Lt, Op::Ge, Op::Le => genSQLCmpFunc($op, $left, $right),
+        Op::Add, Op::Sub, Op::Mul, Op::Div, Op::Mod => genSQLArithmeticFunc($op, $left, $right),
+        Op::Xor, Op::And, Op::Or => genSQLBitwiseSelfFunc($op, $left),
+        Op::Shl, Op::Shr => genSQLBitwiseShiftFunc($op, $left),
+        Op::Not => genSQLBitwiseNotFunc($op, $left),
+    };
+}
+
+function genSQLOperator(Op $op, Type $left, ?Type $right = null): string
+{
+    $cmpFunc = function (Op $op, Type $left, Type $right): string {
+        $funcName = getTypeOpFuncName($left, $right, $op);
+
+        return $op->config()->toSQL($funcName, $left->pgName, $right->pgName) . "\n";
+    };
+
+    $arithmFunc = function (Op $op, Type $left, Type $right): string {
+        $funcName = getTypeOpFuncName($left, $right, $op);
+
+        return $op->config()->toSQL($funcName, $left->pgName, $right->pgName) . "\n";
+    };
+
+    $bitwiseFunc = function (Op $op, Type $left): string {
+        $funcName = "{$left->pgName}_{$op->value}";
+
+        return $op->config()->toSQL($funcName, $left->pgName, $left->pgName) . "\n";
+    };
+
+    $bitwiseShiftFunc = function (Op $op, Type $left): string {
+        return $op->config()->toSQL("{$left->pgName}_$op->value", $left->pgName, 'int4') . "\n";
+    };
+
+    $bitwiseNotFunc = function (Op $op, Type $left): string {
+        return $op->config()->toSQL("{$left->pgName}_$op->value", null, $left->pgName) . "\n";
+    };
+
+    return match ($op) {
+        Op::Eq, Op::Ne, Op::Gt, Op::Lt, Op::Ge, Op::Le => $cmpFunc($op, $left, $right),
+        Op::Add, Op::Sub, Op::Mul, Op::Div, Op::Mod => $arithmFunc($op, $left, $right),
+        Op::Xor, Op::And, Op::Or => $bitwiseFunc($op, $left),
+        Op::Shl, Op::Shr => $bitwiseShiftFunc($op, $left),
+        Op::Not => $bitwiseNotFunc($op, $left),
+    };
 }
 
 class TypeOpConfig
@@ -820,6 +915,10 @@ class TypeConfig
 
     public function toSQLTypeDef(int $version): string
     {
+        if ($this->type->builtIn) {
+            return '';
+        }
+
         $extName = EXT_NAME;
 
         $passByValue = $this->passByValue ? 'PASSEDBYVALUE,' : '--PASSEDBYVALUE,';
@@ -1027,6 +1126,8 @@ EOL;
 
     public function toSQLOperatorFamily(int $version): string
     {
+        if ($this->type->builtIn) return '';
+
         $extName = EXT_NAME;
 
         $sql = "\n-- Index ops block\n\n";
@@ -1176,6 +1277,8 @@ EOT;
 
     public function toSQLAggOps(int $version): string
     {
+        if ($this->type->builtIn) return '';
+
         $sql = '';
         $avgAggFuncGenerated = false;
 
@@ -1197,6 +1300,8 @@ EOT;
 
     public function toSQLGenSeries(int $version): string
     {
+        if ($this->type->builtIn) return '';
+
         $sql = "\n-- Generate series block\n\n";
 
         return $sql . genSQLGenerateSeries($this->type);
@@ -1204,6 +1309,8 @@ EOT;
 
     public function toSQLRanges(int $version): string
     {
+        if ($this->type->builtIn) return '';
+
         $sql = "\n-- Ranges block\n\n";
 
         return $sql . genSQLRanges($this->type);
