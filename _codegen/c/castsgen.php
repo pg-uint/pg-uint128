@@ -111,118 +111,11 @@ function getCastUIntFromUIntFunc(Type $left, Type $right): string
     return $fn;
 }
 
-function getCastUIntToIntFunc(Type $left, Type $right): string
-{
-    if (!$left->isUnsigned || $right->isUnsigned) {
-        throw new InvalidArgumentException("Only cast uint to signed int is supported");
-    }
-
-    $funcName = "{$left->pgName}_to_{$right->pgName}";
-
-    $fn = "PG_FUNCTION_INFO_V1($funcName);\n";
-    $fn .= "Datum $funcName(PG_FUNCTION_ARGS) {\n";
-    $fn .= "    $left->name a = $left->pgGetArgMacro(0);\n";
-    $fn .= "\n";
-
-    // Check for overflow when casting wider integer types than receiver type
-    if ($left->bitSize >= $right->bitSize) {
-        $fn .= "    if (a > {$right->getMaxConstC()}) {\n";
-        $fn .= "        OUT_OF_RANGE_ERR($right->pgName);\n";
-        $fn .= "    }\n";
-    }
-
-    $fn .= "    $right->pgReturnMacro(($right->name) a);\n";
-    $fn .= "}\n";
-
-    return $fn;
-}
-
-function getCastIntToUIntFunc(Type $left, Type $right): string
-{
-    if ($left->isUnsigned || !$right->isUnsigned) {
-        throw new InvalidArgumentException("Only cast signed int to uint is supported");
-    }
-
-    $funcName = "{$left->pgName}_to_{$right->pgName}";
-
-    $fn = "PG_FUNCTION_INFO_V1($funcName);\n";
-    $fn .= "Datum $funcName(PG_FUNCTION_ARGS) {\n";
-    $fn .= "    $left->name a = $left->pgGetArgMacro(0);\n";
-    $fn .= "\n";
-    $fn .= "    if (a < 0) {\n";
-    $fn .= "        OUT_OF_RANGE_ERR($right->pgName);\n";
-    $fn .= "    }\n";
-
-    // Check for overflow when casting wider integer types than receiver type
-    if ($left->bitSize > $right->bitSize) {
-        $fn .= "    if (a > {$right->getMaxConstC()}) {\n";
-        $fn .= "        OUT_OF_RANGE_ERR($right->pgName);\n";
-        $fn .= "    }\n";
-    }
-
-    $fn .= "    $right->pgReturnMacro(($right->name) a);\n";
-    $fn .= "}\n";
-
-    return $fn;
-}
-
-function getCastIntToIntFunc(Type $left, Type $right): string
-{
-    if ($left->isUnsigned || $right->isUnsigned) {
-        throw new InvalidArgumentException("Only cast signed int to signed int is supported");
-    }
-
-    $funcName = "{$left->pgName}_to_{$right->pgName}";
-
-    $fn = "PG_FUNCTION_INFO_V1($funcName);\n";
-    $fn .= "Datum $funcName(PG_FUNCTION_ARGS) {\n";
-    $fn .= "    $left->name a = $left->pgGetArgMacro(0);\n";
-    $fn .= "\n";
-
-    // Check for overflow when casting wider integer types than receiver type
-    if ($left->bitSize > $right->bitSize) {
-        $fn .= "    if (a > {$right->getMaxConstC()} || a < {$right->getMinConstC()}) {\n";
-        $fn .= "        OUT_OF_RANGE_ERR($right->pgName);\n";
-        $fn .= "    }\n";
-    }
-
-    $fn .= "    $right->pgReturnMacro(($right->name) a);\n";
-    $fn .= "}\n";
-
-    return $fn;
-}
-
-function getCastUIntToUIntFunc(Type $left, Type $right): string
-{
-    if (!$left->isUnsigned || !$right->isUnsigned) {
-        throw new InvalidArgumentException("Only cast uint to uint is supported");
-    }
-
-    $funcName = "{$left->pgName}_to_{$right->pgName}";
-
-    $fn = "PG_FUNCTION_INFO_V1($funcName);\n";
-    $fn .= "Datum $funcName(PG_FUNCTION_ARGS) {\n";
-    $fn .= "    $left->name a = $left->pgGetArgMacro(0);\n";
-    $fn .= "\n";
-
-    // Check for overflow when casting wider integer types than receiver type
-    if ($left->bitSize > $right->bitSize) {
-        $fn .= "    if (a > {$right->getMaxConstC()}) {\n";
-        $fn .= "        OUT_OF_RANGE_ERR($right->pgName);\n";
-        $fn .= "    }\n";
-    }
-
-    $fn .= "    $right->pgReturnMacro(($right->name) a);\n";
-    $fn .= "}\n";
-
-    return $fn;
-}
-
 function getCastToJSONFunc(Type $left): string
 {
     $right = JSON;
 
-    $funcName = "{$left->pgName}_to_{$right->pgName}";
+    $funcName = "{$right->pgName}_from_{$left->pgName}";
 
     return <<<C
 PG_FUNCTION_INFO_V1($funcName);
@@ -290,7 +183,7 @@ function getCastToNumeric(Type $left): string
 {
     $right = NUMERIC;
 
-    $funcName = "{$left->pgName}_to_{$right->pgName}";
+    $funcName = "{$right->pgName}_from_{$left->pgName}";
 
     // Fast path for small integers
     if ($left->bitSize < 64) {
@@ -325,10 +218,57 @@ C;
     return '';
 }
 
-function getCastToJSONBFunc(Type $left): string {
+function getCastFromFloat(Type $left, Type $right): string
+{
+    $funcName = "{$left->pgName}_from_{$right->pgName}";
+
+    $boundsCheckMacro = strtoupper($right->name) . "_FITS_IN_" . strtoupper($left->name);
+
+    return <<<C
+PG_FUNCTION_INFO_V1($funcName);
+Datum $funcName(PG_FUNCTION_ARGS)
+{
+	$right->name		num = $right->pgGetArgMacro(0);
+
+	/*
+	 * Get rid of any fractional part in the input.  This is so we don't fail
+	 * on just-out-of-range values that would round into range.  Note
+	 * assumption that rint() will pass through a NaN or Inf unchanged.
+	 */
+	num = ($right->name)rint(num);
+
+	/* Range check */
+	if (unlikely(isnan(num) || !$boundsCheckMacro(num)))
+		OUT_OF_RANGE_ERR($left->pgName);
+
+	$left->pgReturnMacro(($left->name) num);
+}
+C;
+}
+
+function getCastToFloat(Type $left, Type $right): string
+{
+    $funcName = "{$right->pgName}_from_{$left->pgName}";
+
+    return <<<C
+PG_FUNCTION_INFO_V1($funcName);
+Datum $funcName(PG_FUNCTION_ARGS)
+{
+	$left->name		arg = $left->pgGetArgMacro(0);
+	$right->name		result;
+
+	result = ($right->name)arg;
+
+	$right->pgReturnMacro(result);
+}
+C;
+}
+
+function getCastToJSONBFunc(Type $left): string
+{
     $right = JSONB;
 
-    $funcName = "{$left->pgName}_to_{$right->pgName}";
+    $funcName = "{$right->pgName}_from_{$left->pgName}";
 
     // Fast path for small integers
     if ($left->bitSize < 64) {
@@ -397,7 +337,8 @@ Datum {$funcName}(PG_FUNCTION_ARGS) {
 C;
 }
 
-function getCastFromJSONBFunc(Type $left): string {
+function getCastFromJSONBFunc(Type $left): string
+{
     $right = JSONB;
 
     $funcName = "{$left->pgName}_from_{$right->pgName}";
@@ -457,7 +398,8 @@ Datum $funcName(PG_FUNCTION_ARGS)
 C;
 }
 
-function getCastFromJSONFunc(Type $left): string {
+function getCastFromJSONFunc(Type $left): string
+{
     $right = JSON;
 
     $funcName = "{$left->pgName}_from_{$right->pgName}";
@@ -560,8 +502,94 @@ $header = <<<C
 #include "utils/fmgrprotos.h"
 #include "utils/builtins.h"
 #include "json_utils.h"
+#include <math.h>
 
 C;
+
+/**
+ * @param array<Type> $types
+ */
+function genJsonCasts(array $types): void
+{
+    global $header;
+
+    $buf = $header . "\n\n";
+
+    foreach ($types as $type) {
+        $buf .= getCastToJSONFunc($type) . "\n\n";
+    }
+
+    file_put_contents("casts/json.c", $buf);
+    echo "casts/json.c successfully generated\n";
+}
+
+/**
+ * @param array<Type> $types
+ */
+function genJsonbCasts(array $types): void
+{
+    global $header;
+
+    $buf = $header . "\n\n";
+
+    foreach ($types as $type) {
+        $buf .= getCastToJSONBFunc($type) . "\n\n";
+    }
+
+    file_put_contents("casts/jsonb.c", $buf);
+    echo "casts/jsonb.c successfully generated\n";
+}
+
+/**
+ * @param array<Type> $types
+ */
+function genNumericCasts(array $types): void
+{
+    global $header;
+
+    $buf = $header . "\n\n";
+
+    foreach ($types as $type) {
+        $buf .= getCastToNumeric($type) . "\n\n";
+    }
+
+    file_put_contents("casts/numeric.c", $buf);
+    echo "casts/numeric.c successfully generated\n";
+}
+
+/**
+ * @param array<Type> $types
+ */
+function genFloat32Casts(array $types): void
+{
+    global $header;
+
+    $buf = $header . "\n\n";
+
+    foreach ($types as $type) {
+        $buf .= getCastToFloat($type, FLOAT4) . "\n\n";
+    }
+
+    file_put_contents("casts/float4.c", $buf);
+    echo "casts/float4.c successfully generated\n";
+}
+
+/**
+ * @param array<Type> $types
+ */
+function genFloat64Casts(array $types): void
+{
+    global $header;
+
+    $buf = $header . "\n\n";
+
+    foreach ($types as $type) {
+        $buf .= getCastToFloat($type, FLOAT8) . "\n\n";
+    }
+
+    file_put_contents("casts/float8.c", $buf);
+    echo "casts/float8.c successfully generated\n";
+}
 
 @mkdir("casts");
 
@@ -579,26 +607,26 @@ foreach (UINT_TYPES as $LEFT_TYPE) {
         }
 
         $buf .= getCastUIntFromUIntFunc($LEFT_TYPE, $RIGHT_TYPE) . "\n\n";
-        $buf .= getCastUIntToUIntFunc($LEFT_TYPE, $RIGHT_TYPE) . "\n\n";
     }
 
     $buf .= "// Signed casts\n\n";
 
     foreach (INT_TYPES as $RIGHT_TYPE) {
         $buf .= getCastUIntFromIntFunc($LEFT_TYPE, $RIGHT_TYPE) . "\n\n";
-        $buf .= getCastUIntToIntFunc($LEFT_TYPE, $RIGHT_TYPE) . "\n\n";
     }
 
+    // Fast path for numeric casts for small ints
     if ($LEFT_TYPE->bitSize < 64) {
         $buf .= "// Numeric casts\n\n";
         $buf .= getCastFromNumeric($LEFT_TYPE) . "\n\n";
-        $buf .= getCastToNumeric($LEFT_TYPE) . "\n\n";
     }
+
+    $buf .= "// Float casts\n\n";
+    $buf .= getCastFromFloat($LEFT_TYPE, FLOAT4) . "\n\n";
+    $buf .= getCastFromFloat($LEFT_TYPE, FLOAT8) . "\n\n";
 
     $buf .= "// JSON casts\n\n";
 
-    $buf .= getCastToJSONFunc($LEFT_TYPE) . "\n\n";
-    $buf .= getCastToJSONBFunc($LEFT_TYPE) . "\n\n";
     $buf .= getCastFromJSONFunc($LEFT_TYPE) . "\n\n";
     $buf .= getCastFromJSONBFunc($LEFT_TYPE) . "\n\n";
 
@@ -620,27 +648,26 @@ foreach (INT_TYPES as $LEFT_TYPE) {
         }
 
         $buf .= getCastIntFromIntFunc($LEFT_TYPE, $RIGHT_TYPE) . "\n\n";
-        $buf .= getCastIntToIntFunc($LEFT_TYPE, $RIGHT_TYPE) . "\n\n";
     }
 
     $buf .= "// Unsigned comparison\n\n";
 
     foreach (UINT_TYPES as $RIGHT_TYPE) {
         $buf .= getCastIntFromUIntFunc($LEFT_TYPE, $RIGHT_TYPE) . "\n\n";
-        $buf .= getCastIntToUIntFunc($LEFT_TYPE, $RIGHT_TYPE) . "\n\n";
     }
 
     if (in_array($LEFT_TYPE, CUSTOM_INT_TYPES, true)) {
         if ($LEFT_TYPE->bitSize < 64) {
             $buf .= "// Numeric casts\n\n";
             $buf .= getCastFromNumeric($LEFT_TYPE) . "\n\n";
-            $buf .= getCastToNumeric($LEFT_TYPE) . "\n\n";
         }
+
+        $buf .= "// Float casts\n\n";
+        $buf .= getCastFromFloat($LEFT_TYPE, FLOAT4) . "\n\n";
+        $buf .= getCastFromFloat($LEFT_TYPE, FLOAT8) . "\n\n";
 
         $buf .= "// JSON casts\n\n";
 
-        $buf .= getCastToJSONFunc($LEFT_TYPE) . "\n\n";
-        $buf .= getCastToJSONBFunc($LEFT_TYPE) . "\n\n";
         $buf .= getCastFromJSONFunc($LEFT_TYPE) . "\n\n";
         $buf .= getCastFromJSONBFunc($LEFT_TYPE) . "\n\n";
     }
@@ -648,3 +675,10 @@ foreach (INT_TYPES as $LEFT_TYPE) {
     file_put_contents("casts/{$LEFT_TYPE->name}.c", $buf);
     echo "casts/{$LEFT_TYPE->name}.c successfully generated\n";
 }
+
+$customCasts = [...UINT_TYPES, ...CUSTOM_INT_TYPES];
+genJsonCasts($customCasts);
+genJsonbCasts($customCasts);
+genNumericCasts($customCasts);
+genFloat32Casts($customCasts);
+genFloat64Casts($customCasts);

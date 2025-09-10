@@ -7,6 +7,7 @@
 #include "utils/fmgrprotos.h"
 #include "utils/builtins.h"
 #include "json_utils.h"
+#include <math.h>
 
 // Signed comparison
 
@@ -18,17 +19,6 @@ Datum int8_from_int1(PG_FUNCTION_ARGS) {
 }
 
 
-PG_FUNCTION_INFO_V1(int8_to_int1);
-Datum int8_to_int1(PG_FUNCTION_ARGS) {
-    int64 a = PG_GETARG_INT64(0);
-
-    if (a > INT8_MAX || a < INT8_MIN) {
-        OUT_OF_RANGE_ERR(int1);
-    }
-    PG_RETURN_INT8((int8) a);
-}
-
-
 PG_FUNCTION_INFO_V1(int8_from_int2);
 Datum int8_from_int2(PG_FUNCTION_ARGS) {
     int16 a = PG_GETARG_INT16(0);
@@ -37,33 +27,11 @@ Datum int8_from_int2(PG_FUNCTION_ARGS) {
 }
 
 
-PG_FUNCTION_INFO_V1(int8_to_int2);
-Datum int8_to_int2(PG_FUNCTION_ARGS) {
-    int64 a = PG_GETARG_INT64(0);
-
-    if (a > INT16_MAX || a < INT16_MIN) {
-        OUT_OF_RANGE_ERR(int2);
-    }
-    PG_RETURN_INT16((int16) a);
-}
-
-
 PG_FUNCTION_INFO_V1(int8_from_int4);
 Datum int8_from_int4(PG_FUNCTION_ARGS) {
     int32 a = PG_GETARG_INT32(0);
 
     PG_RETURN_INT64((int64) a);
-}
-
-
-PG_FUNCTION_INFO_V1(int8_to_int4);
-Datum int8_to_int4(PG_FUNCTION_ARGS) {
-    int64 a = PG_GETARG_INT64(0);
-
-    if (a > INT32_MAX || a < INT32_MIN) {
-        OUT_OF_RANGE_ERR(int4);
-    }
-    PG_RETURN_INT32((int32) a);
 }
 
 
@@ -78,14 +46,6 @@ Datum int8_from_int16(PG_FUNCTION_ARGS) {
 }
 
 
-PG_FUNCTION_INFO_V1(int8_to_int16);
-Datum int8_to_int16(PG_FUNCTION_ARGS) {
-    int64 a = PG_GETARG_INT64(0);
-
-    PG_RETURN_INT128((int128) a);
-}
-
-
 // Unsigned comparison
 
 PG_FUNCTION_INFO_V1(int8_from_uint1);
@@ -93,20 +53,6 @@ Datum int8_from_uint1(PG_FUNCTION_ARGS) {
     uint8 a = PG_GETARG_UINT8(0);
 
     PG_RETURN_INT64((int64) a);
-}
-
-
-PG_FUNCTION_INFO_V1(int8_to_uint1);
-Datum int8_to_uint1(PG_FUNCTION_ARGS) {
-    int64 a = PG_GETARG_INT64(0);
-
-    if (a < 0) {
-        OUT_OF_RANGE_ERR(uint1);
-    }
-    if (a > UINT8_MAX) {
-        OUT_OF_RANGE_ERR(uint1);
-    }
-    PG_RETURN_UINT8((uint8) a);
 }
 
 
@@ -118,39 +64,11 @@ Datum int8_from_uint2(PG_FUNCTION_ARGS) {
 }
 
 
-PG_FUNCTION_INFO_V1(int8_to_uint2);
-Datum int8_to_uint2(PG_FUNCTION_ARGS) {
-    int64 a = PG_GETARG_INT64(0);
-
-    if (a < 0) {
-        OUT_OF_RANGE_ERR(uint2);
-    }
-    if (a > UINT16_MAX) {
-        OUT_OF_RANGE_ERR(uint2);
-    }
-    PG_RETURN_UINT16((uint16) a);
-}
-
-
 PG_FUNCTION_INFO_V1(int8_from_uint4);
 Datum int8_from_uint4(PG_FUNCTION_ARGS) {
     uint32 a = PG_GETARG_UINT32(0);
 
     PG_RETURN_INT64((int64) a);
-}
-
-
-PG_FUNCTION_INFO_V1(int8_to_uint4);
-Datum int8_to_uint4(PG_FUNCTION_ARGS) {
-    int64 a = PG_GETARG_INT64(0);
-
-    if (a < 0) {
-        OUT_OF_RANGE_ERR(uint4);
-    }
-    if (a > UINT32_MAX) {
-        OUT_OF_RANGE_ERR(uint4);
-    }
-    PG_RETURN_UINT32((uint32) a);
 }
 
 
@@ -165,17 +83,6 @@ Datum int8_from_uint8(PG_FUNCTION_ARGS) {
 }
 
 
-PG_FUNCTION_INFO_V1(int8_to_uint8);
-Datum int8_to_uint8(PG_FUNCTION_ARGS) {
-    int64 a = PG_GETARG_INT64(0);
-
-    if (a < 0) {
-        OUT_OF_RANGE_ERR(uint8);
-    }
-    PG_RETURN_UINT64((uint64) a);
-}
-
-
 PG_FUNCTION_INFO_V1(int8_from_uint16);
 Datum int8_from_uint16(PG_FUNCTION_ARGS) {
     uint128 a = PG_GETARG_UINT128(0);
@@ -184,17 +91,6 @@ Datum int8_from_uint16(PG_FUNCTION_ARGS) {
         OUT_OF_RANGE_ERR(int8);
     }
     PG_RETURN_INT64((int64) a);
-}
-
-
-PG_FUNCTION_INFO_V1(int8_to_uint16);
-Datum int8_to_uint16(PG_FUNCTION_ARGS) {
-    int64 a = PG_GETARG_INT64(0);
-
-    if (a < 0) {
-        OUT_OF_RANGE_ERR(uint16);
-    }
-    PG_RETURN_UINT128((uint128) a);
 }
 
 

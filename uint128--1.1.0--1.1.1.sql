@@ -1,3 +1,5 @@
+-- Type uint1 block
+
 
 -- Casts block
 
@@ -55,6 +57,8 @@ CREATE CAST (numeric AS uint1) WITH FUNCTION uint1_from_numeric(numeric) AS ASSI
 
 DROP CAST (uint1 AS numeric);
 CREATE CAST (uint1 AS numeric) WITH FUNCTION uint1_to_numeric(uint1) AS IMPLICIT;
+-- Type uint2 block
+
 
 -- Casts block
 
@@ -112,6 +116,8 @@ CREATE CAST (numeric AS uint2) WITH FUNCTION uint2_from_numeric(numeric) AS ASSI
 
 DROP CAST (uint2 AS numeric);
 CREATE CAST (uint2 AS numeric) WITH FUNCTION uint2_to_numeric(uint2) AS IMPLICIT;
+-- Type uint4 block
+
 
 -- Casts block
 
@@ -169,6 +175,8 @@ CREATE CAST (numeric AS uint4) WITH FUNCTION uint4_from_numeric(numeric) AS ASSI
 
 DROP CAST (uint4 AS numeric);
 CREATE CAST (uint4 AS numeric) WITH FUNCTION uint4_to_numeric(uint4) AS IMPLICIT;
+-- Type uint8 block
+
 
 -- Casts block
 
@@ -207,6 +215,8 @@ CREATE CAST (uint8 AS jsonb) WITH FUNCTION uint8_to_jsonb(uint8) AS IMPLICIT;
 
 
 
+-- Type uint16 block
+
 
 -- Casts block
 
@@ -244,6 +254,8 @@ CREATE CAST (uint16 AS jsonb) WITH FUNCTION uint16_to_jsonb(uint16) AS IMPLICIT;
 -- Ops block
 
 
+
+-- Type int1 block
 
 
 -- Casts block
@@ -302,6 +314,8 @@ CREATE CAST (numeric AS int1) WITH FUNCTION int1_from_numeric(numeric) AS ASSIGN
 
 DROP CAST (int1 AS numeric);
 CREATE CAST (int1 AS numeric) WITH FUNCTION int1_to_numeric(int1) AS IMPLICIT;
+-- Type int16 block
+
 
 -- Casts block
 
