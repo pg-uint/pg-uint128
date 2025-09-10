@@ -240,10 +240,139 @@ Datum {$funcName}(PG_FUNCTION_ARGS) {
 C;
 }
 
+function getCastFromNumeric(Type $left): string
+{
+    $right = NUMERIC;
+
+    $funcName = "{$left->pgName}_from_{$right->pgName}";
+
+    // Fast path for small integers
+    if ($left->bitSize < 64) {
+        /**
+         * @var string $numericFnName
+         * @var Type $intTyp
+         */
+
+        if ($left->isUnsigned) {
+            [$numericFnName, $intTyp] = match ($left->bitSize) {
+                8 => ['numeric_int2', INT16],
+                16 => ['numeric_int4', INT32],
+                32 => ['numeric_int8', INT64],
+            };
+        } else {
+            [$numericFnName, $intTyp] = match ($left->bitSize) {
+                8 => ['numeric_int2', INT16],
+            };
+        }
+
+        return <<<C
+PG_FUNCTION_INFO_V1($funcName);
+Datum $funcName(PG_FUNCTION_ARGS)
+{
+	Numeric num = PG_GETARG_NUMERIC(0);
+	$intTyp->name numInt = 0;
+
+    // Fast path for small integers
+    numInt = $intTyp->fromDatum(DirectFunctionCall1($numericFnName, NumericGetDatum(num)));
+    if (numInt < $left->minValue || numInt > $left->maxValue) {
+        OUT_OF_RANGE_ERR($left->pgName);
+    }
+
+	$left->pgReturnMacro(($left->name)numInt);
+}
+C;
+    }
+
+    return '';
+}
+
+function getCastToNumeric(Type $left): string
+{
+    $right = NUMERIC;
+
+    $funcName = "{$left->pgName}_to_{$right->pgName}";
+
+    // Fast path for small integers
+    if ($left->bitSize < 64) {
+        /**
+         * @var string $numericFnName
+         * @var Type $intTyp
+         */
+
+        if ($left->isUnsigned) {
+            [$numericFnName, $intTyp] = match ($left->bitSize) {
+                8 => ['int2_numeric', INT16],
+                16 => ['int4_numeric', INT32],
+                32 => ['int8_numeric', INT64],
+            };
+        } else {
+            [$numericFnName, $intTyp] = match ($left->bitSize) {
+                8 => ['int2_numeric', INT16],
+            };
+        }
+
+        return <<<C
+PG_FUNCTION_INFO_V1($funcName);
+Datum $funcName(PG_FUNCTION_ARGS)
+{
+	$left->name		val = $left->pgGetArgMacro(0);
+
+	PG_RETURN_DATUM(DirectFunctionCall1($numericFnName, $intTyp->toDatum(($intTyp->name)val)));
+}
+C;
+    }
+
+    return '';
+}
+
 function getCastToJSONBFunc(Type $left): string {
     $right = JSONB;
 
     $funcName = "{$left->pgName}_to_{$right->pgName}";
+
+    // Fast path for small integers
+    if ($left->bitSize < 64) {
+        /**
+         * @var string $numericFnName
+         * @var Type $intTyp
+         */
+
+        if ($left->isUnsigned) {
+            [$numericFnName, $intTyp] = match ($left->bitSize) {
+                8 => ['int2_numeric', INT16],
+                16 => ['int4_numeric', INT32],
+                32 => ['int8_numeric', INT64],
+            };
+        } else {
+            [$numericFnName, $intTyp] = match ($left->bitSize) {
+                8 => ['int2_numeric', INT16],
+            };
+        }
+
+        $numericTyp = NUMERIC;
+
+        return <<<C
+PG_FUNCTION_INFO_V1($funcName);
+Datum $funcName(PG_FUNCTION_ARGS)
+{
+    $left->name val = $left->pgGetArgMacro(0);
+
+    JsonbValue jbv;
+    Jsonb* result;
+
+    Numeric num = $numericTyp->fromDatum(DirectFunctionCall1($numericFnName, $intTyp->toDatum(($intTyp->name)val)));
+
+    /* convert Numeric to JsonbValue */
+    jbv.type = jbvNumeric;
+    jbv.val.numeric = num;
+
+    /* wrap into a Jsonb container */
+    result = JsonbValueToJsonb(&jbv);
+
+    $right->pgReturnMacro(result);
+}
+C;
+    }
 
     return <<<C
 PG_FUNCTION_INFO_V1($funcName);
@@ -436,6 +565,9 @@ C;
 
 @mkdir("casts");
 
+/**
+ * @var Type $LEFT_TYPE
+ */
 foreach (UINT_TYPES as $LEFT_TYPE) {
     $buf = $header;
 
@@ -457,6 +589,12 @@ foreach (UINT_TYPES as $LEFT_TYPE) {
         $buf .= getCastUIntToIntFunc($LEFT_TYPE, $RIGHT_TYPE) . "\n\n";
     }
 
+    if ($LEFT_TYPE->bitSize < 64) {
+        $buf .= "// Numeric casts\n\n";
+        $buf .= getCastFromNumeric($LEFT_TYPE) . "\n\n";
+        $buf .= getCastToNumeric($LEFT_TYPE) . "\n\n";
+    }
+
     $buf .= "// JSON casts\n\n";
 
     $buf .= getCastToJSONFunc($LEFT_TYPE) . "\n\n";
@@ -468,6 +606,9 @@ foreach (UINT_TYPES as $LEFT_TYPE) {
     echo "casts/{$LEFT_TYPE->name}.c successfully generated\n";
 }
 
+/**
+ * @var Type $LEFT_TYPE
+ */
 foreach (INT_TYPES as $LEFT_TYPE) {
     $buf = $header;
 
@@ -490,6 +631,12 @@ foreach (INT_TYPES as $LEFT_TYPE) {
     }
 
     if (in_array($LEFT_TYPE, CUSTOM_INT_TYPES, true)) {
+        if ($LEFT_TYPE->bitSize < 64) {
+            $buf .= "// Numeric casts\n\n";
+            $buf .= getCastFromNumeric($LEFT_TYPE) . "\n\n";
+            $buf .= getCastToNumeric($LEFT_TYPE) . "\n\n";
+        }
+
         $buf .= "// JSON casts\n\n";
 
         $buf .= getCastToJSONFunc($LEFT_TYPE) . "\n\n";

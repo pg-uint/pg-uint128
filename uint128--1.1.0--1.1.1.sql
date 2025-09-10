@@ -36,6 +36,25 @@ CREATE CAST (uint1 AS jsonb) WITH FUNCTION uint1_to_jsonb(uint1) AS IMPLICIT;
 
 
 
+-- Numeric casts block
+
+CREATE FUNCTION uint1_from_numeric(numeric) RETURNS uint1
+    IMMUTABLE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint1_from_numeric';
+
+CREATE FUNCTION uint1_to_numeric(uint1) RETURNS numeric
+    IMMUTABLE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint1_to_numeric';
+
+DROP CAST (numeric AS uint1);
+CREATE CAST (numeric AS uint1) WITH FUNCTION uint1_from_numeric(numeric) AS ASSIGNMENT;
+
+DROP CAST (uint1 AS numeric);
+CREATE CAST (uint1 AS numeric) WITH FUNCTION uint1_to_numeric(uint1) AS IMPLICIT;
 
 -- Casts block
 
@@ -74,6 +93,25 @@ CREATE CAST (uint2 AS jsonb) WITH FUNCTION uint2_to_jsonb(uint2) AS IMPLICIT;
 
 
 
+-- Numeric casts block
+
+CREATE FUNCTION uint2_from_numeric(numeric) RETURNS uint2
+    IMMUTABLE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint2_from_numeric';
+
+CREATE FUNCTION uint2_to_numeric(uint2) RETURNS numeric
+    IMMUTABLE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint2_to_numeric';
+
+DROP CAST (numeric AS uint2);
+CREATE CAST (numeric AS uint2) WITH FUNCTION uint2_from_numeric(numeric) AS ASSIGNMENT;
+
+DROP CAST (uint2 AS numeric);
+CREATE CAST (uint2 AS numeric) WITH FUNCTION uint2_to_numeric(uint2) AS IMPLICIT;
 
 -- Casts block
 
@@ -112,6 +150,25 @@ CREATE CAST (uint4 AS jsonb) WITH FUNCTION uint4_to_jsonb(uint4) AS IMPLICIT;
 
 
 
+-- Numeric casts block
+
+CREATE FUNCTION uint4_from_numeric(numeric) RETURNS uint4
+    IMMUTABLE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint4_from_numeric';
+
+CREATE FUNCTION uint4_to_numeric(uint4) RETURNS numeric
+    IMMUTABLE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'uint4_to_numeric';
+
+DROP CAST (numeric AS uint4);
+CREATE CAST (numeric AS uint4) WITH FUNCTION uint4_from_numeric(numeric) AS ASSIGNMENT;
+
+DROP CAST (uint4 AS numeric);
+CREATE CAST (uint4 AS numeric) WITH FUNCTION uint4_to_numeric(uint4) AS IMPLICIT;
 
 -- Casts block
 
@@ -226,6 +283,25 @@ CREATE CAST (int1 AS jsonb) WITH FUNCTION int1_to_jsonb(int1) AS IMPLICIT;
 
 
 
+-- Numeric casts block
+
+CREATE FUNCTION int1_from_numeric(numeric) RETURNS int1
+    IMMUTABLE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'int1_from_numeric';
+
+CREATE FUNCTION int1_to_numeric(int1) RETURNS numeric
+    IMMUTABLE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uint128', 'int1_to_numeric';
+
+DROP CAST (numeric AS int1);
+CREATE CAST (numeric AS int1) WITH FUNCTION int1_from_numeric(numeric) AS ASSIGNMENT;
+
+DROP CAST (int1 AS numeric);
+CREATE CAST (int1 AS numeric) WITH FUNCTION int1_to_numeric(int1) AS IMPLICIT;
 
 -- Casts block
 

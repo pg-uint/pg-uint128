@@ -8,8 +8,48 @@ require_once __DIR__ . '/sqlgen_v1.1.1_types.php';
 $types = getV1_1_1_Types();
 $buf = '';
 
+function genCastFunc(Type $left, Type $right): string
+{
+    $EXT_TYPE = $right->pgName;
+    $extName = EXT_NAME;
+
+    return <<<EOF
+CREATE FUNCTION {$left->pgName}_from_$EXT_TYPE($EXT_TYPE) RETURNS {$left->pgName}
+    IMMUTABLE
+    STRICT
+    LANGUAGE C
+    AS '\$libdir/$extName', '{$left->pgName}_from_$EXT_TYPE';
+
+CREATE FUNCTION {$left->pgName}_to_$EXT_TYPE($left->pgName) RETURNS {$EXT_TYPE}
+    IMMUTABLE
+    STRICT
+    LANGUAGE C
+    AS '\$libdir/$extName', '{$left->pgName}_to_$EXT_TYPE';
+
+
+EOF;
+
+}
+
 foreach ($types as $type) {
     $buf .= $type->toSQL(EXT_NAME) . "\n";
+
+    // Fast casts to numeric
+    if (in_array($type->type, [INT8, UINT8, UINT16, UINT32], true)) {
+        $buf .= "-- Numeric casts block\n\n";
+
+        $buf .= genCastFunc($type->type, NUMERIC);
+
+        $buf .= <<<SQL
+DROP CAST (numeric AS {$type->type->pgName});
+CREATE CAST (numeric AS {$type->type->pgName}) WITH FUNCTION {$type->type->pgName}_from_numeric(numeric) AS ASSIGNMENT;
+
+DROP CAST ({$type->type->pgName} AS numeric);
+CREATE CAST ({$type->type->pgName} AS numeric) WITH FUNCTION {$type->type->pgName}_to_numeric({$type->type->pgName}) AS IMPLICIT;
+SQL;
+
+        $buf .= "\n";
+    }
 }
 
 $fileName = "uint128--1.1.0--1.1.1.sql";
@@ -132,8 +172,49 @@ function getJSONBTest(Type $type): array
     return [$test, $expected];
 }
 
+function getNumericTest(Type $type): array
+{
+    $test = '';
+    $expected = '';
+
+    // To numeric
+
+    $q = "SELECT (0::$type->pgName)::numeric;\n";
+
+    $test .= $q;
+    $expected .= $q;
+
+    $expected .= genSqlExpectedPaddedValue(NUMERIC->pgName, "0", true);
+
+    // From numeric
+
+    $q = "SELECT ('0'::numeric)::$type->pgName;\n";
+
+    $test .= $q;
+    $expected .= $q;
+
+    $expected .= genSqlExpectedPaddedValue($type->pgName, "0",
+        !$type->isUnsigned && $type !== INT128 && $type->bitSize !== 8);
+
+    // From numeric error
+
+    $overflowVal = \bcadd($type->maxValue, '1');
+
+    $q = "SELECT ('$overflowVal'::numeric)::$type->pgName;\n";
+
+    $test .= $q;
+    $expected .= $q;
+    $expected .= "ERROR:  $type->pgName out of range\n";
+
+    return [$test, $expected];
+}
+
 foreach ($types as $type) {
     [$test, $expected] = $type->toSQLTests();
+
+    [$testTmp, $expectedTmp] = getNumericTest($type->type);
+    $test .= $testTmp;
+    $expected .= $expectedTmp;
 
     [$testTmp, $expectedTmp] = getJSONTest($type->type);
     $test .= $testTmp;

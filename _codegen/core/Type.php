@@ -236,6 +236,48 @@ const UUID = new Type(
     toDatum: '',
 );
 
+const FLOAT4 = new Type(
+    name: 'float32',
+    isUnsigned: false,
+    bitSize: 32,
+    minValue: '',
+    maxValue: '',
+    pgName: 'float4',
+    pgGetArgMacro: 'PG_GETARG_FLOAT4',
+    pgReturnMacro: 'PG_RETURN_FLOAT4',
+    strLen: 0,
+    fromDatum: 'DatumGetFloat8',
+    toDatum: 'Float8GetDatum',
+);
+
+const FLOAT8 = new Type(
+    name: 'float64',
+    isUnsigned: false,
+    bitSize: 64,
+    minValue: '',
+    maxValue: '',
+    pgName: 'float8',
+    pgGetArgMacro: 'PG_GETARG_FLOAT8',
+    pgReturnMacro: 'PG_RETURN_FLOAT8',
+    strLen: 0,
+    fromDatum: 'DatumGetFloat4',
+    toDatum: 'Float4GetDatum',
+);
+
+const NUMERIC = new Type(
+    name: 'Numeric',
+    isUnsigned: false,
+    bitSize: 64,
+    minValue: '',
+    maxValue: '',
+    pgName: 'numeric',
+    pgGetArgMacro: 'PG_GETARG_NUMERIC',
+    pgReturnMacro: 'PG_RETURN_NUMERIC',
+    strLen: 0,
+    fromDatum: 'DatumGetNumeric',
+    toDatum: 'NumericGetDatum',
+);
+
 const JSON = new Type(
     name: 'json',
     isUnsigned: false,
@@ -243,7 +285,7 @@ const JSON = new Type(
     minValue: '',
     maxValue: '',
     pgName: 'json',
-    pgGetArgMacro: 'PG_GETARG_UUID',
+    pgGetArgMacro: 'PG_GETARG_TEXT_PP',
     pgReturnMacro: 'PG_RETURN_DATUM',
     strLen: 0,
     fromDatum: '',
@@ -257,7 +299,7 @@ const JSONB = new Type(
     minValue: '',
     maxValue: '',
     pgName: 'jsonb',
-    pgGetArgMacro: 'PG_GETARG_UUID',
+    pgGetArgMacro: 'PG_GETARG_JSONB_P',
     pgReturnMacro: 'PG_RETURN_JSONB_P',
     strLen: 0,
     fromDatum: '',

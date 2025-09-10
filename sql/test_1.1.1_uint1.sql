@@ -1,5 +1,8 @@
 -- Testing cross-types compatibility
 
+SELECT (0::uint1)::numeric;
+SELECT ('0'::numeric)::uint1;
+SELECT ('256'::numeric)::uint1;
 SELECT (0::uint1)::json;
 SELECT json_build_object('some', 0::uint1);
 SELECT ('0'::json)::uint1;
