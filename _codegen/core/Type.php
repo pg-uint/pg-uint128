@@ -24,6 +24,8 @@ class Type
 
         public readonly string $pgGetArgPtrMacro = '',
         public readonly string $pgReturnPtrMacro = '',
+
+        public readonly bool $builtIn = false,
     ) {
     }
 
@@ -55,6 +57,56 @@ class Type
     public function getRangePgTypeName(): string
     {
         return "{$this->pgName}range";
+    }
+
+    public function canOverflow(Type $type): bool
+    {
+        if (in_array($this, ALWAYS_OVERFLOW_TYPES, true)) {
+            return true;
+        }
+        if (in_array($type, ALWAYS_OVERFLOW_TYPES, true)) {
+            return false;
+        }
+
+        // int <-> int, uint <-> uint
+        if ($this->isUnsigned === $type->isUnsigned) {
+            return $this->bitSize > $type->bitSize;
+        }
+
+        // uint > int
+        if ($this->isUnsigned && !$type->isUnsigned) {
+            return $this->bitSize >= $type->bitSize;
+        }
+
+        // int > uint (int can only underflow uint)
+        return $this->bitSize > $type->bitSize;
+    }
+
+    public function canUnderflow(Type $type): bool
+    {
+        if (in_array($this, ALWAYS_OVERFLOW_TYPES, true)) {
+            return true;
+        }
+        if (in_array($type, ALWAYS_OVERFLOW_TYPES, true)) {
+            return false;
+        }
+
+        // uint never underflow another unit
+        if ($this->isUnsigned && $type->isUnsigned) {
+            return false;
+        }
+        // int can underflow int only if its scale is bigger
+        if (!$this->isUnsigned && !$type->isUnsigned) {
+            return $this->bitSize > $type->bitSize;
+        }
+
+        // uint never underflow int
+        if ($this->isUnsigned && !$type->isUnsigned) {
+            return false;
+        }
+
+        // int > uint (int always underflow uint, cause int can be negative)
+        return true;
     }
 }
 
@@ -164,6 +216,7 @@ const INT16 = new Type(
     strLen: 6,
     fromDatum: 'DatumGetInt16',
     toDatum: 'Int16GetDatum',
+    builtIn: true,
 );
 const INT32 = new Type(
     name: 'int32',
@@ -177,6 +230,7 @@ const INT32 = new Type(
     strLen: 11,
     fromDatum: 'DatumGetInt32',
     toDatum: 'Int32GetDatum',
+    builtIn: true,
 );
 const INT64 = new Type(
     name: 'int64',
@@ -190,6 +244,7 @@ const INT64 = new Type(
     strLen: 20,
     fromDatum: 'DatumGetInt64',
     toDatum: 'Int64GetDatum',
+    builtIn: true,
 );
 const INT128 = new Type(
     name: 'int128',
@@ -234,10 +289,11 @@ const UUID = new Type(
     strLen: 36,
     fromDatum: '',
     toDatum: '',
+    builtIn: true,
 );
 
 const FLOAT4 = new Type(
-    name: 'float32',
+    name: 'float4',
     isUnsigned: false,
     bitSize: 32,
     minValue: '',
@@ -248,10 +304,11 @@ const FLOAT4 = new Type(
     strLen: 0,
     fromDatum: 'DatumGetFloat8',
     toDatum: 'Float8GetDatum',
+    builtIn: true,
 );
 
 const FLOAT8 = new Type(
-    name: 'float64',
+    name: 'float8',
     isUnsigned: false,
     bitSize: 64,
     minValue: '',
@@ -262,6 +319,7 @@ const FLOAT8 = new Type(
     strLen: 0,
     fromDatum: 'DatumGetFloat4',
     toDatum: 'Float4GetDatum',
+    builtIn: true,
 );
 
 const NUMERIC = new Type(
@@ -276,6 +334,7 @@ const NUMERIC = new Type(
     strLen: 0,
     fromDatum: 'DatumGetNumeric',
     toDatum: 'NumericGetDatum',
+    builtIn: true,
 );
 
 const JSON = new Type(
@@ -290,6 +349,7 @@ const JSON = new Type(
     strLen: 0,
     fromDatum: '',
     toDatum: '',
+    builtIn: true,
 );
 
 const JSONB = new Type(
@@ -304,4 +364,13 @@ const JSONB = new Type(
     strLen: 0,
     fromDatum: '',
     toDatum: '',
+    builtIn: true,
 );
+
+const ALWAYS_OVERFLOW_TYPES = [
+    NUMERIC,
+    FLOAT4,
+    FLOAT8,
+    JSON,
+    JSONB,
+];

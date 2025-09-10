@@ -45,7 +45,7 @@ CREATE TYPE uint16 (
 );
 
 
--- Inout casts block
+-- In-out casts block
 
 CREATE CAST (double precision AS uint16) WITH INOUT AS ASSIGNMENT;
 CREATE CAST (uint16 AS double precision) WITH INOUT AS IMPLICIT;
@@ -1809,7 +1809,7 @@ CREATE TYPE uint8 (
 );
 
 
--- Inout casts block
+-- In-out casts block
 
 CREATE CAST (double precision AS uint8) WITH INOUT AS ASSIGNMENT;
 CREATE CAST (uint8 AS double precision) WITH INOUT AS IMPLICIT;
@@ -3557,7 +3557,7 @@ CREATE TYPE uint4 (
 );
 
 
--- Inout casts block
+-- In-out casts block
 
 CREATE CAST (double precision AS uint4) WITH INOUT AS ASSIGNMENT;
 CREATE CAST (uint4 AS double precision) WITH INOUT AS IMPLICIT;
@@ -5305,7 +5305,7 @@ CREATE TYPE uint2 (
 );
 
 
--- Inout casts block
+-- In-out casts block
 
 CREATE CAST (double precision AS uint2) WITH INOUT AS ASSIGNMENT;
 CREATE CAST (uint2 AS double precision) WITH INOUT AS IMPLICIT;
@@ -7053,7 +7053,7 @@ CREATE TYPE int16 (
 );
 
 
--- Inout casts block
+-- In-out casts block
 
 CREATE CAST (double precision AS int16) WITH INOUT AS ASSIGNMENT;
 CREATE CAST (int16 AS double precision) WITH INOUT AS IMPLICIT;
@@ -8763,6 +8763,8 @@ CREATE TYPE int16range AS RANGE (
 
 
 -- Cross types ops
+-- Type uint16 block
+
 
 -- Casts block
 
@@ -9572,6 +9574,8 @@ CREATE OPERATOR % (
 
 
 
+-- Type uint8 block
+
 
 -- Casts block
 
@@ -10365,6 +10369,8 @@ CREATE OPERATOR % (
 
 
 
+-- Type uint4 block
+
 
 -- Casts block
 
@@ -11142,6 +11148,8 @@ CREATE OPERATOR % (
 
 
 
+-- Type uint2 block
+
 
 -- Casts block
 
@@ -11902,6 +11910,8 @@ CREATE OPERATOR % (
 
 
 
+
+-- Type int16 block
 
 
 -- Casts block

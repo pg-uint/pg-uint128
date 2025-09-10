@@ -754,6 +754,7 @@ class TypeConfig
     /**
      * @param array<TypeOpConfig> $ops
      * @param array<Type> $casts
+     * @param array<Type> $inOutCasts
      * @param array<AggOp> $aggOps
      */
     public function __construct(
@@ -762,23 +763,71 @@ class TypeConfig
         public readonly bool $passByValue = true,
         public readonly array $ops = [],
         public readonly array $casts = [],
+        public readonly array $inOutCasts = [],
         public readonly bool $crossTypesOnly = false,
         public readonly array $aggOps = [],
     ) {
         $this->name = $type->pgName;
     }
 
-    public function toSQL(string $extName): string
+    public function toSQL(int $version, string $extName): string
     {
         $sql = '';
 
-        if (!$this->crossTypesOnly) {
+        if (!$this->crossTypesOnly && !$this->type->builtIn) {
+            $sql .= $this->toSQLTypeDef($version);
+
+            // IN-OUT casts
+            $sql .= $this->toSQLInOutCasts($version);
+        } else {
             $sql .= "-- Type {$this->type->pgName} block\n\n";
+        }
 
-            $passByValue = $this->passByValue ? 'PASSEDBYVALUE,' : '--PASSEDBYVALUE,';
-            $byteSize = $this->type->bitSize / 8;
+        $sql .= "\n-- Casts block";
 
-            $sql .= <<<EOL
+        foreach ($this->casts as $EXT_TYPE) {
+            $sql .= "\n\n";
+
+            $sql .= $this->toSQLCastFunctions($version, $EXT_TYPE);
+            $sql .= $this->toSQLCast($version, $EXT_TYPE);
+        }
+
+        $sql .= "\n-- Ops block\n\n";
+
+        $sql .= $this->toSQLOperatorFunctions($version);
+        $sql .= $this->toSQLOperators($version);
+
+        if (!$this->crossTypesOnly && !$this->type->builtIn) {
+            $sql .= $this->toSQLOperatorFamily($version);
+        }
+
+        if (!$this->crossTypesOnly && !$this->type->builtIn) {
+            $sql .= $this->toSQLAggOps($version);
+
+            $sql .= $this->toSQLGenSeries($version);
+
+            $sql .= "\n";
+
+            $sql .= $this->toSQLRanges($version);
+
+            $sql .= "\n";
+        }
+
+        $sql .= "\n";
+
+        return $sql;
+    }
+
+    public function toSQLTypeDef(int $version): string
+    {
+        $extName = EXT_NAME;
+
+        $passByValue = $this->passByValue ? 'PASSEDBYVALUE,' : '--PASSEDBYVALUE,';
+        $byteSize = $this->type->bitSize / 8;
+
+        $sql = "-- Type {$this->type->pgName} block\n\n";
+
+        return $sql . <<<EOL
 CREATE FUNCTION {$this->name}_in(cstring) RETURNS {$this->name}
     IMMUTABLE
     PARALLEL SAFE
@@ -819,33 +868,100 @@ CREATE TYPE $this->name (
 
 
 EOL;
+    }
 
-            $sql .= "\n-- Inout casts block\n\n";
+    public function toSQLInOutCasts(int $version): string
+    {
+        $inoutBlockStart = "\n-- In-out casts block\n\n";
+        $sql = '';
 
-            // IN-OUT casts
-            foreach (['double precision', 'numeric', 'real'] as $inoutType) {
-                $sql .= "CREATE CAST ($inoutType AS $this->name) WITH INOUT AS ASSIGNMENT;\n";
-                $sql .= "CREATE CAST ($this->name AS $inoutType) WITH INOUT AS IMPLICIT;\n";
+        if ($version >= 1200) {
+            if ($this->inOutCasts !== []) {
+                $sql .= $inoutBlockStart;
+            }
 
+            foreach ($this->inOutCasts as $inOutCast) {
+                $sql .= $this->toSQLInOutCast($version, $inOutCast);
                 $sql .= "\n";
             }
+
+            return $sql;
         }
 
-        $sql .= "\n-- Casts block";
+        $sql .= $inoutBlockStart;
 
-        foreach ($this->casts as $EXT_TYPE) {
-            $EXT_TYPE = $EXT_TYPE->pgName;
+        foreach (['double precision', 'numeric', 'real'] as $inoutType) {
+            $sql .= "CREATE CAST ($inoutType AS $this->name) WITH INOUT AS ASSIGNMENT;\n";
+            $sql .= "CREATE CAST ($this->name AS $inoutType) WITH INOUT AS IMPLICIT;\n";
 
-            $sql .= "\n\n";
+            $sql .= "\n";
+        }
+
+        return $sql;
+    }
+
+    public function toSQLInOutCast(int $version, Type $castTo): string
+    {
+        $isImplicitCast = true;
+
+        $canOverflow = $castTo->canOverflow($this->type);
+        $canUnderflow = $castTo->canUnderflow($this->type);
+
+        if ($canOverflow || $canUnderflow) {
+            $isImplicitCast = false;
+        }
+
+        $castTypeStr = $isImplicitCast ? "IMPLICIT" : "ASSIGNMENT";
+
+//        var_dump("INOUT {$castTo->pgName} AS {$this->name}, CASTTYPE {$castTypeStr}, canOverflow {$canOverflow}, canUnderflow {$canUnderflow}");
+
+        return "CREATE CAST ($castTo->pgName AS $this->name) WITH INOUT AS $castTypeStr;\n";
+    }
+
+    public function toSQLCastFunctions(int $version, Type $castTo, bool $replace = false): string
+    {
+        $extName = EXT_NAME;
+        $EXT_TYPE = $castTo->pgName;
+
+        $LEAKPROOF_STR = "\n    LEAKPROOF";
+
+        $replaceStr = $replace ? 'OR REPLACE ' : '';
+
+        $sql = '';
+
+        if ($version >= 1200) {
+            $leakProof = true;
+
+            $canOverflow = $castTo->canOverflow($this->type);
+            $canUnderflow = $castTo->canUnderflow($this->type);
+
+            if ($canOverflow || $canUnderflow) {
+                $leakProof = false;
+            }
+
+//            $leakProofDbg = $leakProof ? '1' : '0';
+//            var_dump("{$this->type->pgName} from {$castTo->pgName}, LEAKPROOF {$leakProofDbg}, canOverflow {$canOverflow}, canUnderflow {$canUnderflow}");
+
+            $leakProofStr = $leakProof ? $LEAKPROOF_STR : "";
 
             $sql .= <<<EOL
-CREATE FUNCTION {$this->name}_from_$EXT_TYPE($EXT_TYPE) RETURNS {$this->name}
+CREATE {$replaceStr}FUNCTION {$this->name}_from_$EXT_TYPE($EXT_TYPE) RETURNS {$this->name}
+    IMMUTABLE
+    PARALLEL SAFE
+    STRICT{$leakProofStr}
+    LANGUAGE C
+    AS '\$libdir/$extName', '{$this->name}_from_$EXT_TYPE';
+EOL;
+            $sql .= "\n";
+        } else {
+            $sql .= <<<EOL
+CREATE {$replaceStr}FUNCTION {$this->name}_from_$EXT_TYPE($EXT_TYPE) RETURNS {$this->name}
     IMMUTABLE
     STRICT
     LANGUAGE C
     AS '\$libdir/$extName', '{$this->name}_from_$EXT_TYPE';
 
-CREATE FUNCTION {$this->name}_to_$EXT_TYPE($this->name) RETURNS {$EXT_TYPE}
+CREATE {$replaceStr}FUNCTION {$this->name}_to_$EXT_TYPE($this->name) RETURNS {$EXT_TYPE}
     IMMUTABLE
     STRICT
     LANGUAGE C
@@ -853,24 +969,69 @@ CREATE FUNCTION {$this->name}_to_$EXT_TYPE($this->name) RETURNS {$EXT_TYPE}
 
 
 EOL;
+        }
 
+        return $sql;
+    }
+
+    public function toSQLCast(int $version, Type $castTo): string
+    {
+        $sql = '';
+
+        $EXT_TYPE = $castTo->pgName;
+
+        if ($version >= 1200) {
+            $isImplicitCast = true;
+
+            $canOverflow = $castTo->canOverflow($this->type);
+            $canUnderflow = $castTo->canUnderflow($this->type);
+
+            if ($canOverflow || $canUnderflow) {
+                $isImplicitCast = false;
+            }
+
+            $castTypeStr = $isImplicitCast ? "IMPLICIT" : "ASSIGNMENT";
+
+//            var_dump("{$EXT_TYPE} AS {$this->name}, CASTTYPE {$castTypeStr}, canOverflow {$canOverflow}, canUnderflow {$canUnderflow}");
+
+            $sql .= "CREATE CAST ($EXT_TYPE AS $this->name) WITH FUNCTION {$this->name}_from_$EXT_TYPE($EXT_TYPE) AS $castTypeStr;\n";
+        } else {
             $sql .= "CREATE CAST ($EXT_TYPE AS $this->name) WITH FUNCTION {$this->name}_from_$EXT_TYPE($EXT_TYPE) AS IMPLICIT;\n";
             $sql .= "CREATE CAST ($this->name AS $EXT_TYPE) WITH FUNCTION {$this->name}_to_$EXT_TYPE($this->name) AS IMPLICIT;\n";
         }
 
-        $sql .= "\n-- Ops block\n\n";
+        return $sql;
+    }
+
+    public function toSQLOperatorFunctions(int $version): string
+    {
+        $sql = '';
 
         foreach ($this->ops as $op) {
-            $sql .= $op->getSQLFunc($extName, $this, $this->crossTypesOnly) . "\n";
+            $sql .= $op->getSQLFunc(EXT_NAME, $this, $this->crossTypesOnly) . "\n";
         }
+
+        return $sql;
+    }
+
+    public function toSQLOperators(int $version): string
+    {
+        $sql = '';
 
         foreach ($this->ops as $op) {
-            $sql .= $op->getSQLOperator($extName, $this, $this->crossTypesOnly) . "\n";
+            $sql .= $op->getSQLOperator(EXT_NAME, $this, $this->crossTypesOnly) . "\n";
         }
 
-        if (!$this->crossTypesOnly) {
-            $sql .= "\n-- Index ops block\n\n";
-            $sql .= <<<EOT
+        return $sql;
+    }
+
+    public function toSQLOperatorFamily(int $version): string
+    {
+        $extName = EXT_NAME;
+
+        $sql = "\n-- Index ops block\n\n";
+
+        return $sql . <<<EOT
 CREATE FUNCTION {$this->name}_cmp($this->name, $this->name) RETURNS int
     IMMUTABLE
     STRICT
@@ -1011,40 +1172,41 @@ WHERE NOT EXISTS (
 
 ORDER BY typ.opc_oid, deps.oid;
 EOT;
-        }
+    }
 
-        if (!$this->crossTypesOnly) {
-            $sql .= "\n-- Agg ops block\n\n";
+    public function toSQLAggOps(int $version): string
+    {
+        $sql = '';
+        $avgAggFuncGenerated = false;
 
-            $avgAggFuncGenerated = false;
+        $sql .= "\n-- Agg ops block\n\n";
 
-            foreach ($this->aggOps as $aggOp) {
-                if ($aggOp === AggOp::Sum || $aggOp === AggOp::Avg) {
-                    $sql .= $aggOp->getSql($extName, $this->type, !$avgAggFuncGenerated);
-                    $avgAggFuncGenerated = true;
-                } else {
-                    $sql .= $aggOp->getSql($extName, $this->type, true);
-                }
-
-                $sql .= "\n";
+        foreach ($this->aggOps as $aggOp) {
+            if ($aggOp === AggOp::Sum || $aggOp === AggOp::Avg) {
+                $sql .= $aggOp->getSql(EXT_NAME, $this->type, !$avgAggFuncGenerated);
+                $avgAggFuncGenerated = true;
+            } else {
+                $sql .= $aggOp->getSql(EXT_NAME, $this->type, true);
             }
 
-            $sql .= "\n-- Generate series block\n\n";
-
-            $sql .= genSQLGenerateSeries($this->type);
-
-            $sql .= "\n";
-
-            $sql .= "\n-- Ranges block\n\n";
-
-            $sql .= genSQLRanges($this->type);
-
             $sql .= "\n";
         }
 
-        $sql .= "\n";
-
         return $sql;
+    }
+
+    public function toSQLGenSeries(int $version): string
+    {
+        $sql = "\n-- Generate series block\n\n";
+
+        return $sql . genSQLGenerateSeries($this->type);
+    }
+
+    public function toSQLRanges(int $version): string
+    {
+        $sql = "\n-- Ranges block\n\n";
+
+        return $sql . genSQLRanges($this->type);
     }
 
     /**
