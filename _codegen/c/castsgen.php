@@ -280,7 +280,7 @@ Datum $funcName(PG_FUNCTION_ARGS)
     Jsonb* in = PG_GETARG_JSONB_P(0);
     JsonbValue v;
     char* cStrValue;
-    int convRes;
+    parse_uint_res_t convRes;
     $left->name retValue = 0;
 
     if (!JsonbExtractScalar(&in->root, &v))
@@ -304,8 +304,15 @@ Datum $funcName(PG_FUNCTION_ARGS)
     );
 
     convRes = parse_{$left->name}(cStrValue, &retValue);
-    // Syntax error
-    if (convRes == -1)
+    if (convRes == ParseOK) {
+        pfree(cStrValue);
+
+        PG_FREE_IF_COPY(in, 0);
+
+        $left->pgReturnMacro(retValue);
+    }
+
+    if (convRes == ParseError)
     {
         ereport(
             ERROR,
@@ -316,23 +323,13 @@ Datum $funcName(PG_FUNCTION_ARGS)
         );
     }
 
-    // Overflow error
-    if (convRes == -2)
-    {
-        ereport(
-            ERROR,
-            (
-                errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
-                errmsg("{$left->pgName} out of range: %s", cStrValue)
-            )
-        );
-    }
-
-    pfree(cStrValue);
-
-    PG_FREE_IF_COPY(in, 0);
-
-    $left->pgReturnMacro(retValue);
+    ereport(
+        ERROR,
+        (
+            errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
+            errmsg("{$left->pgName} out of range: %s", cStrValue)
+        )
+    );
 }
 C;
 }
@@ -349,7 +346,7 @@ Datum $funcName(PG_FUNCTION_ARGS)
     text* json = PG_GETARG_TEXT_PP(0);
     char* cStrValue;
     $left->name retValue = 0;
-    int convRes;
+    parse_uint_res_t convRes;
 
     // Enforce JSON validation for supported PostgreSQL versions
 #if PG_VERSION_NUM >= 130000
@@ -410,7 +407,11 @@ Datum $funcName(PG_FUNCTION_ARGS)
     pfree(cStrValue);
     PG_FREE_IF_COPY(json, 0);
 
-    if (convRes == -1)
+    if (convRes == ParseOK) {
+        $left->pgReturnMacro(retValue);
+    }
+
+    if (convRes == ParseError)
     {
         ereport(
             ERROR,
@@ -421,18 +422,13 @@ Datum $funcName(PG_FUNCTION_ARGS)
         );
     }
 
-    if (convRes == -2)
-    {
-        ereport(
-            ERROR,
-            (
-                errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
-                errmsg("$left->pgName out of range")
-            )
-        );
-    }
-
-    $left->pgReturnMacro(retValue);
+    ereport(
+        ERROR,
+        (
+            errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
+            errmsg("$left->pgName out of range")
+        )
+    );
 }
 C;
 }

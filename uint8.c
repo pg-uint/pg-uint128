@@ -20,7 +20,7 @@ Datum uint1_in(PG_FUNCTION_ARGS)
 {
     char *num_str = PG_GETARG_CSTRING(0);
     uint8 num = 0;
-    int convRes = 0;
+    parse_uint_res_t convRes = 0;
 
     if (num_str == NULL)
         elog(ERROR, "NULL pointer");
@@ -36,7 +36,12 @@ Datum uint1_in(PG_FUNCTION_ARGS)
     }
 
     convRes = parse_uint8(num_str, &num);
-    if (convRes == -1) {
+    if (convRes == ParseOK)
+    {
+        PG_RETURN_UINT8(num);
+    }
+
+    if (convRes == ParseError) {
         ereport(
             ERROR,
             (
@@ -45,12 +50,8 @@ Datum uint1_in(PG_FUNCTION_ARGS)
             )
         );
     }
-    if (convRes == -2)
-    {
-        OUT_OF_RANGE_ERR(uint1);
-    }
 
-    PG_RETURN_UINT8(num);
+    OUT_OF_RANGE_ERR(uint1);
 }
 
 Datum uint1_out(PG_FUNCTION_ARGS)

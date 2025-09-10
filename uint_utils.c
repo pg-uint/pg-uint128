@@ -2,14 +2,17 @@
 
 // Function to parse uint from string
 #define DEFINE_PARSE_UINT_FUNC(uint, bitSize) \
-    int parse_##uint(const char *str, uint *result) \
+    parse_uint_res_t parse_##uint(const char *str, uint *result) \
     { \
         size_t len = strlen(str); \
+        if (len == 0) { \
+            return ParseOK; \
+        } \
 \
         for (size_t i = 0; i < len; i++) { \
             if (str[i] < '0' || str[i] > '9') { \
                 /* Invalid character */ \
-                return -1; \
+                return ParseError; \
             } \
 \
             /* Shift left by 10 and add the new digit */ \
@@ -17,16 +20,16 @@
 \
             if (mul_u##bitSize##_overflow(*result, 10, result)) { \
                 /* Overflow detected */ \
-                return -2; \
+                return ParseOverflow; \
             } \
 \
             if (add_u##bitSize##_overflow(*result, (str[i] - '0'), result)) { \
                 /* Overflow detected */ \
-                return -2; \
+                return ParseOverflow; \
             } \
         } \
 \
-        return 0; \
+        return ParseOK; \
     }
 
 DEFINE_PARSE_UINT_FUNC(uint8, 8);
