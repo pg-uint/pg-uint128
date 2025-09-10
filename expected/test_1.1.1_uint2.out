@@ -35,3 +35,5 @@ SELECT ('0'::jsonb)::uint2;
  0
 (1 row)
 
+SELECT ('"abc"'::jsonb)::uint2;
+ERROR:  cannot cast jsonb string to type uint2

@@ -6,3 +6,4 @@ SELECT ('0'::json)::int1;
 SELECT (0::int1)::jsonb;
 SELECT jsonb_build_object('some', 0::int1);
 SELECT ('0'::jsonb)::int1;
+SELECT ('"abc"'::jsonb)::int1;

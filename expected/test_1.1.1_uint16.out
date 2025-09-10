@@ -35,3 +35,5 @@ SELECT ('0'::jsonb)::uint16;
  0
 (1 row)
 
+SELECT ('"abc"'::jsonb)::uint16;
+ERROR:  cannot cast jsonb string to type uint16

@@ -351,6 +351,7 @@ Datum $funcName(PG_FUNCTION_ARGS)
     $left->name retValue = 0;
     int convRes;
 
+    // Enforce JSON validation for supported PostgreSQL versions
 #if PG_VERSION_NUM >= 130000
     JsonTokenType token;
 
