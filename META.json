@@ -1,7 +1,7 @@
 {
   "name": "uint128",
   "abstract": "Unsigned integer datatypes for PostgreSQL",
-  "description": "This extension provides additional integer types for PostgreSQL: uint2, uint4, uint8, uint16, int16",
+  "description": "This extension provides additional integer types for PostgreSQL: uint1, uint2, uint4, uint8, uint16, int1, int16",
   "version": "1.1.1",
   "release_status": "testing",
   "maintainer": [

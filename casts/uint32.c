@@ -4,11 +4,9 @@
 #include "int_utils.h"
 #include "uint_utils.h"
 #include "numeric_utils.h"
-#include "utils/jsonb.h"
-#include "utils/jsonfuncs.h"
 #include "utils/fmgrprotos.h"
 #include "utils/builtins.h"
-#include "utils.h"
+#include "json_utils.h"
 
 // Unsigned casts
 
@@ -221,7 +219,7 @@ Datum uint4_to_jsonb(PG_FUNCTION_ARGS) {
     JsonbValue jbv;
     Jsonb* result;
 
-    /* convert to Numeric using your internal function */
+    /* convert to Numeric */
     char buf[UINT32_STRBUFLEN];
     Numeric num = uint32_to_numeric(val, buf, sizeof(buf));
 
@@ -238,43 +236,68 @@ Datum uint4_to_jsonb(PG_FUNCTION_ARGS) {
 PG_FUNCTION_INFO_V1(uint4_from_json);
 Datum uint4_from_json(PG_FUNCTION_ARGS)
 {
-    text* in = PG_GETARG_TEXT_PP(0);
+    text* json = PG_GETARG_TEXT_PP(0);
     char* cStrValue;
     uint32 retValue = 0;
     int convRes;
 
+#if PG_VERSION_NUM >= 130000
+    JsonTokenType token;
+
+#if PG_VERSION_NUM >= 170000 // 17+
     /* Lex one token to check JSON type */
     JsonLexContext lex;
     JsonParseErrorType lexResult;
-    JsonTokenType token;
 
-    makeJsonLexContext(&lex, in, false);
+    makeJsonLexContext(&lex, json, false);
     lexResult = json_lex(&lex);
     if (lexResult != JSON_SUCCESS)
         json_errsave_error(lexResult, &lex, NULL);
 
     token = lex.token_type;
+#elif PG_VERSION_NUM >= 160000 // 16
+    JsonParseErrorType result;
+    JsonLexContext *lex = makeJsonLexContext(json, false);
+
+    /* Lex exactly one token from the input and check its type. */
+    result = json_lex(lex);
+    if (result != JSON_SUCCESS)
+        json_errsave_error(result, lex, NULL);
+
+    token = lex->token_type;
+#else // 13-15
+    JsonLexContext *lex;
+    JsonParseErrorType result;
+
+    lex = makeJsonLexContext(json, false);
+
+    /* Lex exactly one token from the input and check its type. */
+    result = json_lex(lex);
+    if (result != JSON_SUCCESS)
+        json_ereport_error(result, lex);
+
+    token = lex->token_type;
+#endif
 
     if (token == JSON_TOKEN_NULL)
     {
-        PG_FREE_IF_COPY(in, 0);
+        PG_FREE_IF_COPY(json, 0);
         PG_RETURN_NULL();
     }
 
     if (token != JSON_TOKEN_NUMBER)
     {
-        PG_FREE_IF_COPY(in, 0);
-        ereport(ERROR,
-                (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
-                    errmsg("cannot cast json type to type uint4")));
+        PG_FREE_IF_COPY(json, 0);
+        cannotCastJsonValue(token, "uint4");
     }
+#endif
 
     /* Convert the text to C string */
-    cStrValue = text_to_cstring(in);
+    cStrValue = text_to_cstring(json);
     convRes = parse_uint32(cStrValue, &retValue);
 
     pfree(cStrValue);
-    PG_FREE_IF_COPY(in, 0);
+    PG_FREE_IF_COPY(json, 0);
 
     if (convRes == -1)
     {
