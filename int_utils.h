@@ -4,6 +4,11 @@
 #include "postgres.h"
 #include "uint_utils.h"
 
+/* Compatibility for older compilers that don't have __has_builtin */
+#ifndef __has_builtin
+#define __has_builtin(x) 0
+#endif
+
 static inline int128* AllocInt128(int128 initial)
 {
 	int128* ptr = palloc(sizeof(int128));
