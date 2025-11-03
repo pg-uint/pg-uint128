@@ -5,6 +5,8 @@ declare(strict_types=1);
 require_once __DIR__ . '/sql_gen_core.php';
 require_once __DIR__ . '/sqlgen_v1.1.1_types.php';
 
+$VERSION_NUM = 1110;
+
 $types = getV1_1_1_Types();
 $buf = '';
 
@@ -32,7 +34,7 @@ EOF;
 }
 
 foreach ($types as $type) {
-    $buf .= $type->toSQL(EXT_NAME) . "\n";
+    $buf .= $type->toSQL($VERSION_NUM, EXT_NAME) . "\n";
 
     // Fast casts to numeric
     if (in_array($type->type, [INT8, UINT8, UINT16, UINT32], true)) {

@@ -44,6 +44,32 @@ static inline int8 DatumGetInt8(Datum X)
 #define PG_RETURN_INT8(x)	 return Int8GetDatum(x)
 #endif
 
+/*
+ * Macros for range-checking float values before converting to integer.
+ * We must be careful here that the boundary values are expressed exactly
+ * in the float domain.  PG_INTnn_MIN is an exact power of 2, so it will
+ * be represented exactly; but PG_INTnn_MAX isn't, and might get rounded
+ * off, so avoid using that.
+ * The input must be rounded to an integer beforehand, typically with rint(),
+ * else we might draw the wrong conclusion about close-to-the-limit values.
+ * These macros will do the right thing for Inf, but not necessarily for NaN,
+ * so check isnan(num) first if that's a possibility.
+ *
+ * Src: https://github.com/postgres/postgres/blob/9016fa7e3bcde8ae4c3d63c707143af147486a10/src/include/c.h#L1054
+ */
+
+#define FLOAT4_FITS_IN_INT8(num) \
+	((num) >= (float4) PG_INT8_MIN && (num) < -((float4) PG_INT8_MIN))
+
+#define FLOAT4_FITS_IN_INT128(num) \
+	((num) >= (float4) INT128_MIN && (num) < -((float4) INT128_MIN))
+
+#define FLOAT8_FITS_IN_INT8(num) \
+	((num) >= (float8) PG_INT8_MIN && (num) < -((float8) PG_INT8_MIN))
+
+#define FLOAT8_FITS_IN_INT128(num) \
+	((num) >= (float8) INT128_MIN && (num) < -((float8) INT128_MIN))
+
 typedef enum {
 	INT8_STRLEN = 4,
 	INT8_STRBUFLEN = INT8_STRLEN + 1,

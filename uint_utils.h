@@ -44,6 +44,53 @@ static inline uint128* AllocUint128(uint128 initial)
 #define PG_RETURN_UINT8(x)  return UInt8GetDatum(x)
 #endif
 
+
+/*
+ * Macros for range-checking float values before converting to integer.
+ * We must be careful here that the boundary values are expressed exactly
+ * in the float domain.  PG_INTnn_MIN is an exact power of 2, so it will
+ * be represented exactly; but PG_INTnn_MAX isn't, and might get rounded
+ * off, so avoid using that.
+ * The input must be rounded to an integer beforehand, typically with rint(),
+ * else we might draw the wrong conclusion about close-to-the-limit values.
+ * These macros will do the right thing for Inf, but not necessarily for NaN,
+ * so check isnan(num) first if that's a possibility.
+ *
+ * Src: https://github.com/postgres/postgres/blob/9016fa7e3bcde8ae4c3d63c707143af147486a10/src/include/c.h#L1054
+ *
+ * Note: For unsigned integers we use the next power of two, i.e. uint8 max 255 becomes 256
+ */
+
+#define FLOAT4_FITS_IN_UINT8(num) \
+	((num) >= (float4) 0 && (num) < (256.0f))
+
+#define FLOAT4_FITS_IN_UINT16(num) \
+	((num) >= (float4) 0 && (num) < (65536.0f))
+
+#define FLOAT4_FITS_IN_UINT32(num) \
+	((num) >= (float4) 0 && (num) < (4294967296.0f))
+
+#define FLOAT4_FITS_IN_UINT64(num) \
+	((num) >= (float4) 0 && (num) < (18446744073709551616.0f))
+
+#define FLOAT4_FITS_IN_UINT128(num) \
+	((num) >= (float4) 0 && (num) < (340282366920938463463374607431768211456.0f))
+
+#define FLOAT8_FITS_IN_UINT8(num) \
+	((num) >= (float8) 0 && (num) < (256.0))
+
+#define FLOAT8_FITS_IN_UINT16(num) \
+	((num) >= (float8) 0 && (num) < (65536.0))
+
+#define FLOAT8_FITS_IN_UINT32(num) \
+	((num) >= (float8) 0 && (num) < (4294967296.0))
+
+#define FLOAT8_FITS_IN_UINT64(num) \
+	((num) >= (float8) 0 && (num) < (18446744073709551616.0))
+
+#define FLOAT8_FITS_IN_UINT128(num) \
+	((num) >= (float8) 0 && (num) < (340282366920938463463374607431768211456.0))
+
 #define DIVISION_BY_ZERO_ERR \
     ereport(ERROR, \
         ( \

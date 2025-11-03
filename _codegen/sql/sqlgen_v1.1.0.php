@@ -6,6 +6,8 @@ require_once __DIR__ . '/sql_gen_core.php';
 require_once __DIR__ . '/sqlgen_v1.0.0_types.php';
 require_once __DIR__ . '/sqlgen_v1.1.0_types.php';
 
+$VERSION_NUM = 1100;
+
 $types = getV1_1_0_Types();
 $buf = '';
 
@@ -14,7 +16,7 @@ foreach ($types as $type) {
 }
 
 foreach ($types as $type) {
-    $buf .= $type->toSQL(EXT_NAME) . "\n";;
+    $buf .= $type->toSQL($VERSION_NUM, EXT_NAME) . "\n";;
 }
 
 $buf .= "\n\n-- Cross types ops\n";
@@ -25,7 +27,7 @@ $CROSS_TYPES = buildCrossTypes(V1_1_0_UINT_TYPES, V1_1_0_INT_TYPES);
 $crossTests = [];
 
 foreach (genSQLForCrossTypes($types, $CROSS_TYPES) as $typConfig) {
-    $buf .= $typConfig->toSQL(EXT_NAME) . "\n\n";
+    $buf .= $typConfig->toSQL($VERSION_NUM, EXT_NAME) . "\n\n";
 
     $crossTests[$typConfig->type->pgName] = $typConfig->toSQLTests();
 }
@@ -74,7 +76,7 @@ function buildV1_0_0_CrossTypesSQL(): Generator
 $crossTestsWithOldTypes = [];
 
 foreach (buildV1_0_0_CrossTypesSQL() as $typConfig) {
-    $buf .= $typConfig->toSQL(EXT_NAME) . "\n\n";
+    $buf .= $typConfig->toSQL($VERSION_NUM, EXT_NAME) . "\n\n";
 
     $crossTestsWithOldTypes[$typConfig->type->pgName] = $typConfig->toSQLTests();
 }

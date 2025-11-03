@@ -222,26 +222,26 @@ SELECT s FROM generate_series(1::uint16, 10::uint16, 2::uint16) s;
 
 -- Ranges block
 
-SELECT uint16range(0, 10);
+SELECT uint16range(0::uint16, 10::uint16);
 SELECT uint16range(0::uint16, 340282366920938463463374607431768211455::uint16);
 SELECT uint16range(0::uint16, 340282366920938463463374607431768211455::uint16, '[]');
-SELECT upper(uint16range(0, 10));
-SELECT lower(uint16range(0, 10));
-SELECT isempty(uint16range(0, 10));
-SELECT uint16range(0, 10) @> 9::uint16;
-SELECT uint16range(0, 10) @> 10::uint16;
-SELECT uint16range(0, 10) && uint16range(10,20);
-SELECT uint16range(0, 10) && uint16range(9,20);
-SELECT uint16range(5, 10) - uint16range(5, 10);
-SELECT uint16range(5, 10) - uint16range(5, 9);
+SELECT upper(uint16range(0::uint16, 10::uint16));
+SELECT lower(uint16range(0::uint16, 10::uint16));
+SELECT isempty(uint16range(0::uint16, 10::uint16));
+SELECT uint16range(0::uint16, 10::uint16) @> 9::uint16;
+SELECT uint16range(0::uint16, 10::uint16) @> 10::uint16;
+SELECT uint16range(0::uint16, 10::uint16) && uint16range(10::uint16,20::uint16);
+SELECT uint16range(0::uint16, 10::uint16) && uint16range(9::uint16,20::uint16);
+SELECT uint16range(5::uint16, 10::uint16) - uint16range(5::uint16, 10::uint16);
+SELECT uint16range(5::uint16, 10::uint16) - uint16range(5::uint16, 9::uint16);
 CREATE TEMPORARY TABLE test_uint16range (
     r uint16range,
 
     EXCLUDE USING GIST (r WITH &&)
 );
 
-INSERT INTO test_uint16range (r) VALUES (uint16range(0, 10));
-INSERT INTO test_uint16range (r) VALUES (uint16range(10, 20));
-INSERT INTO test_uint16range (r) VALUES (uint16range(19, 30));
+INSERT INTO test_uint16range (r) VALUES (uint16range(0::uint16, 10::uint16));
+INSERT INTO test_uint16range (r) VALUES (uint16range(10::uint16, 20::uint16));
+INSERT INTO test_uint16range (r) VALUES (uint16range(19::uint16, 30::uint16));
 
 DROP TABLE test_uint16range;
