@@ -1,4 +1,5 @@
 ARG PGVERSION="15"
+ARG UINT128_VERSION="1.0.1"
 
 FROM debian:bookworm-20240926-slim AS builder
 
@@ -30,7 +31,8 @@ RUN make clean && make && make install
 FROM postgres:${PGVERSION}-bookworm
 
 ARG PGVERSION
-ENV UINT128_VERSION=1.0.1
+ARG UINT128_VERSION
+ENV UINT128_VERSION=${UINT128_VERSION}
 
 COPY --from=builder /usr/lib/postgresql/$PGVERSION/lib/uint128.so           /usr/lib/postgresql/$PGVERSION/lib/uint128.so
 COPY --from=builder /usr/share/postgresql/$PGVERSION/extension/uint128*     /usr/share/postgresql/$PGVERSION/extension

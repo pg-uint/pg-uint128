@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        pg_version: [ 12, 13, 14, 15, 16, 17 ]
+        pg_version: [ 12, 13, 14, 15, 16, 17, 18 ]
 
     env:
       REGISTRY: docker.io
@@ -43,6 +43,7 @@ jobs:
             ${{ env.IMAGE_NAME }}:${{ matrix.pg_version }}-latest
           build-args: |
             PGVERSION=${{ matrix.pg_version }}
+            UINT128_VERSION=${{ github.event.release.tag_name }}
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v1
