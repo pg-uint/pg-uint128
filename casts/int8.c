@@ -7,6 +7,7 @@
 #include "utils/fmgrprotos.h"
 #include "utils/builtins.h"
 #include "json_utils.h"
+#include <math.h>
 
 // Signed comparison
 
@@ -21,14 +22,6 @@ Datum int1_from_int2(PG_FUNCTION_ARGS) {
 }
 
 
-PG_FUNCTION_INFO_V1(int1_to_int2);
-Datum int1_to_int2(PG_FUNCTION_ARGS) {
-    int8 a = PG_GETARG_INT8(0);
-
-    PG_RETURN_INT16((int16) a);
-}
-
-
 PG_FUNCTION_INFO_V1(int1_from_int4);
 Datum int1_from_int4(PG_FUNCTION_ARGS) {
     int32 a = PG_GETARG_INT32(0);
@@ -37,14 +30,6 @@ Datum int1_from_int4(PG_FUNCTION_ARGS) {
         OUT_OF_RANGE_ERR(int1);
     }
     PG_RETURN_INT8((int8) a);
-}
-
-
-PG_FUNCTION_INFO_V1(int1_to_int4);
-Datum int1_to_int4(PG_FUNCTION_ARGS) {
-    int8 a = PG_GETARG_INT8(0);
-
-    PG_RETURN_INT32((int32) a);
 }
 
 
@@ -59,14 +44,6 @@ Datum int1_from_int8(PG_FUNCTION_ARGS) {
 }
 
 
-PG_FUNCTION_INFO_V1(int1_to_int8);
-Datum int1_to_int8(PG_FUNCTION_ARGS) {
-    int8 a = PG_GETARG_INT8(0);
-
-    PG_RETURN_INT64((int64) a);
-}
-
-
 PG_FUNCTION_INFO_V1(int1_from_int16);
 Datum int1_from_int16(PG_FUNCTION_ARGS) {
     int128 a = PG_GETARG_INT128(0);
@@ -75,14 +52,6 @@ Datum int1_from_int16(PG_FUNCTION_ARGS) {
         OUT_OF_RANGE_ERR(int1);
     }
     PG_RETURN_INT8((int8) a);
-}
-
-
-PG_FUNCTION_INFO_V1(int1_to_int16);
-Datum int1_to_int16(PG_FUNCTION_ARGS) {
-    int8 a = PG_GETARG_INT8(0);
-
-    PG_RETURN_INT128((int128) a);
 }
 
 
@@ -99,17 +68,6 @@ Datum int1_from_uint1(PG_FUNCTION_ARGS) {
 }
 
 
-PG_FUNCTION_INFO_V1(int1_to_uint1);
-Datum int1_to_uint1(PG_FUNCTION_ARGS) {
-    int8 a = PG_GETARG_INT8(0);
-
-    if (a < 0) {
-        OUT_OF_RANGE_ERR(uint1);
-    }
-    PG_RETURN_UINT8((uint8) a);
-}
-
-
 PG_FUNCTION_INFO_V1(int1_from_uint2);
 Datum int1_from_uint2(PG_FUNCTION_ARGS) {
     uint16 a = PG_GETARG_UINT16(0);
@@ -118,17 +76,6 @@ Datum int1_from_uint2(PG_FUNCTION_ARGS) {
         OUT_OF_RANGE_ERR(int1);
     }
     PG_RETURN_INT8((int8) a);
-}
-
-
-PG_FUNCTION_INFO_V1(int1_to_uint2);
-Datum int1_to_uint2(PG_FUNCTION_ARGS) {
-    int8 a = PG_GETARG_INT8(0);
-
-    if (a < 0) {
-        OUT_OF_RANGE_ERR(uint2);
-    }
-    PG_RETURN_UINT16((uint16) a);
 }
 
 
@@ -143,17 +90,6 @@ Datum int1_from_uint4(PG_FUNCTION_ARGS) {
 }
 
 
-PG_FUNCTION_INFO_V1(int1_to_uint4);
-Datum int1_to_uint4(PG_FUNCTION_ARGS) {
-    int8 a = PG_GETARG_INT8(0);
-
-    if (a < 0) {
-        OUT_OF_RANGE_ERR(uint4);
-    }
-    PG_RETURN_UINT32((uint32) a);
-}
-
-
 PG_FUNCTION_INFO_V1(int1_from_uint8);
 Datum int1_from_uint8(PG_FUNCTION_ARGS) {
     uint64 a = PG_GETARG_UINT64(0);
@@ -165,17 +101,6 @@ Datum int1_from_uint8(PG_FUNCTION_ARGS) {
 }
 
 
-PG_FUNCTION_INFO_V1(int1_to_uint8);
-Datum int1_to_uint8(PG_FUNCTION_ARGS) {
-    int8 a = PG_GETARG_INT8(0);
-
-    if (a < 0) {
-        OUT_OF_RANGE_ERR(uint8);
-    }
-    PG_RETURN_UINT64((uint64) a);
-}
-
-
 PG_FUNCTION_INFO_V1(int1_from_uint16);
 Datum int1_from_uint16(PG_FUNCTION_ARGS) {
     uint128 a = PG_GETARG_UINT128(0);
@@ -184,17 +109,6 @@ Datum int1_from_uint16(PG_FUNCTION_ARGS) {
         OUT_OF_RANGE_ERR(int1);
     }
     PG_RETURN_INT8((int8) a);
-}
-
-
-PG_FUNCTION_INFO_V1(int1_to_uint16);
-Datum int1_to_uint16(PG_FUNCTION_ARGS) {
-    int8 a = PG_GETARG_INT8(0);
-
-    if (a < 0) {
-        OUT_OF_RANGE_ERR(uint16);
-    }
-    PG_RETURN_UINT128((uint128) a);
 }
 
 
@@ -215,48 +129,47 @@ Datum int1_from_numeric(PG_FUNCTION_ARGS)
 	PG_RETURN_INT8((int8)numInt);
 }
 
-PG_FUNCTION_INFO_V1(int1_to_numeric);
-Datum int1_to_numeric(PG_FUNCTION_ARGS)
-{
-	int8		val = PG_GETARG_INT8(0);
+// Float casts
 
-	PG_RETURN_DATUM(DirectFunctionCall1(int2_numeric, Int16GetDatum((int16)val)));
+PG_FUNCTION_INFO_V1(int1_from_float4);
+Datum int1_from_float4(PG_FUNCTION_ARGS)
+{
+	float4		num = PG_GETARG_FLOAT4(0);
+
+	/*
+	 * Get rid of any fractional part in the input.  This is so we don't fail
+	 * on just-out-of-range values that would round into range.  Note
+	 * assumption that rint() will pass through a NaN or Inf unchanged.
+	 */
+	num = (float4)rint(num);
+
+	/* Range check */
+	if (unlikely(isnan(num) || !FLOAT4_FITS_IN_INT8(num)))
+		OUT_OF_RANGE_ERR(int1);
+
+	PG_RETURN_INT8((int8) num);
+}
+
+PG_FUNCTION_INFO_V1(int1_from_float8);
+Datum int1_from_float8(PG_FUNCTION_ARGS)
+{
+	float8		num = PG_GETARG_FLOAT8(0);
+
+	/*
+	 * Get rid of any fractional part in the input.  This is so we don't fail
+	 * on just-out-of-range values that would round into range.  Note
+	 * assumption that rint() will pass through a NaN or Inf unchanged.
+	 */
+	num = (float8)rint(num);
+
+	/* Range check */
+	if (unlikely(isnan(num) || !FLOAT8_FITS_IN_INT8(num)))
+		OUT_OF_RANGE_ERR(int1);
+
+	PG_RETURN_INT8((int8) num);
 }
 
 // JSON casts
-
-PG_FUNCTION_INFO_V1(int1_to_json);
-Datum int1_to_json(PG_FUNCTION_ARGS) {
-    int8 a = PG_GETARG_INT8(0);
-    char buf[INT8_STRBUFLEN];
-
-    char *bufPtr = int8_to_string(a, buf, sizeof(buf));
-
-    /* json type in Postgres is really just text with json input cast */
-    Datum result = DirectFunctionCall1(json_in, CStringGetDatum(bufPtr));
-
-    PG_RETURN_DATUM(result);
-}
-
-PG_FUNCTION_INFO_V1(int1_to_jsonb);
-Datum int1_to_jsonb(PG_FUNCTION_ARGS)
-{
-    int8 val = PG_GETARG_INT8(0);
-
-    JsonbValue jbv;
-    Jsonb* result;
-
-    Numeric num = DatumGetNumeric(DirectFunctionCall1(int2_numeric, Int16GetDatum((int16)val)));
-
-    /* convert Numeric to JsonbValue */
-    jbv.type = jbvNumeric;
-    jbv.val.numeric = num;
-
-    /* wrap into a Jsonb container */
-    result = JsonbValueToJsonb(&jbv);
-
-    PG_RETURN_JSONB_P(result);
-}
 
 PG_FUNCTION_INFO_V1(int1_from_json);
 Datum int1_from_json(PG_FUNCTION_ARGS)

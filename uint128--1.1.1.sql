@@ -45,7 +45,7 @@ CREATE TYPE uint16 (
 );
 
 
--- Inout casts block
+-- In-out casts block
 
 CREATE CAST (double precision AS uint16) WITH INOUT AS ASSIGNMENT;
 CREATE CAST (uint16 AS double precision) WITH INOUT AS IMPLICIT;
@@ -1809,7 +1809,7 @@ CREATE TYPE uint8 (
 );
 
 
--- Inout casts block
+-- In-out casts block
 
 CREATE CAST (double precision AS uint8) WITH INOUT AS ASSIGNMENT;
 CREATE CAST (uint8 AS double precision) WITH INOUT AS IMPLICIT;
@@ -3557,7 +3557,7 @@ CREATE TYPE uint4 (
 );
 
 
--- Inout casts block
+-- In-out casts block
 
 CREATE CAST (double precision AS uint4) WITH INOUT AS ASSIGNMENT;
 CREATE CAST (uint4 AS double precision) WITH INOUT AS IMPLICIT;
@@ -5305,7 +5305,7 @@ CREATE TYPE uint2 (
 );
 
 
--- Inout casts block
+-- In-out casts block
 
 CREATE CAST (double precision AS uint2) WITH INOUT AS ASSIGNMENT;
 CREATE CAST (uint2 AS double precision) WITH INOUT AS IMPLICIT;
@@ -7053,7 +7053,7 @@ CREATE TYPE int16 (
 );
 
 
--- Inout casts block
+-- In-out casts block
 
 CREATE CAST (double precision AS int16) WITH INOUT AS ASSIGNMENT;
 CREATE CAST (int16 AS double precision) WITH INOUT AS IMPLICIT;
@@ -8763,6 +8763,8 @@ CREATE TYPE int16range AS RANGE (
 
 
 -- Cross types ops
+-- Type uint16 block
+
 
 -- Casts block
 
@@ -9572,6 +9574,8 @@ CREATE OPERATOR % (
 
 
 
+-- Type uint8 block
+
 
 -- Casts block
 
@@ -10365,6 +10369,8 @@ CREATE OPERATOR % (
 
 
 
+-- Type uint4 block
+
 
 -- Casts block
 
@@ -11142,6 +11148,8 @@ CREATE OPERATOR % (
 
 
 
+-- Type uint2 block
+
 
 -- Casts block
 
@@ -11902,6 +11910,8 @@ CREATE OPERATOR % (
 
 
 
+
+-- Type int16 block
 
 
 -- Casts block
@@ -12695,7 +12705,7 @@ CREATE TYPE uint1 (
 );
 
 
--- Inout casts block
+-- In-out casts block
 
 CREATE CAST (double precision AS uint1) WITH INOUT AS ASSIGNMENT;
 CREATE CAST (uint1 AS double precision) WITH INOUT AS IMPLICIT;
@@ -14443,7 +14453,7 @@ CREATE TYPE int1 (
 );
 
 
--- Inout casts block
+-- In-out casts block
 
 CREATE CAST (double precision AS int1) WITH INOUT AS ASSIGNMENT;
 CREATE CAST (int1 AS double precision) WITH INOUT AS IMPLICIT;
@@ -16153,6 +16163,8 @@ CREATE TYPE int1range AS RANGE (
 
 
 -- Cross types ops
+-- Type uint1 block
+
 
 -- Casts block
 
@@ -17352,6 +17364,8 @@ CREATE OPERATOR % (
 
 
 
+-- Type int1 block
+
 
 -- Casts block
 
@@ -18535,6 +18549,8 @@ CREATE OPERATOR % (
 
 
 
+-- Type uint16 block
+
 
 -- Casts block
 -- Ops block
@@ -18921,6 +18937,8 @@ CREATE OPERATOR % (
 
 
 
+
+-- Type uint8 block
 
 
 -- Casts block
@@ -19309,6 +19327,8 @@ CREATE OPERATOR % (
 
 
 
+-- Type uint4 block
+
 
 -- Casts block
 -- Ops block
@@ -19696,6 +19716,8 @@ CREATE OPERATOR % (
 
 
 
+-- Type uint2 block
+
 
 -- Casts block
 -- Ops block
@@ -20082,6 +20104,8 @@ CREATE OPERATOR % (
 
 
 
+
+-- Type int16 block
 
 
 -- Casts block
@@ -20474,6 +20498,8 @@ CREATE OPERATOR % (
 -- v1.1.1
 --
 
+-- Type uint1 block
+
 
 -- Casts block
 
@@ -20531,6 +20557,8 @@ CREATE CAST (numeric AS uint1) WITH FUNCTION uint1_from_numeric(numeric) AS ASSI
 
 DROP CAST (uint1 AS numeric);
 CREATE CAST (uint1 AS numeric) WITH FUNCTION uint1_to_numeric(uint1) AS IMPLICIT;
+-- Type uint2 block
+
 
 -- Casts block
 
@@ -20588,6 +20616,8 @@ CREATE CAST (numeric AS uint2) WITH FUNCTION uint2_from_numeric(numeric) AS ASSI
 
 DROP CAST (uint2 AS numeric);
 CREATE CAST (uint2 AS numeric) WITH FUNCTION uint2_to_numeric(uint2) AS IMPLICIT;
+-- Type uint4 block
+
 
 -- Casts block
 
@@ -20645,6 +20675,8 @@ CREATE CAST (numeric AS uint4) WITH FUNCTION uint4_from_numeric(numeric) AS ASSI
 
 DROP CAST (uint4 AS numeric);
 CREATE CAST (uint4 AS numeric) WITH FUNCTION uint4_to_numeric(uint4) AS IMPLICIT;
+-- Type uint8 block
+
 
 -- Casts block
 
@@ -20683,6 +20715,8 @@ CREATE CAST (uint8 AS jsonb) WITH FUNCTION uint8_to_jsonb(uint8) AS IMPLICIT;
 
 
 
+-- Type uint16 block
+
 
 -- Casts block
 
@@ -20720,6 +20754,8 @@ CREATE CAST (uint16 AS jsonb) WITH FUNCTION uint16_to_jsonb(uint16) AS IMPLICIT;
 -- Ops block
 
 
+
+-- Type int1 block
 
 
 -- Casts block
@@ -20778,6 +20814,8 @@ CREATE CAST (numeric AS int1) WITH FUNCTION int1_from_numeric(numeric) AS ASSIGN
 
 DROP CAST (int1 AS numeric);
 CREATE CAST (int1 AS numeric) WITH FUNCTION int1_to_numeric(int1) AS IMPLICIT;
+-- Type int16 block
+
 
 -- Casts block
 

@@ -5,6 +5,8 @@ declare(strict_types=1);
 require_once __DIR__ . '/sql_gen_core.php';
 require_once __DIR__ . '/sqlgen_v1.0.0_types.php';
 
+$VERSION_NUM = 1000;
+
 $types = getV1_0_0_Types();
 
 $buf = '';
@@ -16,7 +18,7 @@ foreach ($types as $type) {
 $buf .= "\n";
 
 foreach ($types as $type) {
-    $buf .= $type->toSQL(EXT_NAME) . "\n";
+    $buf .= $type->toSQL($VERSION_NUM, EXT_NAME) . "\n";
 }
 
 $buf .= "\n\n-- Cross types ops\n";
@@ -37,7 +39,7 @@ $CROSS_TYPES = buildCrossTypes(V1_0_0_UINT_TYPES, V1_0_0_INT_TYPES);
 //];
 
 foreach (genSQLForCrossTypes($types, $CROSS_TYPES) as $typConfig) {
-    $buf .= $typConfig->toSQL(EXT_NAME) . "\n\n";
+    $buf .= $typConfig->toSQL($VERSION_NUM, EXT_NAME) . "\n\n";
 }
 
 file_put_contents("uint128--1.0.0.sql", $buf);

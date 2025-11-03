@@ -207,27 +207,27 @@ SELECT s FROM generate_series(1::int1, 10::int1, 2::int1) s;
 
 -- Ranges block
 
-SELECT int1range(0, 10);
+SELECT int1range(0::int1, 10::int1);
 SELECT int1range((-128)::int1, 127::int1);
 SELECT int1range((-128)::int1, 127::int1, '[]');
-SELECT upper(int1range(0, 10));
-SELECT lower(int1range(0, 10));
-SELECT isempty(int1range(0, 10));
-SELECT int1range(0, 10) @> 9::int1;
-SELECT int1range(0, 10) @> 10::int1;
-SELECT int1range(0, 10) && int1range(10,20);
-SELECT int1range(0, 10) && int1range(9,20);
-SELECT int1range(5, 10) - int1range(5, 10);
-SELECT int1range(5, 10) - int1range(5, 9);
+SELECT upper(int1range(0::int1, 10::int1));
+SELECT lower(int1range(0::int1, 10::int1));
+SELECT isempty(int1range(0::int1, 10::int1));
+SELECT int1range(0::int1, 10::int1) @> 9::int1;
+SELECT int1range(0::int1, 10::int1) @> 10::int1;
+SELECT int1range(0::int1, 10::int1) && int1range(10::int1,20::int1);
+SELECT int1range(0::int1, 10::int1) && int1range(9::int1,20::int1);
+SELECT int1range(5::int1, 10::int1) - int1range(5::int1, 10::int1);
+SELECT int1range(5::int1, 10::int1) - int1range(5::int1, 9::int1);
 CREATE TEMPORARY TABLE test_int1range (
     r int1range,
 
     EXCLUDE USING GIST (r WITH &&)
 );
 
-INSERT INTO test_int1range (r) VALUES (int1range(0, 10));
-INSERT INTO test_int1range (r) VALUES (int1range(10, 20));
-INSERT INTO test_int1range (r) VALUES (int1range(19, 30));
+INSERT INTO test_int1range (r) VALUES (int1range(0::int1, 10::int1));
+INSERT INTO test_int1range (r) VALUES (int1range(10::int1, 20::int1));
+INSERT INTO test_int1range (r) VALUES (int1range(19::int1, 30::int1));
 
 DROP TABLE test_int1range;
 

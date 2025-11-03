@@ -952,7 +952,7 @@ SELECT s FROM generate_series(1::int1, 10::int1, 2::int1) s;
 (5 rows)
 
 -- Ranges block
-SELECT int1range(0, 10);
+SELECT int1range(0::int1, 10::int1);
  int1range 
 -----------
  [0,10)
@@ -966,55 +966,55 @@ SELECT int1range((-128)::int1, 127::int1);
 
 SELECT int1range((-128)::int1, 127::int1, '[]');
 ERROR:  int1 out of range
-SELECT upper(int1range(0, 10));
+SELECT upper(int1range(0::int1, 10::int1));
  upper 
 -------
  10
 (1 row)
 
-SELECT lower(int1range(0, 10));
+SELECT lower(int1range(0::int1, 10::int1));
  lower 
 -------
  0
 (1 row)
 
-SELECT isempty(int1range(0, 10));
+SELECT isempty(int1range(0::int1, 10::int1));
  isempty 
 ---------
  f
 (1 row)
 
-SELECT int1range(0, 10) @> 9::int1;
+SELECT int1range(0::int1, 10::int1) @> 9::int1;
  ?column? 
 ----------
  t
 (1 row)
 
-SELECT int1range(0, 10) @> 10::int1;
+SELECT int1range(0::int1, 10::int1) @> 10::int1;
  ?column? 
 ----------
  f
 (1 row)
 
-SELECT int1range(0, 10) && int1range(10,20);
+SELECT int1range(0::int1, 10::int1) && int1range(10::int1,20::int1);
  ?column? 
 ----------
  f
 (1 row)
 
-SELECT int1range(0, 10) && int1range(9,20);
+SELECT int1range(0::int1, 10::int1) && int1range(9::int1,20::int1);
  ?column? 
 ----------
  t
 (1 row)
 
-SELECT int1range(5, 10) - int1range(5, 10);
+SELECT int1range(5::int1, 10::int1) - int1range(5::int1, 10::int1);
  ?column? 
 ----------
  empty
 (1 row)
 
-SELECT int1range(5, 10) - int1range(5, 9);
+SELECT int1range(5::int1, 10::int1) - int1range(5::int1, 9::int1);
  ?column? 
 ----------
  [9,10)
@@ -1024,9 +1024,9 @@ CREATE TEMPORARY TABLE test_int1range (
     r int1range,
     EXCLUDE USING GIST (r WITH &&)
 );
-INSERT INTO test_int1range (r) VALUES (int1range(0, 10));
-INSERT INTO test_int1range (r) VALUES (int1range(10, 20));
-INSERT INTO test_int1range (r) VALUES (int1range(19, 30));
+INSERT INTO test_int1range (r) VALUES (int1range(0::int1, 10::int1));
+INSERT INTO test_int1range (r) VALUES (int1range(10::int1, 20::int1));
+INSERT INTO test_int1range (r) VALUES (int1range(19::int1, 30::int1));
 ERROR:  conflicting key value violates exclusion constraint "test_int1range_r_excl"
 DETAIL:  Key (r)=([19,30)) conflicts with existing key (r)=([10,20)).
 DROP TABLE test_int1range;

@@ -17,7 +17,7 @@ PG_FUNCTION_INFO_V1(uint16_cmp);
 PG_FUNCTION_INFO_V1(uint16_hash);
 
 PG_FUNCTION_INFO_V1(uint16_from_uuid);
-PG_FUNCTION_INFO_V1(uint16_to_uuid);
+PG_FUNCTION_INFO_V1(uuid_from_uint16);
 
 // Serialization ops
 
@@ -144,7 +144,7 @@ Datum uint16_from_uuid(PG_FUNCTION_ARGS)
     PG_RETURN_UINT128_P(result);
 }
 
-Datum uint16_to_uuid(PG_FUNCTION_ARGS)
+Datum uuid_from_uint16(PG_FUNCTION_ARGS)
 {
     uint128   *uint = PG_GETARG_UINT128_P(0);
     pg_uuid_t *uuid = palloc(sizeof(pg_uuid_t));
