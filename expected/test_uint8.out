@@ -1120,3 +1120,115 @@ INSERT INTO test_uint8range (r) VALUES (uint8range(19::uint8, 30::uint8));
 ERROR:  conflicting key value violates exclusion constraint "test_uint8range_r_excl"
 DETAIL:  Key (r)=([19,30)) conflicts with existing key (r)=([10,20)).
 DROP TABLE test_uint8range;
+-- Sequential and indexed scans must return the same actual rows.
+-- A constant on the left makes index conditions depend on the operator's commutator.
+-- Incorrect commutators can select the opposite range; planner estimates are not tested.
+CREATE TEMP TABLE test_uint8_commutators (n uint8);
+INSERT INTO test_uint8_commutators VALUES (1), (2), (3);
+CREATE INDEX ON test_uint8_commutators (n);
+SET enable_seqscan = on;
+SET enable_indexscan = off;
+SET enable_bitmapscan = off;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::uint8 < n;
+ matches 
+---------
+ {3}
+(1 row)
+
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::uint8 <= n;
+ matches 
+---------
+ {2,3}
+(1 row)
+
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::uint8 > n;
+ matches 
+---------
+ {1}
+(1 row)
+
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::uint8 >= n;
+ matches 
+---------
+ {1,2}
+(1 row)
+
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::int4 < n;
+ matches 
+---------
+ {3}
+(1 row)
+
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::int4 <= n;
+ matches 
+---------
+ {2,3}
+(1 row)
+
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::int4 > n;
+ matches 
+---------
+ {1}
+(1 row)
+
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::int4 >= n;
+ matches 
+---------
+ {1,2}
+(1 row)
+
+SET enable_seqscan = off;
+SET enable_indexscan = on;
+SET enable_bitmapscan = on;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::uint8 < n;
+ matches 
+---------
+ {3}
+(1 row)
+
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::uint8 <= n;
+ matches 
+---------
+ {2,3}
+(1 row)
+
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::uint8 > n;
+ matches 
+---------
+ {1}
+(1 row)
+
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::uint8 >= n;
+ matches 
+---------
+ {1,2}
+(1 row)
+
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::int4 < n;
+ matches 
+---------
+ {3}
+(1 row)
+
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::int4 <= n;
+ matches 
+---------
+ {2,3}
+(1 row)
+
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::int4 > n;
+ matches 
+---------
+ {1}
+(1 row)
+
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::int4 >= n;
+ matches 
+---------
+ {1,2}
+(1 row)
+
+RESET enable_seqscan;
+RESET enable_indexscan;
+RESET enable_bitmapscan;
+DROP TABLE test_uint8_commutators;

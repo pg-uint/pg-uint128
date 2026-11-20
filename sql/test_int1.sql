@@ -231,6 +231,39 @@ INSERT INTO test_int1range (r) VALUES (int1range(19::int1, 30::int1));
 
 DROP TABLE test_int1range;
 
+-- Sequential and indexed scans must return the same actual rows.
+-- A constant on the left makes index conditions depend on the operator's commutator.
+-- Incorrect commutators can select the opposite range; planner estimates are not tested.
+CREATE TEMP TABLE test_int1_commutators (n int1);
+INSERT INTO test_int1_commutators VALUES (1), (2), (3);
+CREATE INDEX ON test_int1_commutators (n);
+SET enable_seqscan = on;
+SET enable_indexscan = off;
+SET enable_bitmapscan = off;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_int1_commutators WHERE 2::int1 < n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_int1_commutators WHERE 2::int1 <= n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_int1_commutators WHERE 2::int1 > n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_int1_commutators WHERE 2::int1 >= n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_int1_commutators WHERE 2::int4 < n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_int1_commutators WHERE 2::int4 <= n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_int1_commutators WHERE 2::int4 > n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_int1_commutators WHERE 2::int4 >= n;
+SET enable_seqscan = off;
+SET enable_indexscan = on;
+SET enable_bitmapscan = on;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_int1_commutators WHERE 2::int1 < n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_int1_commutators WHERE 2::int1 <= n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_int1_commutators WHERE 2::int1 > n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_int1_commutators WHERE 2::int1 >= n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_int1_commutators WHERE 2::int4 < n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_int1_commutators WHERE 2::int4 <= n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_int1_commutators WHERE 2::int4 > n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_int1_commutators WHERE 2::int4 >= n;
+RESET enable_seqscan;
+RESET enable_indexscan;
+RESET enable_bitmapscan;
+DROP TABLE test_int1_commutators;
+
 
 -- Testing cross-types compatibility
 

@@ -14,6 +14,7 @@ class OpConfig
         public readonly bool $hashes = false,
         public readonly bool $merges = false,
         public readonly bool $hasLeftArg = true,
+        public readonly bool $commutatorSameTypeOnly = false,
     ) {
     }
 
@@ -31,7 +32,8 @@ class OpConfig
 
         $parts[] = "PROCEDURE={$procedure}";
 
-        if ($this->commutator) {
+        // Cross-type addition returns the left type, so its reverse has a different result type.
+        if ($this->commutator && (!$this->commutatorSameTypeOnly || $leftType === $rightType)) {
             $parts[] = "COMMUTATOR = {$this->commutator}";
         }
 

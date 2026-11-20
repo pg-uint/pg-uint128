@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/sql_gen_core.php';
+require_once __DIR__ . '/sqlgen_v1.0.0_types.php';
 
 /** @var array<TypeConfig> $V1_1_0_Types */
 $V1_1_0_Types = [
@@ -92,4 +93,45 @@ function getV1_1_0_Types(): array
     global $V1_1_0_Types;
 
     return $V1_1_0_Types;
+}
+
+/**
+ * Cross type conversion from previous version
+ * @param array<TypeConfig> $types
+ * @return Generator<TypeConfig>
+ */
+function buildV1_0_0_CrossTypesSQL(array $types): Generator
+{
+    $V1_0_0_Types = getV1_0_0_Types();
+
+    $crossTypes = array_map(static fn (TypeConfig $typConfig) => $typConfig->type, $types);
+
+    /** @var array<string, string[]> $processedCastPairs */
+    $processedCastPairs = [];
+
+    foreach ($V1_0_0_Types as $type) {
+        $typConfig = new TypeConfig(
+            type: $type->type,
+            alignment: $type->alignment,
+            passByValue: $type->passByValue,
+            ops: array_values(array_filter(array_map(function (TypeOpConfig $typeCfg) use ($crossTypes) {
+                return match ($typeCfg->op) {
+                    // Bitwise doesn't scale between types
+                    Op::Not, Op::And, Op::Or, Op::Xor, Op::Shl, Op::Shr => null,
+                    default => new TypeOpConfig(
+                        op: $typeCfg->op,
+                        types: $crossTypes,
+                    )
+                };
+            }, $type->ops))),
+            crossTypesOnly: true,
+        );
+
+        foreach ($crossTypes as $crossType) {
+            $processedCastPairs[$type->type->pgName][] = $crossType->pgName;
+            $processedCastPairs[$crossType->pgName][] = $type->type->pgName;
+        }
+
+        yield $typConfig;
+    }
 }

@@ -85,7 +85,7 @@ enum Op: string
             self::Gt => new OpConfig(
                 cOp: '>',
                 sign: '>',
-                commutator: '>',
+                commutator: '<',
                 negator: '<=',
                 restrict: 'scalargtsel',
                 join: 'scalargtjoinsel',
@@ -93,7 +93,7 @@ enum Op: string
             self::Lt => new OpConfig(
                 cOp: '<',
                 sign: '<',
-                commutator: '<',
+                commutator: '>',
                 negator: '>=',
                 restrict: 'scalarltsel',
                 join: 'scalarltjoinsel',
@@ -101,7 +101,7 @@ enum Op: string
             self::Ge => new OpConfig(
                 cOp: '>=',
                 sign: '>=',
-                commutator: '>=',
+                commutator: '<=',
                 negator: '<',
                 restrict: 'scalargtsel',
                 join: 'scalargtjoinsel',
@@ -109,7 +109,7 @@ enum Op: string
             self::Le => new OpConfig(
                 cOp: '<=',
                 sign: '<=',
-                commutator: '<=',
+                commutator: '>=',
                 negator: '>',
                 restrict: 'scalarltsel',
                 join: 'scalarltjoinsel',
@@ -118,12 +118,12 @@ enum Op: string
             self::Add => new OpConfig(
                 cOp: '+',
                 sign: '+',
-                commutator: '+'
+                commutator: '+',
+                commutatorSameTypeOnly: true,
             ),
             self::Sub => new OpConfig(
                 cOp: '-',
-                sign: '-',
-                commutator: '-'
+                sign: '-'
             ),
             self::Mul => new OpConfig(
                 cOp: '*',

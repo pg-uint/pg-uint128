@@ -1,1 +1,20 @@
 CREATE EXTENSION uint128;
+-- Commutators must reverse argument types and preserve the result type.
+SELECT count(*) AS invalid_commutators
+FROM pg_operator o
+JOIN pg_depend d ON d.classid = 'pg_operator'::regclass AND d.objid = o.oid
+JOIN pg_extension e ON e.oid = d.refobjid AND d.refclassid = 'pg_extension'::regclass
+JOIN pg_operator c ON c.oid = o.oprcom
+WHERE e.extname = 'uint128' AND d.deptype = 'e'
+  AND (o.oprleft <> c.oprright OR o.oprright <> c.oprleft
+       OR o.oprresult <> c.oprresult OR c.oprcom <> o.oid
+       OR c.oprname <> CASE o.oprname
+           WHEN '<' THEN '>' WHEN '>' THEN '<'
+           WHEN '<=' THEN '>=' WHEN '>=' THEN '<='
+           ELSE o.oprname END
+       OR o.oprname = '-');
+ invalid_commutators 
+---------------------
+                   0
+(1 row)
+

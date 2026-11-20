@@ -245,3 +245,36 @@ INSERT INTO test_uint8range (r) VALUES (uint8range(10::uint8, 20::uint8));
 INSERT INTO test_uint8range (r) VALUES (uint8range(19::uint8, 30::uint8));
 
 DROP TABLE test_uint8range;
+
+-- Sequential and indexed scans must return the same actual rows.
+-- A constant on the left makes index conditions depend on the operator's commutator.
+-- Incorrect commutators can select the opposite range; planner estimates are not tested.
+CREATE TEMP TABLE test_uint8_commutators (n uint8);
+INSERT INTO test_uint8_commutators VALUES (1), (2), (3);
+CREATE INDEX ON test_uint8_commutators (n);
+SET enable_seqscan = on;
+SET enable_indexscan = off;
+SET enable_bitmapscan = off;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::uint8 < n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::uint8 <= n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::uint8 > n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::uint8 >= n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::int4 < n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::int4 <= n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::int4 > n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::int4 >= n;
+SET enable_seqscan = off;
+SET enable_indexscan = on;
+SET enable_bitmapscan = on;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::uint8 < n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::uint8 <= n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::uint8 > n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::uint8 >= n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::int4 < n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::int4 <= n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::int4 > n;
+SELECT array_agg(n ORDER BY n)::text AS matches FROM test_uint8_commutators WHERE 2::int4 >= n;
+RESET enable_seqscan;
+RESET enable_indexscan;
+RESET enable_bitmapscan;
+DROP TABLE test_uint8_commutators;
