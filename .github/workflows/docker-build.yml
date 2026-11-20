@@ -6,11 +6,18 @@ on:
 
 jobs:
   push_to_registry:
-    name: Push Docker image to Docker Hub
-    runs-on: ubuntu-24.04
+    name: Build PostgreSQL ${{ matrix.pg_version }} (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
     strategy:
+      fail-fast: false
       matrix:
         pg_version: [ 12, 13, 14, 15, 16, 17, 18 ]
+        arch: [amd64, arm64]
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
 
     env:
       REGISTRY: docker.io
@@ -24,11 +31,6 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130
-        with:
-          platforms: arm64
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
@@ -45,18 +47,50 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/${{ matrix.arch }}
           push: true
-          tags: |
-            ${{ env.IMAGE_NAME }}:${{ matrix.pg_version }}-${{ github.event.release.tag_name }}
-            ${{ env.IMAGE_NAME }}:${{ matrix.pg_version }}-latest
+          tags: ${{ env.IMAGE_NAME }}:${{ matrix.pg_version }}-${{ github.event.release.tag_name }}-${{ matrix.arch }}
           build-args: |
             PGVERSION=${{ matrix.pg_version }}
             UINT128_VERSION=${{ github.event.release.tag_name }}
 
+  merge:
+    name: Publish PostgreSQL ${{ matrix.pg_version }} multi-platform image
+    needs: push_to_registry
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        pg_version: [12, 13, 14, 15, 16, 17, 18]
+    env:
+      REGISTRY: docker.io
+      IMAGE_NAME: codercms/postgres-uint128
+      PGVERSION: ${{ matrix.pg_version }}
+      RELEASE_TAG: ${{ github.event.release.tag_name }}
+    permissions:
+      contents: read
+      attestations: write
+      id-token: write
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Publish combined image tags
+        id: manifest
+        run: |
+          docker buildx imagetools create \
+            --tag "$IMAGE_NAME:$PGVERSION-$RELEASE_TAG" \
+            --tag "$IMAGE_NAME:$PGVERSION-latest" \
+            "$IMAGE_NAME:$PGVERSION-$RELEASE_TAG-amd64" \
+            "$IMAGE_NAME:$PGVERSION-$RELEASE_TAG-arm64"
+          digest=$(docker buildx imagetools inspect "$IMAGE_NAME:$PGVERSION-$RELEASE_TAG" --format '{{.Manifest.Digest}}')
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v1
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
-          subject-digest: ${{ steps.push.outputs.digest }}
+          subject-digest: ${{ steps.manifest.outputs.digest }}
           push-to-registry: true

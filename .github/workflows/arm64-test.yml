@@ -52,18 +52,36 @@ jobs:
           if-no-files-found: ignore
 
   docker:
-    name: PostgreSQL ${{ matrix.pg_version }} Docker (ARM64)
-    runs-on: ubuntu-24.04-arm
+    name: PostgreSQL ${{ matrix.pg_version }} Docker (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
         pg_version: [12, 13, 14, 15, 16, 17, 18]
+        arch: [amd64, arm64]
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
       - name: Build Docker image without publishing
+        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+        with:
+          context: .
+          platforms: linux/${{ matrix.arch }}
+          push: false
+          load: true
+          tags: uint128:test
+          build-args: |
+            PGVERSION=${{ matrix.pg_version }}
+            UINT128_VERSION=ci
+      - name: Verify image architecture
         run: |
-          docker build --platform linux/arm64 --build-arg PGVERSION=${{ matrix.pg_version }} --build-arg UINT128_VERSION=ci -t uint128:test .
-          test "$(docker image inspect uint128:test --format '{{.Architecture}}')" = arm64
+          test "$(docker image inspect uint128:test --format '{{.Architecture}}')" = "${{ matrix.arch }}"
       - name: Test Docker image
         run: |
           docker run -d --name uint128-test -e POSTGRES_HOST_AUTH_METHOD=trust uint128:test
