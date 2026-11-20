@@ -50,3 +50,38 @@ jobs:
             regression.out
             results/
           if-no-files-found: ignore
+
+  docker:
+    name: PostgreSQL ${{ matrix.pg_version }} Docker (ARM64)
+    runs-on: ubuntu-24.04-arm
+    strategy:
+      fail-fast: false
+      matrix:
+        pg_version: [12, 13, 14, 15, 16, 17, 18]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker image without publishing
+        run: |
+          docker build --platform linux/arm64 --build-arg PGVERSION=${{ matrix.pg_version }} --build-arg UINT128_VERSION=ci -t uint128:test .
+          test "$(docker image inspect uint128:test --format '{{.Architecture}}')" = arm64
+      - name: Test Docker image
+        run: |
+          docker run -d --name uint128-test -e POSTGRES_HOST_AUTH_METHOD=trust uint128:test
+          ready=false
+          for attempt in $(seq 1 60); do
+            if docker exec uint128-test pg_isready -h 127.0.0.1 -U postgres; then
+              ready=true
+              break
+            fi
+            sleep 1
+          done
+          test "$ready" = true
+          expected=$(sed -n "s/default_version = '\([^']*\)'/\1/p" uint128.control)
+          actual=$(docker exec uint128-test psql -XAt -U postgres -v ON_ERROR_STOP=1 -c "SELECT extversion FROM pg_extension WHERE extname = 'uint128'")
+          test "$actual" = "$expected"
+          docker exec uint128-test psql -X -U postgres -v ON_ERROR_STOP=1 -c "SELECT 1::uint16 + 2::uint16, 3::uint16 - 1::uint16"
+      - name: Show Docker logs and clean up
+        if: always()
+        run: |
+          docker logs uint128-test || true
+          docker rm -fv uint128-test || true
