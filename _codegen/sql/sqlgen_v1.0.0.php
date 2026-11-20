@@ -45,17 +45,4 @@ foreach (genSQLForCrossTypes($types, $CROSS_TYPES) as $typConfig) {
 file_put_contents("uint128--1.0.0.sql", $buf);
 echo "uint128--1.0.0.sql successfully generated\n";
 
-@mkdir("sql");
-@mkdir("expected");
-
-foreach ($types as $type) {
-    [$test, $expected] = $type->toSQLTests();
-
-    file_put_contents("sql/test_{$type->type->pgName}.sql", $test);
-    file_put_contents("expected/test_{$type->type->pgName}.out", $expected);
-
-    echo "sql/test_{$type->type->pgName}.sql successfully generated\n";
-    echo "expected/test_{$type->type->pgName}.out successfully generated\n";
-}
-
-return;
+include __DIR__ . '/testgen_v1.0.0.php';

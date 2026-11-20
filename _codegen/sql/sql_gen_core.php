@@ -128,6 +128,39 @@ function genSQLTestForCmpOp(Op $op, Type $leftType, Type $rightType): array
 /**
  * @return array{0: string, 1: string}
  */
+function genSQLTestForIndexedComparisons(Type $type): array
+{
+    $table = "test_{$type->pgName}_commutators";
+    $sql = "-- Sequential and indexed scans must return the same actual rows.\n";
+    $sql .= "-- A constant on the left makes index conditions depend on the operator's commutator.\n";
+    $sql .= "-- Incorrect commutators can select the opposite range; planner estimates are not tested.\n";
+    $sql .= "CREATE TEMP TABLE $table (n $type->pgName);\n";
+    $sql .= "INSERT INTO $table VALUES (1), (2), (3);\n";
+    $sql .= "CREATE INDEX ON $table (n);\n";
+    $expected = $sql;
+
+    foreach ([
+        "SET enable_seqscan = on;\nSET enable_indexscan = off;\nSET enable_bitmapscan = off;\n",
+        "SET enable_seqscan = off;\nSET enable_indexscan = on;\nSET enable_bitmapscan = on;\n",
+    ] as $settings) {
+        $sql .= $settings;
+        $expected .= $settings;
+        foreach ([$type->pgName, 'int4'] as $constantType) {
+            foreach (['<' => '{3}', '<=' => '{2,3}', '>' => '{1}', '>=' => '{1,2}'] as $sign => $matches) {
+                $query = "SELECT array_agg(n ORDER BY n)::text AS matches FROM $table WHERE 2::$constantType $sign n;\n";
+                $sql .= $query;
+                $expected .= $query . genSqlExpectedPaddedValue('matches', $matches, false);
+            }
+        }
+    }
+
+    $cleanup = "RESET enable_seqscan;\nRESET enable_indexscan;\nRESET enable_bitmapscan;\nDROP TABLE $table;\n";
+    return ["\n" . $sql . $cleanup, $expected . $cleanup];
+}
+
+/**
+ * @return array{0: string, 1: string}
+ */
 function genSQLTestForOverflowOp(Op $op, Type $leftType, Type $rightType): array
 {
     if (!$op->canOverflow()) {
@@ -1374,6 +1407,10 @@ EOT;
         $expected .= "-- Ranges block\n";
 
         [$tSql, $tExpected] = genSQLTestRanges($this->type);
+        $sql .= $tSql;
+        $expected .= $tExpected;
+
+        [$tSql, $tExpected] = genSQLTestForIndexedComparisons($this->type);
         $sql .= $tSql;
         $expected .= $tExpected;
 
