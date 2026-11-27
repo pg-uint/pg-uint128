@@ -45,6 +45,14 @@ static inline int8 DatumGetInt8(Datum X)
 #define PG_GETARG_INT8(n)	 DatumGetInt8(PG_GETARG_DATUM(n))
 #endif
 
+#if PG_VERSION_NUM >= 190000
+static inline Datum
+Int8GetDatum(int8 value)
+{
+	return (Datum) value;
+}
+#endif
+
 #ifndef PG_RETURN_INT8
 #define PG_RETURN_INT8(x)	 return Int8GetDatum(x)
 #endif
