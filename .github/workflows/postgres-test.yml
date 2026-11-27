@@ -1,0 +1,50 @@
+name: PostgreSQL regression tests
+
+on:
+  push:
+    branches: [main, ci/postgres-regression]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: PostgreSQL ${{ matrix.pg_version }}
+    runs-on: ubuntu-24.04
+    container: ubuntu:24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        pg_version: [12, 13, 14, 15, 16, 17, 18, 19]
+    env:
+      DEBIAN_FRONTEND: noninteractive
+      LANG: C
+      PGVERSION: ${{ matrix.pg_version }}
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - name: Install PostgreSQL and build tools
+        run: |
+          apt-get update
+          apt-get install -y ca-certificates curl
+          curl --fail --show-error --silent https://www.postgresql.org/media/keys/ACCC4CF8.asc -o /usr/share/keyrings/pgdg.asc
+          echo "deb [signed-by=/usr/share/keyrings/pgdg.asc] https://apt.postgresql.org/pub/repos/apt noble-pgdg main $PGVERSION" > /etc/apt/sources.list.d/pgdg.list
+          apt-get update
+          apt-get install -y gcc make postgresql-$PGVERSION postgresql-server-dev-$PGVERSION
+          pg_createcluster --start "$PGVERSION" test -p 55435 -- -A trust
+      - name: Build and install
+        run: make install PG_CONFIG=/usr/lib/postgresql/$PGVERSION/bin/pg_config
+      - name: Run regression tests
+        run: PGPORT=55435 make installcheck PGUSER=postgres PG_CONFIG=/usr/lib/postgresql/$PGVERSION/bin/pg_config
+      - name: Upload regression failures
+        if: failure()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: pg${{ matrix.pg_version }}-regression
+          path: |
+            regression.diffs
+            regression.out
+            results/
+          if-no-files-found: ignore
