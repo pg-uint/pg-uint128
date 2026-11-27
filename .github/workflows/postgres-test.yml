@@ -24,7 +24,7 @@ jobs:
       LANG: C
       PGVERSION: ${{ matrix.pg_version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805da76410c181273ba90b1 # v7.0.1
       - name: Install PostgreSQL and build tools
         run: |
           apt-get update
@@ -40,7 +40,7 @@ jobs:
         run: PGPORT=55435 make installcheck PGUSER=postgres PG_CONFIG=/usr/lib/postgresql/$PGVERSION/bin/pg_config
       - name: Upload regression failures
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: pg${{ matrix.pg_version }}-regression
           path: |
