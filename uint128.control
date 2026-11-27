@@ -1,4 +1,4 @@
 comment = 'Native uint128 type'
-default_version = '1.3.0'
+default_version = '1.4.0'
 relocatable = true
 module_pathname = '$libdir/uint128'

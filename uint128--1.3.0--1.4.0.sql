@@ -1,0 +1,1 @@
+-- PostgreSQL 19 compatibility only changes the shared library.

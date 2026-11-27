@@ -12,7 +12,7 @@ if (!array_key_exists(1, $argv) || $argv[1] === "--c-only") {
 
 if (!array_key_exists(1, $argv) || $argv[1] === "--sql-only") {
     // Released SQL files are frozen; generate only the current version.
-    include __DIR__ . '/_codegen/sql/sqlgen_v1.3.0.php';
+    include __DIR__ . '/_codegen/sql/sqlgen_v1.4.0.php';
 }
 
 if (!array_key_exists(1, $argv) || $argv[1] === "--tests-only") {
